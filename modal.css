@@ -12,8 +12,8 @@
 
 /* Контент внутри модального окна */
 .modal-content {
-    background-color: #222222ef;
-    margin: 10% auto;
+    background-color: #222222;
+    margin: 15% auto;
     padding: 20px;
     border-radius: 25px;
     width: 80%;
