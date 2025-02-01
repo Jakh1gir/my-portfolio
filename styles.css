@@ -12,19 +12,29 @@ body {
 
 /* === Стили для шапки сайта === */
 header {
-    justify-content: space-between; /* Выравнивание содержимого */
-    max-height: 50px;
-    min-height: 50px;
-    background: #222;
-    color: #00bcd4;
-    padding: 35px 30px;
+    height: 90px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding: 10px 20px;
+    background-color: #222;
+    color: #fff;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
+.menu-toggle {
+    display: none; /* Скрыто для больших экранов */
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #00bcd4;
+    cursor: pointer;
+    outline: none;
+}
+
+
 
 header h1 {
     margin: 0;
@@ -33,6 +43,7 @@ header h1 {
 }
 
 .animated-header {
+    margin-left: 15px;
     font-size: 2rem;
     animation: fadeIn 2s ease-in-out, glow 1.5s infinite alternate;
 }
@@ -536,6 +547,27 @@ nav ul li a:hover {
     }
 }
 
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.navigation ul.active {
+    animation: slideDown 0.3s ease;
+}
+
+@media (max-width: 480px) {
+    .portfolio-item {
+        width: 90%; /* Увеличиваем процентное значение для ограничения */
+        height: auto;
+    }
+}
 
 @media (max-width: 1250px) {
     .portfolio-item{
@@ -555,20 +587,33 @@ nav ul li a:hover {
     }  
 }
 
-@media (max-width: 400px) {
+@media (max-width: 900px) {
     .portfolio-item{
-        margin-left: 15px;
-        width: 250px;
+        margin-left: 50px;
+        width: 290px;
         height: 240px;
 
     }  
-    .portfolio-text{
-        size: 2px;
-    }
 }
 
-@media (max-width: 800px) 
+
+
+@media (max-width: 768px) 
 {
+    nav ul {
+        display:grid;
+        gap: 15px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .portfolio-item{
+        width: 75%;
+        height: 240px;
+
+    }  
+
     .profile-photo {
         width: 120px;
         height: 120px;
@@ -596,12 +641,6 @@ nav ul li a:hover {
     .telegram-button img {
         width: 25px;
         height: 25px;
-    }
-
-    .portfolio-item{
-        margin-left: 50px;
-        width: 540px;
-
     }
 
     .animated-header {
@@ -643,10 +682,5 @@ nav ul li a:hover {
     }   
 }
 
-@media (max-width: 1200px) {
-    .nav-menu ul li:first-child {
-        display: none; /* Убираем пункт меню "Обо мне" */
-    }
 
-    
-}
+
