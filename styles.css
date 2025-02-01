@@ -339,7 +339,6 @@ nav ul li a:hover {
 .portfolio-item {
     background: #222;
     padding: 20px 10px;
-    border-radius: 12px;
     transition: transform 0.8s ease, background 0.3s ease;
     cursor: pointer;
     text-align: center;
