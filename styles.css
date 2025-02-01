@@ -555,9 +555,19 @@ nav ul li a:hover {
     }  
 }
 
+@media (max-width: 400px) {
+    .portfolio-item{
+        margin-left: 15px;
+        width: 250px;
+        height: 240px;
 
+    }  
+    .portfolio-text{
+        size: 2px;
+    }
+}
 
-@media (max-width: 768px) 
+@media (max-width: 800px) 
 {
     .profile-photo {
         width: 120px;
