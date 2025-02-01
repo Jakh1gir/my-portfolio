@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juraev Jahongir – 1% лучше каждый день</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="modal.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1 class="animated-header">Juraev Jahongir</h1>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="#skills">Навыки</a></li>
+                <li><a href="#portfolio">Портфолио</a></li>
+                <li><a href="#certificates">Сертификаты</a></li>
+                <li><a href="#contact">Контакты</a></li>
+                </ul>
+        </nav>
+    </header>
+
+    <section id="about">
+        <div class="about-container">
+            <a href="#about"> <img src="image/profile.jpg" alt="Мое фото" class="profile-photo" /> </a>
+            <div class="about-content">
+                <p class="typed-text"></p> <!-- Контейнер для печатаемого текста -->
+                <div class="tags">
+                    <span class="tag">#Инженер</span>
+                    <span class="tag">#HTM/CSS</span>
+                    <span class="tag">#JavaScript</span>
+                    <span class="tag">#ВЕБ сайты</span>
+                    <span class="tag">#Python</span>
+                    <span class="tag">#Телеграм боты</span>
+                    <span class="tag">#OpenAI</span>
+                    <span class="tag">#C++</span>
+                    <span class="tag">#Фрилансер</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <section id="skills">
+        <h2>Навыки</h2>
+        <div class="skill-list">
+            <div class="skill-items">
+            <div class="skill-item" data-detail="HTML Верстка" aria-label="HTML Верстка">
+                <img src="image/html-icon.png" alt="HTML Icon">
+            </div>
+            <div class="skill-item" data-detail="CSS Дизайн" aria-label="CSS Дизайн">
+                <img src="image/css-icon.png" alt="CSS Icon">
+            </div>
+            <div class="skill-item" data-detail="JavaScript Анимации" aria-label="JavaScript Анимации">
+                <img src="image/js-icon.png" alt="JavaScript Icon">
+            </div>
+            <div class="skill-item" data-detail="Python Коддинг" aria-label="Python Коддинг">
+                <img src="image/python-icon.png" alt="Python Icon">
+            </div>
+            <div class="skill-item" data-detail="C++ Коддинг" aria-label="C++ Коддинг">
+                <img src="image/cpp-icon.png" alt="Cpp Icon">
+            </div>
+            <div class="skill-item" data-detail="C# Коддинг" aria-label="C# Коддинг">
+                <img src="image/csharp-icon.png" alt="C# Icon">
+            </div>
+            <div class="skill-item" data-detail="Создание телеграм-ботов" aria-label="Создание телеграм-ботов">
+                <img src="image/telegram-bot.png" alt="Telegram Bot Icon">
+            </div>
+            <div class="skill-item" data-detail="Интеграция с SQL" aria-label="Интеграция с SQL">
+                <img src="image/mysql-icon.png" alt="SQL Icon">
+            </div>
+            <div class="skill-item" data-detail="Git Hub" aria-label="Git Hub">
+                <img src="image/git-icon.png" alt="Git Icon">
+            </div>
+            <div class="skill-item" data-detail="Интеграция с OpenAI" aria-label="Интеграция с OpenAI">
+                <img src="image/openai-icon.png" alt="OpenAI Icon">
+            </div>
+            <div class="skill-item" data-detail="База JSON" aria-label="База JSON">
+                <img src="image/json-icon.png" alt="Json Icon">
+            </div>
+            <div class="skill-item" data-detail="Проекты AutoCAD" aria-label="Проекты AutoCAD">
+                <img src="image/cad-icon.png" alt="AutoCad Icon">
+            </div>
+            
+        </div>
+        </div>
+    </section>
+    
+
+    <section id="portfolio">
+        <h2 class="portfolio-text">Портфолио</h2>
+        <div class="portfolio-list">
+            
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Лэндинг-страница портфолио</h3>
+                <p class="portfolio-short">Сайт-визитка с анимацией и адаптивным дизайном.</p>
+                <div class="portfolio-description">
+                    <p>Проект включает разделы "Обо мне", "Навыки", "Проекты", "Контакты". Использованы HTML, CSS, JavaScript.</p>
+                    <button class="portfolio-more" onclick="openModal('modal1'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Веб-сайт с авторизацией</h3>
+                <p class="portfolio-short">Регистрация и вход с базой данных.</p>
+                <div class="portfolio-description">
+                    <p>Проект с регистрацией, входом и хранением данных в SQLite/PostgreSQL. Использует Flask/Django.</p>
+                    <button class="portfolio-more" onclick="openModal('modal2'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Генератор случайных цитат</h3>
+                <p class="portfolio-short">Выдаёт случайную цитату.</p>
+                <div class="portfolio-description">
+                    <p>Проект реализован на JavaScript с хранением цитат в JSON-файле.</p>
+                    <button class="portfolio-more" onclick="openModal('modal3'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Telegram-бот для уведомлений</h3>
+                <p class="portfolio-short">Отправляет новые заказы с фриланс-платформ.</p>
+                <div class="portfolio-description">
+                    <p>Использует Python, BeautifulSoup и Telegram API для отправки свежих заказов пользователям.</p>
+                    <button class="portfolio-more" onclick="openModal('modal4'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Калькулятор</h3>
+                <p class="portfolio-short">Выполняет базовые математические операции.</p>
+                <div class="portfolio-description">
+                    <p>Поддерживает сложение, вычитание, умножение и деление. Добавлена история вычислений.</p>
+                    <button class="portfolio-more" onclick="openModal('modal5'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Конвертер валют в Telegram</h3>
+                <p class="portfolio-short">Перевод валют по актуальному курсу.</p>
+                <div class="portfolio-description">
+                    <p>Получает актуальные курсы через API и выполняет конвертацию в Telegram.</p>
+                    <button class="portfolio-more" onclick="openModal('modal6'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Сайт-квиз</h3>
+                <p class="portfolio-short">Интерактивные тесты с подсчетом баллов.</p>
+                <div class="portfolio-description">
+                    <p>Поддерживает вопросы с вариантами ответов, анализ результатов. Написан на JavaScript.</p>
+                    <button class="portfolio-more" onclick="openModal('modal7'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Telegram-бот-парсер вакансий</h3>
+                <p class="portfolio-short">Ищет вакансии по ключевым словам.</p>
+                <div class="portfolio-description">
+                    <p>Парсит сайты с вакансиями и отправляет подходящие предложения в Telegram.</p>
+                    <button class="portfolio-more" onclick="openModal('modal8'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+            <div class="portfolio-item" onmouseenter="showDescription(this)" onmouseleave="hideDescription(this)">
+                <h3 class="animated-portfolio-text">Telegram-бот с OpenAI API</h3>
+                <p class="portfolio-short">Бот с искусственным интеллектом.</p>
+                <div class="portfolio-description">
+                    <p>Использует OpenAI API для ответов на вопросы и генерации текста.</p>
+                    <button class="portfolio-more" onclick="openModal('modal9'); toggleButton(this)">Подробнее</button>
+                </div>
+            </div>
+    
+        </div>
+    </section>
+    
+
+            <!-- Модальные окна -->
+<div class="modal" id="modal1">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal1')">&times;</span>
+        <div class="modal-photo"><img src="image/project1.jpg" alt="Лэндинг-страница портфолио"></div>
+        <div class="modal-description">
+            <h3>Лэндинг-страница портфолио</h3>
+            <p>Проект представляет собой адаптивный сайт-визитку с разделами "Обо мне", "Навыки", "Проекты", "Контакты". Использованы HTML, CSS, JavaScript.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>300$</span></div>
+        <div class="modal-links"><a href="https://example.com/project1" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<div class="modal" id="modal2">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal2')">&times;</span>
+        <div class="modal-photo"><img src="project2.jpg" alt="Веб-сайт с авторизацией"></div>
+        <div class="modal-description">
+            <h3>Веб-сайт с авторизацией</h3>
+            <p>Проект с регистрацией, входом и хранением данных в SQLite/PostgreSQL. Использует Flask/Django.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>400$</span></div>
+        <div class="modal-links"><a href="https://example.com/project2" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Генератор случайных цитат -->
+<div class="modal" id="modal3">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal3')">&times;</span>
+        <div class="modal-photo"><img src="project3.jpg" alt="Генератор случайных цитат"></div>
+        <div class="modal-description">
+            <h3>Генератор случайных цитат</h3>
+            <p>Проект реализован на JavaScript. Позволяет генерировать случайные цитаты из предустановленного списка, сохраненного в формате JSON.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>150$</span></div>
+        <div class="modal-links"><a href="https://example.com/project3" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Telegram-бот для уведомлений -->
+<div class="modal" id="modal4">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal4')">&times;</span>
+        <div class="modal-photo"><img src="project4.jpg" alt="Telegram-бот для уведомлений"></div>
+        <div class="modal-description">
+            <h3>Telegram-бот для уведомлений</h3>
+            <p>Бот, созданный с использованием Python, BeautifulSoup и Telegram API, отправляет пользователям новые заказы с фриланс-платформ.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>250$</span></div>
+        <div class="modal-links"><a href="https://example.com/project4" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Калькулятор -->
+<div class="modal" id="modal5">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal5')">&times;</span>
+        <div class="modal-photo"><img src="project5.jpg" alt="Калькулятор"></div>
+        <div class="modal-description">
+            <h3>Калькулятор</h3>
+            <p>Поддерживает базовые математические операции: сложение, вычитание, умножение и деление. Реализован с историей вычислений.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>120$</span></div>
+        <div class="modal-links"><a href="https://example.com/project5" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Конвертер валют в Telegram -->
+<div class="modal" id="modal6">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal6')">&times;</span>
+        <div class="modal-photo"><img src="project6.jpg" alt="Конвертер валют в Telegram"></div>
+        <div class="modal-description">
+            <h3>Конвертер валют в Telegram</h3>
+            <p>Бот получает актуальные курсы валют через API и позволяет пользователям легко конвертировать валюты в режиме реального времени.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>200$</span></div>
+        <div class="modal-links"><a href="https://example.com/project6" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Telegram-бот "Умный список дел" -->
+<div class="modal" id="modal7">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal7')">&times;</span>
+        <div class="modal-photo"><img src="project7.jpg" alt="Telegram-бот 'Умный список дел'"></div>
+        <div class="modal-description">
+            <h3>Telegram-бот "Умный список дел"</h3>
+            <p>Бот управляет задачами, хранит их в базе данных и отправляет напоминания. Реализован на Python с использованием библиотеки aiogram.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>300$</span></div>
+        <div class="modal-links"><a href="https://example.com/project7" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Сайт-квиз -->
+<div class="modal" id="modal8">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal8')">&times;</span>
+        <div class="modal-photo"><img src="project8.jpg" alt="Сайт-квиз"></div>
+        <div class="modal-description">
+            <h3>Сайт-квиз</h3>
+            <p>Интерактивный сайт с тестами. Поддерживает вопросы с вариантами ответов, анализ результатов и отображение итогового балла.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>180$</span></div>
+        <div class="modal-links"><a href="https://example.com/project8" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+<!-- Telegram-бот с OpenAI API -->
+<div class="modal" id="modal9">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('modal9')">&times;</span>
+        <div class="modal-photo"><img src="project9.jpg" alt="Telegram-бот с OpenAI API"></div>
+        <div class="modal-description">
+            <h3>Telegram-бот с OpenAI API</h3>
+            <p>Использует OpenAI API для обработки вопросов и генерации текстов. Поддерживает множество функций для общения с пользователями.</p>
+        </div>
+        <div class="modal-price">Цена проекта: <span>500$</span></div>
+        <div class="modal-links"><a href="https://example.com/project9" target="_blank">Посмотреть проект</a></div>
+    </div>
+</div>
+
+    
+
+    <section id="certificates">
+        <h2>Сертификаты</h2>
+        <div class="certificate-list">
+            <div class="certificate-item">Сертификат 1</div>
+            <div class="certificate-item">Сертификат 2</div>
+            <div class="certificate-item">Сертификат 3</div>
+            <div class="certificate-item">Сертификат 4</div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Контакты</h2>
+        <p>Email: <a href="mailto:Juraevjahongir.r@gmail.com">Juraevjahongir.r@gmail.com</a></p>
+        <p>Telegram: <a href="https://t.me/Juraev_JR">@Juraev_JR</a></p>
+        <p>Instagram: <a href="https://instagram.com/jakhon.uz">@juraev_jr</a></p>
+        <p>LinkedIn: <a href="https://linkedin.com/in/juraevjahongir">LinkedIn</a></p>
+    </section>
+
+    
+
+<a href="https://t.me/Juraev_JR" class="telegram-button" target="_blank">
+    <img src="image/aiogram-icon.png" alt="Telegram">
+</a>
+
+<a href="https://instagram.com/jakhon.uz" class="instagram-button" target="_blank">
+    <img src="image/instagram-icon.png" alt="Telegram">
+</a>
+
+</body>
+</html>
+
+
