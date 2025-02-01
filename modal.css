@@ -10,6 +10,22 @@
     overflow: auto;
 }
 
+@media (max-width: 768px) {
+    .modal-content {
+        background-color: #222222;
+        margin: 35% auto;
+        padding: 20px;
+        border-radius: 25px;
+        width: 60%;
+        max-width: 100%;
+        position: relative;
+        color: #fff;
+        animation: fadeIn 0.3s ease-in-out; /* Анимация появления */
+        box-shadow: 0 4px 15px 4px rgba(250, 250, 250, 0.74);
+    }
+}
+
+
 /* Контент внутри модального окна */
 .modal-content {
     background-color: #222222;
