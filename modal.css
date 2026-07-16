@@ -1,125 +1,268 @@
-/* ====== Общие стили для модальных окон ====== */
+body.modal-open {
+  переполнение: скрыто;
+}
+
 .modal {
-    display: none; /* Скрыто по умолчанию */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+  положение: фиксированное;
+  вставка: 0;
+  z-индекс: 1100;
+  display: none;
+  place-ites: center;
+  padding: 28px;
+  overflow-y: auto;
+  background: rgba(2, 8, 15, 0.82);
+  backdrop-filter: blur(12px);
 }
 
-@media (max-width: 768px) {
-    .modal-content {
-        background-color: #222222;
-        margin: 35% auto;
-        padding: 20px;
-        border-radius: 25px;
-        width: 60%;
-        max-width: 100%;
-        position: relative;
-        color: #fff;
-        animation: fadeIn 0.3s ease-in-out; /* Анимация появления */
-        box-shadow: 0 4px 15px 4px rgba(250, 250, 250, 0.74);
-    }
+.modal[style*="display: block"] {
+  display: grid !important;
 }
 
-
-/* Контент внутри модального окна */
 .modal-content {
-    background-color: #222222;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 25px;
-    width: 80%;
-    max-width: 100%;
-    position: relative;
-    color: #fff;
-    animation: fadeIn 0.3s ease-in-out; /* Анимация появления */
-    box-shadow: 0 4px 15px 4px rgba(250, 250, 250, 0.74);
+  положение: относительное;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+  зазор: 28 пикселей;
+  ширина: мин(100%, 920px);
+  max-height: calc(100vh - 56px);
+  margin: auto;
+  padding: 24px;
+  граница: 1 пиксель сплошная var(-line-strong);
+  граница-радиус: вар (--радиус-lg);
+  цвет: var(--text);
+  background: linear-gradient(145deg, #10243a, #071523);
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.62);
+  overflow-y: auto;
+  animation: modal-enter 220ms ease-out;
 }
 
-/* Анимация модального окна */
-@keyframes fadeIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Кнопка закрытия */
-.close {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    color: #aaa;
-    font-size: 44px;
-    font-weight: bold;
-    cursor: pointer;
+.закрывать {
+  положение: абсолютное;
+  top: 12px;
+  справа: 14 пикселей;
+  z-индекс: 2;
+  display: grid;
+  place-ites: center;
+  ширина: 42 пикселя;
+  высота: 42 пикселя;
+  граница: сплошная 1 пиксель var(--line);
+  border-radius: 11px;
+  цвет: var(--muted);
+  background: rgba(4, 13, 23, 0.88);
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1;
+  курсор: указатель;
+  переход:
+    цвет 180 мс легкость,
+    border-color 180ms ease,
+    преобразование 180 мс легкость;
 }
 
 .close:hover {
-    color: #00bcd4;
-    transform: scale(1.2);
+  цвет: var(--primary);
+  border-color: var(--line-strong);
+  transform: rotate(4deg);
 }
 
-/* Фото проекта */
 .modal-photo {
-    width: 100%;
-    max-height: 300px;
-    overflow: hidden;
-    border-radius: 10px;
-    margin-bottom: 20px;
+  grid-row: 1 / span 4;
+  ширина: 100%;
+  минимальная высота: 330 пикселей;
+  отступ: 0;
+  граница: сплошная 1 пиксель var(--line);
+  border-radius: 18px;
+  background: rgba(3, 12, 21, 0.68);
+  переполнение: скрыто;
 }
 
 .modal-photo img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+  display: block;
+  ширина: 100%;
+  высота: 100%;
+  object-fit: cover;
 }
 
-/* Описание проекта */
+.project-placeholder {
+  положение: относительное;
+  display: grid;
+  place-ites: center;
+  ширина: 100%;
+  высота: 100%;
+  min-height: inherit;
+  цвет: var(--primary);
+  фон:
+    linear-gradient(rgba(101, 215, 237, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(101, 215, 237, 0.08) 1px, transparent 1px),
+    radial-gradient(circle, rgba(101, 215, 237, 0.16), transparent 62%);
+  размер фона:
+    28px 28px,
+    28px 28px,
+    авто;
+}
+
+.project-placeholder::before,
+.project-placeholder::after {
+  содержание: "";
+  положение: абсолютное;
+  ширина: 44 пикселя;
+  высота: 44 пикселя;
+}
+
+.project-placeholder::before {
+  top: 20px;
+  слева: 20 пикселей;
+  border-top: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+}
+
+.project-placeholder::after {
+  справа: 20 пикселей;
+  нижняя часть: 20 пикселей;
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+
+.project-placeholder span {
+  padding: 11px 15px;
+  граница: 1 пиксель сплошная var(-line-strong);
+  border-radius: 9px;
+  background: rgba(4, 15, 26, 0.78);
+  семейство шрифтов: «SFMono-Regular», Consolas, моноширинный;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.modal-description {
+  align-self: end;
+  padding: 26px 38px 0 0;
+}
+
 .modal-description h3 {
-    font-size: 24px;
-    color: #00bcd4;
-    margin-bottom: 10px;
+  margin: 0 0 14px;
+  цвет: var(--text);
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  высота строки: 1.15;
+  letter-pacing: -0.035em;
+}
+
+.modal-description h3::before {
+  Содержание: "ПРОЕКТ // ";
+  display: block;
+  margin-bottom: 12px;
+  цвет: var(--primary);
+  семейство шрифтов: «SFMono-Regular», Consolas, моноширинный;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
 }
 
 .modal-description p {
-    font-size: 16px;
-    color: #ccc;
-    line-height: 1.5;
+  отступ: 0;
+  цвет: var(--muted);
+  font-size: 0.94rem;
+  межстрочный интервал: 1.7;
 }
 
-/* Блок с ценой */
 .modal-price {
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
-    margin-bottom: 20px;
+  align-self: end;
+  отступ: 0;
+  padding: 18px 0;
+  border-block: 1px solid var(--line);
+  цвет: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .modal-price span {
-    color: #00bcd4;
+  margin-left: 7px;
+  цвет: var(--accent);
+  семейство шрифтов: «SFMono-Regular», Consolas, моноширинный;
+  font-size: 1rem;
 }
 
-/* Ссылка на проект */
+.modal-links {
+  align-self: start;
+}
+
 .modal-links a {
-    display: inline-block;
-    background: #00bcd4;
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  минимальная высота: 44px;
+  padding: 10px 15px;
+  граница: 1 пиксель сплошная var(--primary);
+  border-radius: 10px;
+  цвет: #031820;
+  background: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  переход:
+    преобразование 180 мс легкость,
+    background-color 180ms ease;
+}
+
+.modal-links a::after {
+  содержание: "↗";
+  margin-left: 8px;
 }
 
 .modal-links a:hover {
-    background: #007e9e;
-    transform: scale(1.05);
+  transform: translateY(-2px);
+  фон: #83e5f4;
+}
+
+.disabled-link {
+  display: inline-flex;
+  align-items: center;
+  минимальная высота: 42px;
+  padding: 9px 14px;
+  граница: пунктирная линия 1 пиксель var(-line-strong);
+  border-radius: 10px;
+  цвет: var(--muted);
+  background: rgba(255, 255, 255, 0.025);
+  семейство шрифтов: «SFMono-Regular», Consolas, моноширинный;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+@keyframes modal-enter {
+  от {
+    непрозрачность: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  к {
+    непрозрачность: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .modal {
+    place-items: start center;
+    padding: 16px;
+  }
+
+  .modal-content {
+    grid-template-columns: 1fr;
+    зазор: 18 пикселей;
+    максимальная высота: отсутствует;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .modal-photo {
+    grid-row: auto;
+    минимальная высота: 220 пикселей;
+    max-height: 320px;
+  }
+
+  .modal-description {
+    padding: 4px 0 0;
+  }
+
+  .modal-price {
+    padding: 14px 0;
+  }
 }
