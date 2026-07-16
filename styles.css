@@ -455,7 +455,8 @@ section h2 {
 .skill-list {
   position: relative;
   width: 100%;
-  margin-top: 60px;
+  margin-top: 38px;
+  margin-botton;
   padding: 20px 0;
   border-block: 1px solid var(--line);
   overflow: hidden;
