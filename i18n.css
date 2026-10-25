@@ -1,0 +1,44 @@
+/* Three-language switcher — RU / EN / Uzbek (Latin). */
+.site-language{display:inline-flex;position:relative;z-index:111;flex:0 0 auto;align-items:center;gap:3px;min-height:39px;padding:4px 7px;border:1px solid rgba(121,207,200,.35);border-radius:9px;background:rgba(21,55,65,.85);color:#ceeee6;transition:border-color .25s,background .25s}
+.site-language:hover,.site-language:focus-within{border-color:#77ebcf;background:#1a4652}
+.site-language label{display:flex;align-items:center;justify-content:center;cursor:pointer;color:#8eeac9;font-size:18px;width:18px;line-height:1}
+.site-language select{color:#e7fff8;background:transparent;border:0;outline:0;min-height:29px;cursor:pointer;font:800 11px/1.2 Consolas,monospace;letter-spacing:.06em;padding:3px 2px}
+.site-language select option{background:#102e3e;color:#e7fff8}
+.site-language select:focus-visible{outline:2px solid #a8ffd9;outline-offset:3px;border-radius:2px}
+.site-language[data-locale=en]{border-color:rgba(148,185,255,.55)}
+.site-language[data-locale=uz]{border-color:rgba(255,194,129,.48)}
+.nav-wrap>.site-language{margin-left:auto}
+.nav-wrap>.site-language+.masterpiece-command-trigger{margin-left:0}
+@media(max-width:1220px){
+ .nav-wrap{gap:10px}
+ .site-nav{gap:12px}
+ .site-nav>a{font-size:11px}
+ .site-language{padding:3px 6px}
+}
+@media(min-width:1051px) and (max-width:1140px){
+ .brand-name{font-size:18px}
+ .brand-symbol{width:41px;height:41px}
+ .brand{gap:9px}
+ .site-nav{gap:8px}
+}
+@media(max-width:1050px){
+ .nav-wrap>.site-language{margin-left:auto}
+ .site-language{order:0}
+ .masterpiece-command-trigger{order:1;margin-left:0}
+ .menu-toggle{order:2;margin-left:0}
+}
+@media(max-width:570px){
+ .site-language{order:0;min-height:35px;padding:2px 4px;gap:0}
+ .site-language label{font-size:15px;width:15px}
+ .site-language select{font-size:10px}
+ .menu-toggle{order:1}
+ .nav-wrap>.site-language{margin-left:auto}
+ .masterpiece-command-trigger{display:none}
+ .nav-wrap{gap:6px}
+}
+@media(max-width:345px){
+ .site-language{padding:2px 3px}
+ .site-language label{display:none}
+ .brand-name{font-size:16px}
+ .brand-symbol{width:36px;height:36px}
+}
