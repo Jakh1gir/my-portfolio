@@ -320,7 +320,7 @@
       command.close();
       if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
     }
-    $("[data-command-open]").forEach(button=>button.addEventListener("click",()=>{
+    $$("[data-command-open]").forEach(button=>button.addEventListener("click",()=>{
       const menu=$(".menu-toggle");
       if (menu?.getAttribute("aria-expanded")==="true") menu.click();
       open();
