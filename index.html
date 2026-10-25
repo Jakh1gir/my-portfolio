@@ -32,7 +32,9 @@
   </script>
 <link rel="stylesheet" href="extras.css">
 <link rel="stylesheet" href="experience.css">
+<link rel="stylesheet" href="masterpiece.css">
 <script src="experience.js" defer></script>
+<script src="masterpiece.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти к содержимому</a>
@@ -51,20 +53,23 @@
       <nav class="site-nav" id="site-menu" aria-label="Основная навигация">
         <a href="#about">Обо мне</a>
         <a href="#services">Направления</a>
-        <a href="#projects">Проекты</a><a href="#career">Карьера</a><a href="studio.html">AI Motion / Боты</a>
+        <a href="#masterworks">Избранное</a><a href="#projects">Проекты</a><a href="#career">Карьера</a><a href="studio.html">AI Motion / Боты</a>
         <a href="#pricing">Прайс-лист</a>
         <a class="nav-contact" href="#contacts">Контакты <span aria-hidden="true">↗</span></a>
       </nav>
+      <button type="button" class="masterpiece-command-trigger" data-command-open aria-label="Открыть быстрый поиск и навигацию" title="Быстрая навигация Ctrl+K"><span aria-hidden="true">⌕</span><kbd>⌘ K</kbd></button>
     </div>
   </header>
 
   <main id="main">
-    <section class="hero section" aria-labelledby="hero-title">
+    <section class="hero section masterpiece-hero" aria-labelledby="hero-title">
+      <canvas class="masterpiece-network" id="network-canvas" aria-hidden="true"></canvas>
+      <div class="masterpiece-corner-index" aria-hidden="true">J / 09 — ENERGY SYSTEMS</div>
       <div class="container hero-grid">
         <div class="hero-copy">
           <div class="eyebrow"><span class="status-dot" aria-hidden="true"></span> АСУ ТП × ВЧ-СВЯЗЬ × SOFTWARE × AI</div>
-          <p class="hero-index">JAKHON / ENGINEERING STUDIO <span>01 — 06</span></p>
-          <h1 id="hero-title">Инженерная логика.<br><em>Цифровые</em> решения.</h1>
+          <p class="hero-index">JAKHON / ENGINEERING STUDIO <span>09 YEARS / TASHKENT</span></p>
+          <h1 id="hero-title"><span class="hero-first-line">Инженерная</span><br><span class="hero-second-line">логика<span class="masterpiece-period">.</span></span><br><em>Цифровые</em> решения.</h1>
           <p class="hero-lead">Разрабатываю прикладные системы на стыке промышленной автоматизации, программирования и инженерных данных — с фокусом на надёжность, понятную архитектуру и реальные задачи.</p>
           <div class="hero-buttons">
             <a class="btn btn-primary" href="#projects">Смотреть проекты <span aria-hidden="true">↗</span></a>
@@ -102,6 +107,14 @@
       </div>
     </section>
 
+
+    <div class="manifesto-strip" aria-label="Профессиональная концепция">
+      <div class="container manifesto-grid">
+        <div class="manifesto-side">[ DESIGN PRINCIPLE / 01 ]</div>
+        <p>Сложную технологию<br><em>делаю понятной.</em></p>
+        <div class="manifesto-sign"><span>09</span><small>ЛЕТ<br>В ЭНЕРГЕТИКЕ</small></div>
+      </div>
+    </div>
     <div class="tech-band" aria-label="Технические направления"><div class="container tech-row">
       <span>PLC / SCADA</span><i></i><span>C++ / PYTHON</span><i></i><span>INDUSTRIAL DATA</span><i></i><span>LOCAL AI</span><i></i><span>EDGE / MQTT</span><i></i><span>ENGINEERING UX</span>
     </div></div>
@@ -185,6 +198,74 @@
       </div>
     </section>
 
+
+    <section class="masterworks" id="masterworks" aria-labelledby="masterworks-title">
+      <div class="container">
+        <div class="masterworks-heading">
+          <div>
+            <p class="master-overline"><span class="master-symbol">✳</span> SELECTED WORK / ТРИ МИРА ИНЖЕНЕРИИ</p>
+            <h2 id="masterworks-title">От сигнала.<br><em>До системы.</em></h2>
+          </div>
+          <p>Не абстрактные макеты ради красоты. Три разных задачи, три инженерных подхода. Выберите проект — архитектура оживёт прямо перед вами.</p>
+        </div>
+        <div class="masterworks-app" data-masterworks>
+          <div class="masterworks-switcher" role="group" aria-label="Выбор проекта">
+            <button type="button" class="masterworks-item is-selected" data-work="calc" aria-pressed="true">
+              <span class="masterworks-n">01 / ENGINEERING</span><strong>J1Calc</strong>
+              <span class="masterworks-caption">Инженерный инструмент Android · офлайн</span><span class="masterworks-item-icon" aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="masterworks-item" data-work="database" aria-pressed="false">
+              <span class="masterworks-n">02 / DATA SYSTEM</span><strong>Local_DB Universal</strong>
+              <span class="masterworks-caption">Локальная база · аудит · интеграции</span><span class="masterworks-item-icon" aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="masterworks-item" data-work="edge" aria-pressed="false">
+              <span class="masterworks-n">03 / EDGE AUTOMATION</span><strong>Smart Home Edge</strong>
+              <span class="masterworks-caption">ESP32 · MQTT · C++20 · Flutter</span><span class="masterworks-item-icon" aria-hidden="true">↗</span>
+            </button>
+            <div class="masterworks-switcher-bottom"><span>JAKHON / ENGINEERED SYSTEMS</span><span>03 CASES ↗</span></div>
+          </div>
+          <div class="masterworks-stage">
+            <div class="masterworks-stage-top"><span><i class="mw-led"></i> <span id="mw-live-label">INTERACTIVE CONCEPT / J1CALC</span></span><span>00<span id="mw-index">1</span> / 003</span></div>
+            <div class="masterworks-scenes">
+              <div class="masterworks-scene is-selected" data-work-scene="calc">
+                <div class="mw-radar-outer"><div class="mw-radar-ring"><div class="mw-radar-trace"></div><div class="mw-radar-center"><span>MEASURE / CALCULATE</span><strong>J1<span>Calc</span></strong><small>OFFLINE ENGINEERING TOOLS</small></div></div></div>
+                <div class="mw-floating-metric mw-metric-one"><span>INSTRUMENTS</span><strong>U · I · R</strong></div>
+                <div class="mw-floating-metric mw-metric-two"><span>WORKFLOW</span><strong>MEASURE → CALCULATE</strong></div>
+                <div class="mw-crosshair mw-cross-one">+</div><div class="mw-crosshair mw-cross-two">+</div>
+              </div>
+              <div class="masterworks-scene" data-work-scene="database" hidden>
+                <div class="mw-db-board">
+                  <div class="mw-db-top"><span>LOCAL_DB / UNIVERSAL</span><span>LOCAL FIRST</span></div>
+                  <div class="mw-db-head"><span>DEVICE / KKS</span><span>STATE</span><span>RECORD</span></div>
+                  <div class="mw-db-row"><i>01</i><span>ASSET / 001</span><b>● REVIEW</b><em>▷▷▷</em></div>
+                  <div class="mw-db-row"><i>02</i><span>ASSET / 002</span><b>● CHECK</b><em>▷▷▷</em></div>
+                  <div class="mw-db-row"><i>03</i><span>ASSET / 003</span><b>● ARCHIVE</b><em>▷▷▷</em></div>
+                  <div class="mw-db-row"><i>04</i><span>ASSET / 004</span><b>● AUDIT</b><em>▷▷▷</em></div>
+                  <div class="mw-db-footer"><span>DATA / INTEGRITY / TRACEABILITY</span><span>LOCAL_DB</span></div>
+                </div>
+                <div class="mw-db-watermark" aria-hidden="true">DATA.</div>
+              </div>
+              <div class="masterworks-scene" data-work-scene="edge" hidden>
+                <div class="mw-edge-ring"></div><div class="mw-edge-ring second"></div>
+                <div class="mw-edge-nodes">
+                  <div class="mw-edge-node"><span>01 / FIELD</span><strong>ESP32</strong><small>SENSOR / RELAY</small></div>
+                  <div class="mw-edge-wire"><i></i><small>MQTT</small></div>
+                  <div class="mw-edge-node mw-edge-core"><span>02 / EDGE</span><strong>ORANGE PI</strong><small>C++ / LOCAL SERVER</small></div>
+                  <div class="mw-edge-wire"><i></i><small>HTTPS</small></div>
+                  <div class="mw-edge-node"><span>03 / UI</span><strong>FLUTTER</strong><small>MOBILE CONTROL</small></div>
+                </div>
+                <div class="mw-edge-note">REFERENCE TOPOLOGY · PROTOTYPE · NOT LIVE EQUIPMENT</div>
+              </div>
+            </div>
+            <div class="masterworks-stage-bottom">
+              <div><small id="mw-category">ENGINEERING / ANDROID</small><h3 id="mw-headline">Инструменты, которые работают даже без интернета.</h3><p id="mw-description">Инженерные расчёты, измерительные цепи и протоколы в офлайн-приложении для практической работы.</p></div>
+              <a href="#projects" class="masterworks-more">Все проекты <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </div>
+        <p class="masterworks-disclaimer">Изображения выше — авторские интерактивные иллюстрации архитектур, а не скриншоты рабочих систем или живая телеметрия.</p>
+      </div>
+    </section>
     <section class="section projects-section" id="projects">
       <div class="container">
         <div class="section-head-inline">
@@ -297,6 +378,13 @@
       </div>
     </section>
   </main>
+
+  <dialog class="masterpiece-command" id="masterpiece-command" aria-labelledby="command-title">
+    <div class="command-head"><div><span>J / COMMAND CENTER</span><h2 id="command-title">Куда отправимся?</h2></div><button type="button" class="command-close" aria-label="Закрыть поиск">ESC ×</button></div>
+    <div class="command-search"><span aria-hidden="true">⌕</span><input id="command-input" type="search" autocomplete="off" aria-label="Найти раздел или проект" placeholder="Поиск раздела, проекта, направления..."><kbd>↵</kbd></div>
+    <div class="command-list" id="command-list" role="listbox" aria-label="Результаты навигации"></div>
+    <div class="command-bottom"><span>↑ ↓ ВЫБОР</span><span>ENTER ПЕРЕЙТИ</span><span>ESC ЗАКРЫТЬ</span></div>
+  </dialog>
 
   <dialog class="case-dialog" id="case-dialog" aria-labelledby="case-dialog-title">
     <div class="case-dialog-top"><span>JAKHON / PROJECT DOSSIER</span><button type="button" class="case-dialog-close" aria-label="Закрыть карточку">×</button></div>
