@@ -161,3 +161,18 @@ html{scroll-padding-top:98px}
 .motion-off .masterworks-scene.is-selected,.motion-off .mw-radar-trace,.motion-off .mw-floating-metric,.motion-off .mw-edge-wire i,.motion-off .mw-led,.motion-off .studio-cinema-track i{animation:none!important}
 .motion-off .masterpiece-network{display:none!important}
 @media(hover:none){.masterworks-item:hover{background:inherit}.masterworks-item.is-selected:hover{background:linear-gradient(112deg,#163d40,#0b2b37)}}
+
+/* Compact-phone header: move search into the mobile navigation. */
+.nav-quicksearch{display:none}
+@media(max-width:820px){
+ .nav-quicksearch{display:block;width:100%;text-align:left;margin-top:9px;padding:16px 7px;border:1px solid #396c72;border-radius:7px;background:#173947;color:#b4f7d8;font-weight:750;font-size:16px}
+}
+@media(max-width:570px){
+ .masterpiece-command-trigger{display:none}
+ .nav-wrap{gap:7px}
+ .brand{gap:10px}
+ .brand-symbol{width:42px;height:42px}
+ .brand-name{font-size:19px}
+ .menu-toggle{margin-left:auto;flex:0 0 43px}
+}
+@media(max-width:359px){.brand-name{font-size:17px}.brand-symbol{width:39px;height:39px}}
