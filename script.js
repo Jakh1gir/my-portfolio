@@ -25,7 +25,7 @@
       if (menuButton.getAttribute("aria-expanded") === "true" && !navigation.contains(event.target) && !menuButton.contains(event.target)) setMenuOpen(false);
     });
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 820) setMenuOpen(false);
+      if (window.innerWidth > 1050) setMenuOpen(false);
     });
   }
 
