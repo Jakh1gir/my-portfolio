@@ -30,7 +30,10 @@
     "sameAs":["https://github.com/Jakh1gir","https://www.instagram.com/jakhon.uz/","https://t.me/jakhon_UZ"]
   }
   </script>
-<link rel="stylesheet" href="extras.css"></head>
+<link rel="stylesheet" href="extras.css">
+<link rel="stylesheet" href="experience.css">
+<script src="experience.js" defer></script>
+</head>
 <body>
   <a class="skip-link" href="#main">Перейти к содержимому</a>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -68,7 +71,7 @@
             <a class="btn btn-outline" href="#contacts">Обсудить задачу <span aria-hidden="true">→</span></a>
           </div>
           <div class="hero-proof" aria-label="Профессиональные направления">
-            <div><strong>7+ лет</strong><span>работы в энергетике</span></div>
+            <div><strong class="count-up" data-count="9">9 лет</strong><span>работы в энергетике</span></div>
             <div><strong>АСУ ТП</strong><span>практика эксплуатации</span></div>
             <div><strong>Local-first</strong><span>системы без обязательного облака</span></div>
           </div>
@@ -110,7 +113,7 @@
           <h2>Технологии должны<br><span>работать в реальности.</span></h2>
         </div>
         <div class="about-body">
-          <p class="about-emphasis">Я — Jahongir Juraev. Ведущий инженер-программист АСУ ТП с опытом работы в энергетике и практикой в системах ВЧ-связи, технической диагностике и промышленной эксплуатации.</p>
+          <p class="about-emphasis">Я — Jahongir Juraev. Ведущий инженер-программист АСУ ТП с 9-летним опытом работы в энергетике и практикой в системах ВЧ-связи, технической диагностике и промышленной эксплуатации.</p>
           <p>Развиваю собственные программные продукты: инженерные инструменты, локальные базы данных, приложения управления оборудованием и компоненты ИИ для работы с документацией. Проекты ниже включают как протестированные версии, так и прототипы — их статус указан отдельно.</p>
           <div class="about-bottom">
             <div class="profile-mini"><img src="image/profile.jpg" alt="Портрет Jahongir Juraev" width="62" height="62" loading="lazy"><div><strong>Jahongir Juraev</strong><small>Ведущий инженер-программист АСУ ТП<br>Ташкент, Узбекистан</small></div></div>
@@ -120,6 +123,53 @@
       </div>
     </section>
 
+
+    <!-- Interactive signal lab: illustrative simulation, not connected to any PLC. -->
+    <section class="signal-lab section" id="lab" aria-labelledby="lab-title">
+      <div class="container">
+        <div class="lab-intro">
+          <div>
+            <div class="section-label"><span>◈</span> INTERACTIVE EXPERIENCE / 2026</div>
+            <h2 id="lab-title">Инженерия,<br>которую <em>можно почувствовать.</em></h2>
+          </div>
+          <p>Три направления. Один принцип: надёжная архитектура, понятная логика, полезный результат. Выберите сценарий и исследуйте модель системы.</p>
+        </div>
+        <div class="lab-shell" data-lab>
+          <div class="lab-toolbar">
+            <div class="lab-toolbar-title"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span> JAKHON / EXPLORER <small>v.2026</small></div>
+            <div class="lab-tag"><span class="lab-breathing-led" aria-hidden="true"></span> DEMO / НЕ ПОДКЛЮЧЕНО К ОБОРУДОВАНИЮ</div>
+          </div>
+          <div class="lab-layout">
+            <div class="lab-selector" role="group" aria-label="Выберите инженерный сценарий">
+              <p class="lab-label">SELECT DOMAIN / 01–03</p>
+              <button type="button" class="lab-tab is-active" data-scene="plc" aria-pressed="true"><span class="lab-tab-id">01 /</span><span><strong>АСУ ТП</strong><small>PLC · SCADA · HMI</small></span><span class="lab-arrow" aria-hidden="true">↗</span></button>
+              <button type="button" class="lab-tab" data-scene="data" aria-pressed="false"><span class="lab-tab-id">02 /</span><span><strong>Данные</strong><small>DATABASE · API · UX</small></span><span class="lab-arrow" aria-hidden="true">↗</span></button>
+              <button type="button" class="lab-tab" data-scene="ai" aria-pressed="false"><span class="lab-tab-id">03 /</span><span><strong>Локальный AI</strong><small>RAG · OCR · LLM</small></span><span class="lab-arrow" aria-hidden="true">↗</span></button>
+              <p class="lab-selector-note">Нажмите на сценарий. Схема и описание обновятся без перезагрузки.</p>
+            </div>
+            <div class="lab-display" aria-live="polite" aria-atomic="false">
+              <div class="lab-display-meta"><span><span class="lab-online" aria-hidden="true"></span> <span id="lab-scene-tag">CONTROL SYSTEM / SIMULATION</span></span><span id="lab-sequence">SCENE 01 / 03</span></div>
+              <div class="lab-visualization" aria-hidden="true">
+                <div class="lab-reticle reticle-a"></div><div class="lab-reticle reticle-b"></div>
+                <div class="lab-node" data-lab-node="0"><span>INPUT</span><strong>FIELD</strong><small>Датчики / I/O</small></div>
+                <div class="lab-connector"><i></i></div>
+                <div class="lab-node lab-node-core" data-lab-node="1"><span>LOGIC</span><strong>PLC</strong><small>Control Engine</small></div>
+                <div class="lab-connector"><i></i></div>
+                <div class="lab-node" data-lab-node="2"><span>OUTPUT</span><strong>HMI</strong><small>Operator View</small></div>
+              </div>
+              <div class="lab-waveform" aria-hidden="true">
+                <div class="wave-grid"></div>
+                <svg viewBox="0 0 700 100" preserveAspectRatio="none"><path id="lab-wave-path" d="M0 80 L75 80 L75 57 L140 57 L140 75 L215 75 L215 40 L275 40 L275 54 L360 54 L360 19 L440 19 L440 54 L515 54 L515 35 L610 35 L610 65 L700 65"></path></svg>
+                <div class="wave-scan"></div>
+              </div>
+              <div class="lab-output"><div><span class="lab-label">ARCHITECTURE / EXPLANATION</span><h3 id="lab-output-title">Управление начинается на уровне контроллера</h3><p id="lab-output-text">Полевой сигнал поступает в ПЛК. Логика работает локально, а оператор получает состояние через HMI и SCADA.</p></div><div class="lab-log"><span>LOG / ILLUSTRATION</span><code id="lab-log-1">01 · INPUT REGISTERED</code><code id="lab-log-2">02 · LOGIC EXECUTED</code><code id="lab-log-3">03 · STATE VISUALIZED</code></div></div>
+            </div>
+          </div>
+          <div class="lab-foot"><span>NO LIVE EQUIPMENT · NO NETWORK REQUESTS · UI CONCEPT</span><a href="#projects">Исследовать проекты ↗</a></div>
+        </div>
+      </div>
+      <div class="kinetic-banner" aria-hidden="true"><div>CONTROL <span>✳</span> CREATE <span>✳</span> ENGINEER <span>✳</span> CONTROL <span>✳</span> CREATE <span>✳</span> ENGINEER <span>✳</span> </div></div>
+    </section>
     <section class="section services-section" id="services">
       <div class="container">
         <div class="section-head-inline">
@@ -186,7 +236,7 @@
       </div>
     </section>
 
-    <section class="section career-section" id="career"><div class="container career-layout"><div><div class="section-label"><span>04</span> ПРОФЕССИОНАЛЬНЫЙ ПУТЬ</div><h2>Карьера в энергетике.<br><span>От ВЧ-связи к АСУ ТП.</span></h2><p>Более 7 лет инженерной практики. Промышленная связь, наладка оборудования, эксплуатация технологических систем и разработка инженерного программного обеспечения.</p><a class="btn btn-primary" href="studio.html#career">Профессиональная биография ↗</a></div><div class="career-steps"><div><small>СЕГОДНЯ</small><h3>Ведущий инженер-программист АСУ ТП</h3><p>Текущая должность. Инженерная логика, ПО, SCADA/HMI и интеграция.</p></div><div><small>ПРЕДЫДУЩИЙ ЭТАП</small><h3>Инженер АСУ ТП</h3><p>Технологические процессы, блокировки, уставки, КИП и эксплуатация.</p></div><div><small>ПРОФЕССИОНАЛЬНАЯ ОСНОВА</small><h3>Инженер ВЧ-связи</h3><p>Диагностика и наладка аппаратуры ВЧ-каналов связи в энергетике.</p></div></div></div><div class="container hf-strip"><strong>СПЕЦИАЛИЗАЦИЯ / ВЧ-СВЯЗЬ</strong><div><span>ПВЗУ-Е</span><span>АКА «Кедр»</span><span>УКСТН-А</span><span>УКСНТ-Е</span><span>УКСНТ-В</span><span>АКСТ</span></div></div></section><section class="section methodology-section" id="approach">
+    <section class="section career-section" id="career"><div class="container career-layout"><div><div class="section-label"><span>04</span> ПРОФЕССИОНАЛЬНЫЙ ПУТЬ</div><h2>Карьера в энергетике.<br><span>От ВЧ-связи к АСУ ТП.</span></h2><p>9 лет опыта в энергетике. Промышленная связь, наладка оборудования, эксплуатация технологических систем и разработка инженерного программного обеспечения.</p><a class="btn btn-primary" href="studio.html#career">Профессиональная биография ↗</a></div><div class="career-steps"><div><small>СЕГОДНЯ</small><h3>Ведущий инженер-программист АСУ ТП</h3><p>Текущая должность. Инженерная логика, ПО, SCADA/HMI и интеграция.</p></div><div><small>ПРЕДЫДУЩИЙ ЭТАП</small><h3>Инженер АСУ ТП</h3><p>Технологические процессы, блокировки, уставки, КИП и эксплуатация.</p></div><div><small>ПРОФЕССИОНАЛЬНАЯ ОСНОВА</small><h3>Инженер ВЧ-связи</h3><p>Диагностика и наладка аппаратуры ВЧ-каналов связи в энергетике.</p></div></div></div><div class="container hf-strip"><strong>СПЕЦИАЛИЗАЦИЯ / ВЧ-СВЯЗЬ</strong><div><span>ПВЗУ-Е</span><span>АКА «Кедр»</span><span>УКСТН-А</span><span>УКСНТ-Е</span><span>УКСНТ-В</span><span>АКСТ</span></div></div></section><section class="section methodology-section" id="approach">
       <div class="container approach-grid">
         <div><div class="section-label"><span>04</span> ПОДХОД К РАБОТЕ</div><h2>От задачи<br>до проверяемого<br><span>результата.</span></h2><p>Техническая система должна быть понятна тому, кто будет её эксплуатировать и поддерживать.</p></div>
         <ol class="steps">
@@ -247,6 +297,11 @@
       </div>
     </section>
   </main>
+
+  <dialog class="case-dialog" id="case-dialog" aria-labelledby="case-dialog-title">
+    <div class="case-dialog-top"><span>JAKHON / PROJECT DOSSIER</span><button type="button" class="case-dialog-close" aria-label="Закрыть карточку">×</button></div>
+    <div class="case-dialog-body"><div class="case-dialog-category" id="case-dialog-category"></div><h2 id="case-dialog-title"></h2><p id="case-dialog-description"></p><div class="case-dialog-tags" id="case-dialog-tags"></div><p class="case-dialog-note">Описание носит информационный характер. Статус готовности и объём работ уточняются отдельно.</p><a class="btn btn-primary" href="https://t.me/JakhonUZ" target="_blank" rel="noopener noreferrer">Обсудить проект ↗</a></div>
+  </dialog>
 
   <footer class="footer">
     <div class="container footer-main"><a class="footer-brand" href="#top">JAKHON<span>.</span>UZ</a><p>Industrial thinking. Digital execution.<br>Ташкент · Узбекистан</p><div class="footer-links"><a href="https://t.me/JakhonUZ" target="_blank" rel="noopener noreferrer">Telegram</a><a href="https://t.me/jakhon_UZ" target="_blank" rel="noopener noreferrer">Канал</a><a href="https://www.instagram.com/jakhon.uz/" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://github.com/Jakh1gir" target="_blank" rel="noopener noreferrer">GitHub</a></div></div>
