@@ -20,6 +20,7 @@
   let selectedPlan = "ultra";
 
   const dollars = amount => "$" + amount.toFixed(2);
+  const tr = text => window.JakhonI18n?.translate(text) ?? text;
   function getDuration() {
     if (!durationInput) return 20;
     return Math.min(120, Math.max(5, Number(durationInput.value) || 20));
@@ -52,15 +53,15 @@
   function motionMessage() {
     const { plan, seconds, cost, generation, outstanding, extras } = calculations();
     return [
-      "Заявка на AI-видео — JakhonUZ AI Production",
-      "Тариф: " + plan.label,
-      "Длительность: " + seconds + " сек",
-      "Ставка: " + dollars(plan.price) + " / сек",
-      "Стоимость видео: " + dollars(cost),
-      "Предоплата за генерацию: " + dollars(generation),
-      "Остаток: " + dollars(outstanding),
-      "Дополнительно: " + (extras.length ? extras.join(", ") + " (стоимость отдельно)" : "не выбрано"),
-      "Прошу уточнить сроки и условия работы."
+      tr("Заявка на AI-видео — JakhonUZ AI Production"),
+      tr("Тариф") + ": " + plan.label,
+      tr("Длительность") + ": " + seconds + " " + tr("сек"),
+      tr("Ставка") + ": " + dollars(plan.price) + " / " + tr("сек"),
+      tr("Стоимость видео") + ": " + dollars(cost),
+      tr("Предоплата за генерацию") + ": " + dollars(generation),
+      tr("Остаток") + ": " + dollars(outstanding),
+      tr("Дополнительно") + ": " + (extras.length ? extras.map(tr).join(", ") + " (" + tr("стоимость отдельно") + ")" : tr("не выбрано")),
+      tr("Прошу уточнить сроки и условия работы.")
     ].join("\n");
   }
   async function copyText(value) {
@@ -74,8 +75,8 @@
   }
   function showCopyResult(success, node) {
     if (node) node.textContent = success
-      ? "Текст скопирован. Вставьте его в сообщение Telegram."
-      : "Не удалось скопировать автоматически. Разрешите доступ к буферу обмена или скопируйте вручную.";
+      ? tr("Текст скопирован. Вставьте его в сообщение Telegram.")
+      : tr("Не удалось скопировать автоматически. Разрешите доступ к буферу обмена или скопируйте вручную.");
   }
   planButtons.forEach(button => button.addEventListener("click", () => {
     if (!Object.prototype.hasOwnProperty.call(rates, button.dataset.plan)) return;
@@ -92,7 +93,7 @@
     const tab = window.open("https://t.me/JakhonUZ", "_blank", "noopener,noreferrer");
     const message = motionMessage();
     copyText(message).then(ok => showCopyResult(ok, copyStatus));
-    if (!tab && copyStatus) copyStatus.textContent = "Откройте t.me/JakhonUZ и отправьте заявку. " + message;
+    if (!tab && copyStatus) copyStatus.textContent = tr("Откройте t.me/JakhonUZ и отправьте заявку.") + " " + message;
   });
   render();
 
@@ -103,17 +104,17 @@
     const name = document.getElementById("quote-name")?.value.trim() || "";
     const description = document.getElementById("quote-description")?.value.trim() || "";
     return [
-      "Новая заявка / JAKHON",
-      "Направление: " + type,
-      "Контакт: " + name,
-      "Описание задачи: " + description,
-      type === "AI Motion / Runway" ? "\nПредварительный расчёт AI-видео:\n" + motionMessage() : ""
+      tr("Новая заявка / JAKHON"),
+      tr("Направление") + ": " + tr(type),
+      tr("Контакт") + ": " + name,
+      tr("Описание задачи") + ": " + description,
+      type === "AI Motion / Runway" ? "\n" + tr("Предварительный расчёт AI-видео") + ":\n" + motionMessage() : ""
     ].filter(Boolean).join("\n");
   }
   document.getElementById("quote-copy")?.addEventListener("click", async () => {
     const text = briefText();
     if (!document.getElementById("quote-name")?.value.trim() || !document.getElementById("quote-description")?.value.trim()) {
-      if (quoteStatus) quoteStatus.textContent = "Введите имя и описание задачи.";
+      if (quoteStatus) quoteStatus.textContent = tr("Введите имя и описание задачи.");
       return;
     }
     showCopyResult(await copyText(text), quoteStatus);
@@ -124,6 +125,6 @@
     const tab = window.open("https://t.me/JakhonUZ", "_blank", "noopener,noreferrer");
     const message = briefText();
     copyText(message).then(ok => showCopyResult(ok, quoteStatus));
-    if (!tab && quoteStatus) quoteStatus.textContent = "Откройте t.me/JakhonUZ и передайте бриф. " + message;
+    if (!tab && quoteStatus) quoteStatus.textContent = tr("Откройте t.me/JakhonUZ и передайте бриф.") + " " + message;
   });
 })();

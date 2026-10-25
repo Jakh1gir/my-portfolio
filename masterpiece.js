@@ -242,6 +242,7 @@
       return name ? [name,"#projects",$(".project-type",card)?.textContent?.trim() || "Проект",true] : null;
     }).filter(Boolean);
     const allItems = [...categories,...projects];
+    const tr = value => window.JakhonI18n?.translate(value) ?? value;
     let filtered = [];
     let activeIndex = 0;
     let previouslyFocused = null;
@@ -255,7 +256,7 @@
           filter?.click();
           const input=$("#project-search");
           if (input) {
-            input.value=item[0];
+            input.value=tr(item[0]);
             input.dispatchEvent(new Event("input",{bubbles:true}));
           }
         }
@@ -268,7 +269,7 @@
     }
     function render(query=""){
       const q=query.trim().toLocaleLowerCase("ru-RU");
-      filtered=allItems.filter(item=>(item[0]+" "+item[2]).toLocaleLowerCase("ru-RU").includes(q)).slice(0,12);
+      filtered=allItems.filter(item=>(tr(item[0])+" "+tr(item[2])+" "+item[0]+" "+item[2]).toLocaleLowerCase().includes(q)).slice(0,12);
       activeIndex=0;
       list.replaceChildren();
       if (!filtered.length) {
@@ -287,8 +288,8 @@
         const left=document.createElement("span");
         const title=document.createElement("strong");
         const description=document.createElement("small");
-        title.textContent=item[0];
-        description.textContent=item[2];
+        title.textContent=tr(item[0]);
+        description.textContent=tr(item[2]);
         const arrow=document.createElement("i");
         arrow.setAttribute("aria-hidden","true");
         arrow.textContent="↗";
@@ -319,7 +320,7 @@
       command.close();
       if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
     }
-    $("[data-command-open]").forEach(button=>button.addEventListener("click",()=>{
+    $$("[data-command-open]").forEach(button=>button.addEventListener("click",()=>{
       const menu=$(".menu-toggle");
       if (menu?.getAttribute("aria-expanded")==="true") menu.click();
       open();
