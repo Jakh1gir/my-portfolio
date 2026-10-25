@@ -1,176 +1,84 @@
-const reduceMotion = window.matchMedia(
-  "(prefers-reduced-motion: reduce)",
-).matches;
+(() => {
+  "use strict";
+  const menuButton = document.querySelector(".menu-toggle");
+  const navigation = document.getElementById("site-menu");
+  const year = document.getElementById("year");
+  if (year) year.textContent = String(new Date().getFullYear());
 
-document.addEventListener("DOMContentLoaded", () => {
-  initSkillsTicker();
-  initTypedText();
-  initModalControls();
-});
-
-function initSkillsTicker() {
-  const track = document.querySelector(".skill-items");
-  const items = Array.from(document.querySelectorAll(".skill-item"));
-
-  if (!track || items.length === 0 || reduceMotion) {
-    return;
+  function setMenuOpen(open) {
+    if (!menuButton || !navigation) return;
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
+    navigation.classList.toggle("is-open", open);
+    document.body.classList.toggle("menu-open", open);
   }
-
-  track.append(...items.map((item) => item.cloneNode(true)));
-
-  let position = 0;
-  let paused = false;
-  const speed = 0.35;
-
-  track.closest(".skill-list")?.addEventListener("mouseenter", () => {
-    paused = true;
-  });
-
-  track.closest(".skill-list")?.addEventListener("mouseleave", () => {
-    paused = false;
-  });
-
-  function animate() {
-    const firstItem = track.firstElementChild;
-
-    if (!paused && firstItem) {
-      position -= speed;
-      const itemWidth = firstItem.getBoundingClientRect().width + 12;
-
-      if (Math.abs(position) >= itemWidth) {
-        position += itemWidth;
-        track.appendChild(firstItem);
+  if (menuButton && navigation) {
+    menuButton.addEventListener("click", () => setMenuOpen(menuButton.getAttribute("aria-expanded") !== "true"));
+    navigation.querySelectorAll("a").forEach(link => link.addEventListener("click", () => setMenuOpen(false)));
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
+        setMenuOpen(false);
+        menuButton.focus();
       }
-
-      track.style.transform = `translateX(${position}px)`;
-    }
-
-    requestAnimationFrame(animate);
+    });
+    document.addEventListener("click", event => {
+      if (menuButton.getAttribute("aria-expanded") === "true" && !navigation.contains(event.target) && !menuButton.contains(event.target)) setMenuOpen(false);
+    });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 1050) setMenuOpen(false);
+    });
   }
 
-  requestAnimationFrame(animate);
-}
+  const filterButtons = Array.from(document.querySelectorAll(".filter-btn[data-filter]"));
+  const projectCards = Array.from(document.querySelectorAll(".project-card[data-category]"));
+  const search = document.getElementById("project-search");
+  const count = document.getElementById("results-count");
+  const empty = document.getElementById("project-empty");
+  const reset = document.getElementById("reset-project-filters");
+  let selectedFilter = "all";
 
-function initTypedText() {
-  const element = document.querySelector(".typed-text");
-
-  if (!element) {
-    return;
+  function applyFilters() {
+    const query = (search?.value || "").trim().toLocaleLowerCase("ru-RU");
+    let visible = 0;
+    projectCards.forEach(card => {
+      const inCategory = selectedFilter === "all" || (card.dataset.category || "").split(/\s+/).includes(selectedFilter);
+      const matchesText = !query || card.textContent.toLocaleLowerCase("ru-RU").includes(query);
+      card.hidden = !(inCategory && matchesText);
+      if (!card.hidden) visible++;
+    });
+    filterButtons.forEach(button => {
+      const active = button.dataset.filter === selectedFilter;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    if (count) count.textContent = "Показано: " + visible + " / " + projectCards.length;
+    if (empty) empty.hidden = visible !== 0;
   }
 
-  const messages = [
-    "АСУ ТП: от сигнала датчика до логики управления",
-    "C++ и Python для прикладных инженерных задач",
-    "Надёжность системы начинается с понятной логики",
-  ];
-
-  if (reduceMotion) {
-    element.textContent = messages[0];
-    return;
-  }
-
-  let messageIndex = 0;
-  let characterIndex = 0;
-  let deleting = false;
-
-  function type() {
-    const message = messages[messageIndex];
-
-    if (!deleting) {
-      characterIndex += 1;
-      element.textContent = message.slice(0, characterIndex);
-
-      if (characterIndex === message.length) {
-        deleting = true;
-        window.setTimeout(type, 1800);
-        return;
+  filterButtons.forEach(button => button.addEventListener("click", () => {
+    selectedFilter = button.dataset.filter;
+    applyFilters();
+  }));
+  search?.addEventListener("input", applyFilters);
+  reset?.addEventListener("click", () => {
+    selectedFilter = "all";
+    if (search) search.value = "";
+    applyFilters();
+    search?.focus();
+  });
+  if (projectCards.length) {
+    applyFilters();
+    document.addEventListener("keydown", event => {
+      const target = event.target;
+      const typing = target instanceof HTMLElement && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable);
+      if (event.key === "/" && !typing && search) {
+        event.preventDefault();
+        search.focus();
       }
-    } else {
-      characterIndex -= 1;
-      element.textContent = message.slice(0, characterIndex);
-
-      if (characterIndex === 0) {
-        deleting = false;
-        messageIndex = (messageIndex + 1) % messages.length;
+      if (event.key === "Escape" && target === search && search.value) {
+        search.value = "";
+        applyFilters();
       }
-    }
-
-    window.setTimeout(type, deleting ? 28 : 48);
+    });
   }
-
-  type();
-}
-
-function initModalControls() {
-  document.querySelectorAll(".modal").forEach((modal) => {
-    modal.setAttribute("role", "dialog");
-    modal.setAttribute("aria-modal", "true");
-    modal.setAttribute("aria-hidden", "true");
-
-    const close = modal.querySelector(".close");
-    if (close) {
-      close.setAttribute("role", "button");
-      close.setAttribute("tabindex", "0");
-      close.setAttribute("aria-label", "Закрыть окно");
-      close.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          closeModal(modal.id);
-        }
-      });
-    }
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target.classList?.contains("modal")) {
-      closeModal(event.target.id);
-    }
-  });
-
-  window.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") {
-      return;
-    }
-
-    const openModalElement = Array.from(
-      document.querySelectorAll(".modal"),
-    ).find((modal) => modal.style.display === "block");
-
-    if (openModalElement) {
-      closeModal(openModalElement.id);
-    }
-  });
-}
-
-function showDescription() {
-  // Карточки всегда показывают описание; функция сохранена для старой разметки.
-}
-
-function hideDescription() {
-  // Карточки всегда показывают описание; функция сохранена для старой разметки.
-}
-
-function openModal(modalId) {
-  const modal = document.getElementById(modalId);
-
-  if (!modal) {
-    return;
-  }
-
-  modal.style.display = "block";
-  modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-  modal.querySelector(".close")?.focus();
-}
-
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-
-  if (!modal) {
-    return;
-  }
-
-  modal.style.display = "none";
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
-}
+})();
