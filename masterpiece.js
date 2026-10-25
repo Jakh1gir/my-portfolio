@@ -319,7 +319,11 @@
       command.close();
       if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
     }
-    $$("[data-command-open]").forEach(button=>button.addEventListener("click",open));
+    $("[data-command-open]").forEach(button=>button.addEventListener("click",()=>{
+      const menu=$(".menu-toggle");
+      if (menu?.getAttribute("aria-expanded")==="true") menu.click();
+      open();
+    }));
     $(".command-close",command)?.addEventListener("click",close);
     command.addEventListener("click",event=>{if(event.target===command)close()});
     search?.addEventListener("input",()=>render(search.value));
