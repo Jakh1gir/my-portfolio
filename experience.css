@@ -181,3 +181,14 @@
   .blueprint::before,.brand-symbol::before,.wave-scan,.lab-connector i,.status-dot,.lab-online,.lab-breathing-led,.signal-path,.hero h1 em,.contact-section h2 em,.studio-header-block h1 em{animation:none!important}
   .motion-control{display:none!important}
 }
+/* Keep pointer-driven depth active after the entrance sequence finishes. */
+@keyframes visual-fade-in{from{opacity:0;filter:blur(10px)}to{opacity:1;filter:blur(0)}}
+.hero-visual{animation-name:visual-fade-in}
+.career-steps>div::before{transition:box-shadow .4s,transform .4s}
+.career-steps>div:hover::before{transform:scale(1.6);box-shadow:0 0 0 9px rgba(96,235,201,.12)}
+.hf-strip span,.hf-tags span{transition:transform .24s var(--ease-expo),border-color .24s,background .24s}
+.hf-strip span:hover,.hf-tags span:hover{transform:translateY(-3px);border-color:#7be9cc;background:#1f4650}
+.studio-subnav a{position:relative}
+.studio-subnav a::after{content:"";height:2px;background:#75e6ca;position:absolute;bottom:0;left:0;right:0;transform:scaleX(0);transform-origin:left;transition:transform .28s}
+.studio-subnav a:hover::after{transform:scaleX(1)}
+@media(prefers-reduced-motion:reduce){.hero-visual{animation:none!important}}
