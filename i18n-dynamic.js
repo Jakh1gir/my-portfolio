@@ -4,3 +4,5 @@ for (const line of "Открыть кейс|||View case|||Loyihani ochish\nПо�
  if (parts.length !== 3) continue;
  window.JakhonDictionary[parts[0]]={en:parts[1],uz:parts[2]};
 }
+
+for (const line of "Поиск раздела, проекта, направления...|||Search sections, projects, expertise...|||Bo'lim, loyiha yoki yo'nalishni qidirish...\nРезультаты навигации|||Navigation results|||Navigatsiya natijalari\nLanguage / Til / Язык|||Language|||Til".split("\n")) { const parts=line.split("|||"); if(parts.length===3) window.JakhonDictionary[parts[0]]={en:parts[1],uz:parts[2]}; }
