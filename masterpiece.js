@@ -230,6 +230,7 @@
       ["Направления","#services","Компетенции и специализации"],
       ["Избранные системы","#masterworks","J1Calc · Local_DB · Smart Home Edge"],
       ["Все проекты","#projects","11 проектов, поиск и фильтры"],
+      ["Планы и релизы","#roadmap","Проекты до конца 2027 года"],
       ["Профессиональный путь","#career","ВЧ-связь → АСУ ТП"],
       ["Стоимость услуг","#pricing","Ориентировочный прайс"],
       ["Контакты","#contacts","Телефон · Telegram · Instagram"],
@@ -241,7 +242,11 @@
       const name=$("h3",card)?.textContent?.trim();
       return name ? [name,"#projects",$(".project-type",card)?.textContent?.trim() || "Проект",true] : null;
     }).filter(Boolean);
-    const allItems = [...categories,...projects];
+    const futureItems = $(".upcoming-card").map(card=>{
+      const name=$("h4",card)?.textContent?.trim();
+      return name ? [name,"#roadmap",$(".upcoming-state",card)?.textContent?.trim()||"Планы"] : null;
+    }).filter(Boolean);
+    const allItems = [...categories,...projects,...futureItems];
     const tr = value => window.JakhonI18n?.translate(value) ?? value;
     let filtered = [];
     let activeIndex = 0;
