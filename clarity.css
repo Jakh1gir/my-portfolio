@@ -49,3 +49,10 @@
 @media(max-width:820px){.masterpiece-hero h1{font-size:clamp(3.5rem,8vw,6rem)}.roadmap-heading{grid-template-columns:1fr}.release-grid{grid-template-columns:1fr 1fr}.release-card:last-child{grid-column:1/-1;min-height:260px}.release-card{min-height:315px}.upcoming-header{align-items:flex-start;flex-direction:column;margin-top:58px}}
 @media(max-width:570px){.masterpiece-hero h1{font-size:clamp(2.8rem,9.6vw,4.6rem);letter-spacing:-.065em}.masterpiece-hero .hero-lead{font-size:15px}.roadmap-heading h2{font-size:clamp(2.6rem,9vw,4.2rem)}.release-grid,.upcoming-grid{grid-template-columns:1fr}.release-card,.release-card:last-child{grid-column:auto;min-height:0}.release-card{padding:25px 21px}.release-card h3{margin-top:29px}.upcoming-card{min-height:0;padding:25px 21px}.upcoming-card h4{margin-top:19px}.milestone-bar{align-items:flex-start;flex-direction:column;gap:9px}.milestone-bar span{width:100%}.masterworks-heading h2{font-size:clamp(3.1rem,10vw,5.2rem)}}
 @media(prefers-reduced-motion:reduce){.release-card,.upcoming-card{transition:none!important}}
+
+@media(max-width:570px){
+  .masterpiece-hero h1{font-size:clamp(2.1rem,9vw,4.1rem);overflow-wrap:normal}
+  .masterpiece-hero h1 em{font-size:.78em}
+  .roadmap-section{padding-top:78px}
+  .release-count{font-size:clamp(23px,7vw,30px)}
+}
