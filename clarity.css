@@ -1,0 +1,51 @@
+/* Clarity layer: accessible human-readable roadmap and restrained visual hierarchy. */
+:root{--clear-ink:#102631;--clear-teal:#1e8075;--clear-accent:#8effca}
+.masterpiece-hero .hero-lead{max-width:670px;font-size:clamp(16px,1.43vw,19px);line-height:1.78;color:#dcf0ee}
+.masterpiece-hero h1{font-size:clamp(3.3rem,5.65vw,7.2rem);letter-spacing:-.073em;max-width:850px;overflow-wrap:normal}
+.hero-proof>div span{max-width:180px}
+.about-body .about-emphasis{font-size:clamp(18px,2vw,24px);line-height:1.68}
+.services-section .service p{font-size:14px;line-height:1.78}
+.project-info p{line-height:1.76}
+.project-release{display:flex;flex-wrap:wrap;gap:5px;align-items:baseline;padding:12px 12px;margin:13px 0 15px!important;border-radius:9px;background:#ebf8f4;border:1px solid #b5ded4;color:#144f4b!important;font-size:12px!important;font-weight:650}
+.project-release time{font-weight:850}
+.project-release strong{width:100%;color:#0e7266;letter-spacing:.01em;font-size:12px}
+.project-card .status-beta{background:#e5f5ef;color:#126b50;border:1px solid #b0d6c3}
+.roadmap-section{background:radial-gradient(ellipse at 20% 0%,rgba(84,188,166,.12),transparent 43%),#081d2b;color:#eefbf7;overflow:hidden;position:relative}
+.roadmap-section:before{content:"COMING NEXT";position:absolute;right:-.06em;top:12px;color:#73eacb08;font-weight:950;font-size:clamp(85px,16vw,230px);letter-spacing:-.1em;white-space:nowrap;pointer-events:none}
+.roadmap-section .container{position:relative}
+.roadmap-heading{display:grid;grid-template-columns:1.18fr .75fr;gap:52px;align-items:end;margin-bottom:44px}
+.roadmap-heading h2{font-size:clamp(2.8rem,5.9vw,6.5rem);margin:22px 0 0;letter-spacing:-.065em}
+.roadmap-heading h2 em{font-style:normal;color:#9df0ca}
+.roadmap-heading p{color:#b3ccd1;max-width:470px;font-size:15px;line-height:1.85;margin:0}
+.roadmap-heading .section-label{color:#83dfc5}
+.release-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.release-card{position:relative;display:flex;flex-direction:column;min-height:336px;padding:28px 25px;border:1px solid #396477;border-radius:15px;background:linear-gradient(148deg,#173c4a,#102d3d 80%);overflow:hidden;box-shadow:0 18px 40px #0316242b;transition:transform .28s ease,border-color .3s}
+.release-card:before{content:"";position:absolute;right:-75px;top:-80px;width:180px;height:180px;border:1px solid #68dfc332;border-radius:50%;box-shadow:0 0 0 34px #72e2d107,0 0 0 73px #72e2d107;pointer-events:none}
+.release-card:hover{transform:translateY(-5px);border-color:#82e9cf}
+.release-card-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#86bbc0;font:750 10px/1.5 Consolas,monospace;letter-spacing:.045em}
+.release-working{color:#baf7ce;background:#21493d;border:1px solid #3e8367;border-radius:30px;padding:5px 8px;white-space:nowrap}
+.release-card h3{position:relative;font-size:clamp(25px,2.5vw,36px);color:#f0fff8;letter-spacing:-.045em;margin:36px 0 13px}
+.release-card>p{position:relative;color:#b2ccd1;line-height:1.65;font-size:13px;margin:0 0 30px;flex:1}
+.release-date{border-top:1px solid #376476;padding-top:19px;color:#a8cfd0;font-size:12px}
+.release-date time{font-weight:750;color:#effff8}
+.release-count{margin-top:14px;font-size:clamp(23px,2.6vw,33px);font-weight:880;letter-spacing:-.045em;line-height:1.25;color:#c9ffbb;min-height:35px;font-variant-numeric:tabular-nums}
+.release-count[data-passed="true"]{font-size:17px;color:#f8d0a7;letter-spacing:-.025em}
+.milestone-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-block:1px solid #365465;margin-top:24px;padding:19px 0;color:#a4c2ca;font-size:12px}
+.milestone-bar strong{color:#e2f6f1;margin-right:12px}
+.milestone-bar span{border:1px solid #335b65;background:#112f3d;padding:8px 12px;border-radius:8px}
+.upcoming-header{display:flex;align-items:end;justify-content:space-between;gap:28px;margin:82px 0 26px}
+.upcoming-header h3{margin:0;color:#f2fff8;font-size:clamp(29px,3.7vw,46px);letter-spacing:-.05em}
+.upcoming-header p{max-width:500px;margin:0;color:#aac9ce;font-size:13px;line-height:1.7}
+.upcoming-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.upcoming-card{display:flex;flex-direction:column;position:relative;min-height:270px;padding:27px 23px;background:#102f3d;border:1px solid #355968;border-radius:13px;overflow:hidden;transition:background .2s,transform .24s,border-color .2s}
+.upcoming-card:hover{background:#174051;border-color:#83e3ca;transform:translateY(-4px)}
+.upcoming-card h4{color:#f1fff5;font-size:clamp(19px,1.7vw,24px);letter-spacing:-.045em;line-height:1.15;margin:25px 0 12px}
+.upcoming-card p{color:#afc9d0;font-size:13px;line-height:1.75;margin:0}
+.upcoming-state{display:inline-block;align-self:flex-start;border:1px solid #417477;color:#8ee4c8;border-radius:20px;padding:6px 9px;font:700 9px Consolas,monospace;letter-spacing:.04em;line-height:1.4}
+.upcoming-more{background:linear-gradient(140deg,#255a58,#183c4b);border-color:#65a8a5}
+.upcoming-more h4{font-size:clamp(25px,2.2vw,32px)}
+.studio-bot-status{display:block;margin-top:14px;font:700 11px/1.6 Consolas,monospace;letter-spacing:.015em;color:#94ebc5}
+@media(max-width:1080px){.upcoming-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.roadmap-heading{grid-template-columns:1fr 1fr;gap:26px}.release-card{padding:25px 18px}}
+@media(max-width:820px){.masterpiece-hero h1{font-size:clamp(3.5rem,8vw,6rem)}.roadmap-heading{grid-template-columns:1fr}.release-grid{grid-template-columns:1fr 1fr}.release-card:last-child{grid-column:1/-1;min-height:260px}.release-card{min-height:315px}.upcoming-header{align-items:flex-start;flex-direction:column;margin-top:58px}}
+@media(max-width:570px){.masterpiece-hero h1{font-size:clamp(2.8rem,9.6vw,4.6rem);letter-spacing:-.065em}.masterpiece-hero .hero-lead{font-size:15px}.roadmap-heading h2{font-size:clamp(2.6rem,9vw,4.2rem)}.release-grid,.upcoming-grid{grid-template-columns:1fr}.release-card,.release-card:last-child{grid-column:auto;min-height:0}.release-card{padding:25px 21px}.release-card h3{margin-top:29px}.upcoming-card{min-height:0;padding:25px 21px}.upcoming-card h4{margin-top:19px}.milestone-bar{align-items:flex-start;flex-direction:column;gap:9px}.milestone-bar span{width:100%}.masterworks-heading h2{font-size:clamp(3.1rem,10vw,5.2rem)}}
+@media(prefers-reduced-motion:reduce){.release-card,.upcoming-card{transition:none!important}}
