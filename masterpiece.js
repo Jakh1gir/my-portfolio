@@ -162,20 +162,20 @@
       calc: {
         label:"INTERACTIVE CONCEPT / J1CALC",
         category:"ENGINEERING / ANDROID",
-        headline:"Инструменты, которые работают даже без интернета.",
-        description:"Инженерные расчёты, измерительные цепи и протоколы в офлайн-приложении для практической работы."
+        headline:"Калькулятор для инженеров, который работает без интернета.",
+        description:"Расчёты, проверка приборов и сохранение результатов прямо на Android."
       },
       database: {
         label:"INTERACTIVE CONCEPT / LOCAL_DB",
         category:"DATA PLATFORM / ON-PREMISE",
-        headline:"Данные остаются под вашим контролем.",
-        description:"Локальная инженерная база с аудитом изменений, гибкими полями, поиском и обменом Excel."
+        headline:"Учёт оборудования и документов в одной программе.",
+        description:"Локальная база: поиск, сроки проверки, история изменений и Excel. Бета работает."
       },
       edge: {
         label:"REFERENCE ARCHITECTURE / PROTOTYPE",
         category:"C++20 / MQTT / ESP32",
-        headline:"Управление продолжает работать локально.",
-        description:"Прототип локальной архитектуры умного дома: ESP32, сервер Orange Pi и мобильное приложение Flutter."
+        headline:"Разрабатываю свой умный дом.",
+        description:"Управление светом и климатом с телефона. Сейчас проектируются электронные компоненты и программная часть."
       }
     });
     const label = $("#mw-live-label");
@@ -230,6 +230,7 @@
       ["Направления","#services","Компетенции и специализации"],
       ["Избранные системы","#masterworks","J1Calc · Local_DB · Smart Home Edge"],
       ["Все проекты","#projects","11 проектов, поиск и фильтры"],
+      ["Планы и релизы","#roadmap","Проекты до конца 2027 года"],
       ["Профессиональный путь","#career","ВЧ-связь → АСУ ТП"],
       ["Стоимость услуг","#pricing","Ориентировочный прайс"],
       ["Контакты","#contacts","Телефон · Telegram · Instagram"],
@@ -241,7 +242,11 @@
       const name=$("h3",card)?.textContent?.trim();
       return name ? [name,"#projects",$(".project-type",card)?.textContent?.trim() || "Проект",true] : null;
     }).filter(Boolean);
-    const allItems = [...categories,...projects];
+    const futureItems = $(".upcoming-card").map(card=>{
+      const name=$("h4",card)?.textContent?.trim();
+      return name ? [name,"#roadmap",$(".upcoming-state",card)?.textContent?.trim()||"Планы"] : null;
+    }).filter(Boolean);
+    const allItems = [...categories,...projects,...futureItems];
     const tr = value => window.JakhonI18n?.translate(value) ?? value;
     let filtered = [];
     let activeIndex = 0;
