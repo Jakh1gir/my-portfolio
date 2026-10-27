@@ -196,7 +196,7 @@
 
   // Sample application flow, no user data or real integrations.
   const scenarios = Object.freeze({
-    plc: {
+    app: {
       label: "APPLICATION FLOW / SIMULATION",
       title: "Приложение превращает запрос в результат",
       description: "Пользователь вводит данные. Программа выполняет расчёт и отображает результат в интерфейсе.",
