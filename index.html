@@ -39,9 +39,10 @@
 <link rel="alternate" hreflang="en" href="https://jakhon.uz/?lang=en">
 <link rel="alternate" hreflang="uz-Latn" href="https://jakhon.uz/?lang=uz">
 <link rel="alternate" hreflang="x-default" href="https://jakhon.uz/">
+<link rel="stylesheet" href="project-details.css">
 <link rel="stylesheet" href="i18n.css"><link rel="stylesheet" href="clarity.css"><link rel="stylesheet" href="developer.css">
 <script src="i18n-main.js" defer></script><script src="i18n-studio.js" defer></script><script src="i18n-dynamic.js" defer></script><script src="i18n-clarity-main.js" defer></script><script src="i18n-clarity-studio.js" defer></script><script src="i18n-developer.js" defer></script>
-<script src="i18n.js" defer></script><script src="roadmap.js" defer></script>
+<script src="i18n.js" defer></script><script src="roadmap.js" defer></script><script src="project-details.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти к содержимому</a>
@@ -89,7 +90,15 @@
             <div><strong>Telegram</strong><span>боты и автоматизация</span></div>
           </div>
         </div>
-        <div class="hero-visual" aria-label="Иллюстрация архитектуры программного продукта">
+        <div class="hero-media-stack">
+          <figure class="hero-persona">
+            <div class="hero-persona-photo">
+              <img src="image/developer-portrait.png" width="1775" height="1775" alt="Jahongir Juraev — автор программ и проектов JAKHON" decoding="async" fetchpriority="high">
+              <span class="hero-persona-sticker" aria-hidden="true">J.</span>
+            </div>
+            <figcaption><span class="persona-eyebrow">ЗНАКОМСТВО / HELLO</span><strong>Jahongir Juraev</strong><span class="persona-caption">Разработчик программ · Ташкент</span></figcaption>
+          </figure>
+          <div class="hero-visual" aria-label="Иллюстрация архитектуры программного продукта">
           <div class="visual-top"><span class="mono">JAKHON / SOFTWARE ARCHITECTURE</span><span class="visual-indicator"><i></i> DESIGN VIEW</span></div>
           <div class="blueprint">
             <div class="blueprint-heading"><span>LOCAL SOFTWARE FLOW</span><small>CONCEPT / ИЛЛЮСТРАЦИЯ</small></div>
@@ -111,6 +120,7 @@
           </div>
           <div class="visual-bottom"><span><span class="mini-square"></span> APP / DATA / AI</span><span>DESIGNED FOR CLARITY ↗</span></div>
           <div class="floating-note"><span class="mini-flash">✳</span><div><small>ПРИНЦИП</small><strong>Сначала логика.<br>Затем интерфейс.</strong></div></div>
+        </div>
         </div>
       </div>
     </section>
@@ -282,7 +292,7 @@
       <div class="container">
         <div class="section-head-inline">
           <div><div class="section-label"><span>03</span> PORTFOLIO / CASE STUDIES</div><h2>Мои проекты<span class="accent-dot">.</span></h2></div>
-          <p>Ниже — мои действующие бета-версии, разработки и сервисы. Бета означает, что продукт работает, но продолжает совершенствоваться.</p>
+          <p>Нажмите на проект: откроются подробное описание, возможности, технологии и план следующих этапов. Статус каждого продукта указан отдельно.</p>
         </div>
         <div class="filter-bar" role="group" aria-label="Фильтр проектов">
           <button class="filter-btn is-active" type="button" data-filter="all" aria-pressed="true">Все проекты <span>10</span></button>
@@ -291,37 +301,37 @@
           <button class="filter-btn" type="button" data-filter="ai" aria-pressed="false">AI / Data</button><button class="filter-btn" type="button" data-filter="bots" aria-pressed="false">Telegram-боты</button><button class="filter-btn" type="button" data-filter="motion" aria-pressed="false">AI Motion</button>
         </div>
         <div class="project-tools"><label class="project-search"><span>⌕</span><input type="search" id="project-search" placeholder="Поиск проектов..." aria-label="Поиск проектов"></label><span id="results-count" aria-live="polite">10 проектов</span></div><div class="projects-grid" id="project-list">
-          <article class="project-card featured" data-category="software">
+          <article class="project-card featured" data-category="software" data-project="j1calc">
             <div class="project-top"><span>01 / ANDROID APP</span><span class="project-status">Бета: 5 сентября 2026</span></div>
             <div class="project-art art-calc" aria-hidden="true"><div class="art-caption">J1Calc <small>OFFLINE CALCULATOR</small></div><div class="calc-graphic"><div>Ω <span>∑</span></div><div class="calc-rows"><b>U · I · R</b><b>ΔP / LEVEL</b><b>CALIBRATION</b></div></div></div>
             <div class="project-info"><div class="project-type">ANDROID / OFFLINE-FIRST</div><h3>J1Calc</h3><p>Android-калькулятор с расчётами, полезными инструментами и сохранением результатов. Бета-версия — с 5 сентября 2026 года.</p><p class="project-release">Бета с <time datetime="2026-09-05">5 сентября 2026</time></p><div class="project-bottom"><div class="pills"><span>Kotlin</span><span>Android</span><span>11 языков</span></div><a href="#contacts" aria-label="Обсудить J1Calc">Обсудить <span aria-hidden="true">↗</span></a></div></div>
           </article>
-          <article class="project-card" data-category="software ai">
+          <article class="project-card" data-category="software ai" data-project="localdb">
             <div class="project-top"><span>02 / LOCAL DATA PLATFORM</span><span class="project-status">Работает в бета-версии</span></div>
             <div class="project-art art-database" aria-hidden="true"><div class="visual-table"><div class="table-head"><span>LOCAL_DB</span><span>UNIVERSAL</span></div><div class="table-line"><span></span><b></b><i></i></div><div class="table-line"><span></span><b></b><i></i></div><div class="table-line"><span></span><b></b><i></i></div><div class="table-line"><span></span><b></b><i></i></div></div></div>
             <div class="project-info"><div class="project-type">WINDOWS / LAN / DATABASE</div><h3>Local_DB Universal</h3><p>Локальная база данных для записей и документов: поиск, напоминания, обмен с Excel и история изменений. Бета работает, разработка продолжается.</p><p class="project-release">План релиза: <time datetime="2026-12-15">15 декабря 2026</time><strong data-countdown="2026-12-15">Идёт отсчёт</strong></p><div class="project-bottom"><div class="pills"><span>Python</span><span>SQLite</span><span>API</span></div><a href="#contacts" aria-label="Обсудить Local_DB Universal">Обсудить <span aria-hidden="true">↗</span></a></div></div>
           </article>
-          <article class="project-card" data-category="software">
+          <article class="project-card" data-category="software" data-project="smarthome">
             <div class="project-top"><span>03 / EDGE AUTOMATION</span><span class="project-status status-lab">Проектирование устройства</span></div>
             <div class="project-art art-home" aria-hidden="true"><div class="home-network"><span class="home-device">ESP32</span><span class="home-wire"></span><span class="home-core">ORANGE<br>PI</span><span class="home-wire"></span><span class="home-device">APP</span></div><div class="art-bottom-label">LOCAL · MQTT · HTTPS</div></div>
             <div class="project-info"><div class="project-type">IOT / LOCAL CONTROL</div><h3>Smart Home Edge</h3><p>Умный дом с управлением через телефон. Приложение и электронные компоненты пока проектируются; готового набора ещё нет.</p><div class="project-bottom"><div class="pills"><span>C++20</span><span>ESP32</span><span>Flutter</span></div><a href="#contacts" aria-label="Обсудить Smart Home Edge">Обсудить <span aria-hidden="true">↗</span></a></div></div>
           </article>
-          <article class="project-card" data-category="ai software">
+          <article class="project-card" data-category="ai software" data-project="aicore">
             <div class="project-top"><span>04 / AI ARCHITECTURE</span><span class="project-status status-beta">Работает в бета-версии</span></div>
             <div class="project-art art-ai" aria-hidden="true"><div class="brain-orbits"><span class="orbit orbit-a"></span><span class="orbit orbit-b"></span><div class="brain-core">AI<br><small>CORE</small></div></div><div class="art-bottom-label">DB ↔ CORE ↔ VISUALS ↔ LLM</div></div>
             <div class="project-info"><div class="project-type">ON-PREMISE / DOCUMENT INTELLIGENCE</div><h3>DB AI Core</h3><p>Локальный AI-помощник для технических документов: помогает искать информацию и разбирать материалы. Бета работает, функции продолжают разрабатываться.</p><p class="project-release">План релиза: <time datetime="2026-12-30">30 декабря 2026</time><strong data-countdown="2026-12-30">Идёт отсчёт</strong></p><div class="project-bottom"><div class="pills"><span>Local AI</span><span>RAG</span><span>API</span></div><a href="#contacts" aria-label="Обсудить DB AI Core">Обсудить <span aria-hidden="true">↗</span></a></div></div>
           </article>
-          <article class="project-card" data-category="ai software">
+          <article class="project-card" data-category="ai software" data-project="visual">
             <div class="project-top"><span>05 / DOCUMENT VISION</span><span class="project-status status-beta">Работает в бета-версии</span></div>
             <div class="project-art art-visual" aria-hidden="true"><div class="drawing-sheet"><span class="sheet-label">P&ID / PDF</span><div class="drawing-symbols"><i></i><b></b><i></i><b></b><i></i></div><span class="scan-bar"></span></div><div class="art-bottom-label">OCR / PDF / IMAGES</div></div>
             <div class="project-info"><div class="project-type">OCR / TECHNICAL DRAWINGS</div><h3>Visual Pack</h3><p>Инструмент для анализа PDF и изображений: распознавание текста, поиск, извлечение данных. Бета работает, развитие продолжается.</p><p class="project-release">План релиза: <time datetime="2026-12-05">5 декабря 2026</time><strong data-countdown="2026-12-05">Идёт отсчёт</strong></p><div class="project-bottom"><div class="pills"><span>Python</span><span>OpenCV</span><span>OCR</span></div><a href="#contacts" aria-label="Обсудить Visual Pack">Обсудить <span aria-hidden="true">↗</span></a></div></div>
           </article>
           
-<article class="project-card" data-category="bots software"><div class="project-top"><span>07 / FOODTECH</span><span class="project-status status-lab">Бета с 5 марта 2025</span></div><div class="project-art art-mini art-gourmet"><strong>Gourmet Bot «Гурман»</strong><small>Bot API / FoodTech</small></div><div class="project-info"><div class="project-type">Bot API / FoodTech</div><h3>Gourmet Bot «Гурман»</h3><p>Telegram-бот «Гурман»: гастрономический сервис. Бета — 5 марта 2025 года. Публичный запуск планируется в начале 2027 года.</p><div class="project-bottom"><div class="pills"><span>Bot API</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
-<article class="project-card" data-category="bots ai"><div class="project-top"><span>08 / AI TELEGRAM</span><span class="project-status status-lab">Разработка</span></div><div class="project-art art-mini art-chatbot"><strong>AI Chat Bot</strong><small>Python / AI / Bot API</small></div><div class="project-info"><div class="project-type">Python / AI / Bot API</div><h3>AI Chat Bot</h3><p>AI-помощник в Telegram: общение, ответы на вопросы и автоматизация запросов. Развитие Telegram-направления продолжается.</p><div class="project-bottom"><div class="pills"><span>Python</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
-<article class="project-card" data-category="bots automation"><div class="project-top"><span>09 / CONTENT</span><span class="project-status status-lab">Готовится сервер</span></div><div class="project-art art-mini art-news"><strong>News Publisher Bot</strong><small>RSS / API / Scheduler</small></div><div class="project-info"><div class="project-type">RSS / API / Scheduler</div><h3>News Publisher Bot</h3><p>Боты, которые самостоятельно находят материалы, обрабатывают их и публикуют в Telegram-каналах в заданном формате. Готовится сервер; планируется несколько таких ботов.</p><div class="project-bottom"><div class="pills"><span>RSS</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
-<article class="project-card" data-category="bots automation"><div class="project-top"><span>10 / AUTOMATION</span><span class="project-status status-lab">В планах</span></div><div class="project-art art-mini art-notify"><strong>Telegram Automation</strong><small>Alerts / Bot API</small></div><div class="project-info"><div class="project-type">Alerts / Bot API</div><h3>Telegram Automation</h3><p>Боты для уведомлений, поиска полезной информации и регулярных задач. Помимо них в планах ещё десятки ботов и цифровых проектов.</p><div class="project-bottom"><div class="pills"><span>Alerts</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
-<article class="project-card" data-category="motion ai"><div class="project-top"><span>11 / AI PRODUCTION</span><span class="project-status status-lab">Прайс утверждён</span></div><div class="project-art art-mini art-motion"><strong>JakhonUZ AI Production</strong><small>Runway / AI Motion</small></div><div class="project-info"><div class="project-type">Runway / AI Motion</div><h3>JakhonUZ AI Production</h3><p>Создаю AI-видео, рекламу, motion-ролики и мультфильмы с Runway и дополнительными инструментами.</p><div class="project-bottom"><div class="pills"><span>Runway</span></div><a href="studio.html#motion">Подробнее ↗</a></div></div></article></div><div class="project-empty" id="project-empty" hidden>По запросу ничего не найдено. <button type="button" id="reset-project-filters">Сбросить фильтры</button></div><p class="project-footnote">Здесь показана часть моих проектов. Ещё десятки идей и разработок появятся по мере готовности.</p>
+<article class="project-card" data-category="bots software" data-project="gourmet"><div class="project-top"><span>07 / FOODTECH</span><span class="project-status status-lab">Бета с 5 марта 2025</span></div><div class="project-art art-mini art-gourmet"><strong>Gourmet Bot «Гурман»</strong><small>Bot API / FoodTech</small></div><div class="project-info"><div class="project-type">Bot API / FoodTech</div><h3>Gourmet Bot «Гурман»</h3><p>Telegram-бот «Гурман»: гастрономический сервис. Бета — 5 марта 2025 года. Публичный запуск планируется в начале 2027 года.</p><div class="project-bottom"><div class="pills"><span>Bot API</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
+<article class="project-card" data-category="bots ai" data-project="aichat"><div class="project-top"><span>08 / AI TELEGRAM</span><span class="project-status status-lab">Разработка</span></div><div class="project-art art-mini art-chatbot"><strong>AI Chat Bot</strong><small>Python / AI / Bot API</small></div><div class="project-info"><div class="project-type">Python / AI / Bot API</div><h3>AI Chat Bot</h3><p>AI-помощник в Telegram: общение, ответы на вопросы и автоматизация запросов. Развитие Telegram-направления продолжается.</p><div class="project-bottom"><div class="pills"><span>Python</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
+<article class="project-card" data-category="bots automation" data-project="publisher"><div class="project-top"><span>09 / CONTENT</span><span class="project-status status-lab">Готовится сервер</span></div><div class="project-art art-mini art-news"><strong>News Publisher Bot</strong><small>RSS / API / Scheduler</small></div><div class="project-info"><div class="project-type">RSS / API / Scheduler</div><h3>News Publisher Bot</h3><p>Боты, которые самостоятельно находят материалы, обрабатывают их и публикуют в Telegram-каналах в заданном формате. Готовится сервер; планируется несколько таких ботов.</p><div class="project-bottom"><div class="pills"><span>RSS</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
+<article class="project-card" data-category="bots automation" data-project="automation"><div class="project-top"><span>10 / AUTOMATION</span><span class="project-status status-lab">В планах</span></div><div class="project-art art-mini art-notify"><strong>Telegram Automation</strong><small>Alerts / Bot API</small></div><div class="project-info"><div class="project-type">Alerts / Bot API</div><h3>Telegram Automation</h3><p>Боты для уведомлений, поиска полезной информации и регулярных задач. Помимо них в планах ещё десятки ботов и цифровых проектов.</p><div class="project-bottom"><div class="pills"><span>Alerts</span></div><a href="studio.html#bots">Подробнее ↗</a></div></div></article>
+<article class="project-card" data-category="motion ai" data-project="motion"><div class="project-top"><span>11 / AI PRODUCTION</span><span class="project-status status-lab">Прайс утверждён</span></div><div class="project-art art-mini art-motion"><strong>JakhonUZ AI Production</strong><small>Runway / AI Motion</small></div><div class="project-info"><div class="project-type">Runway / AI Motion</div><h3>JakhonUZ AI Production</h3><p>Создаю AI-видео, рекламу, motion-ролики и мультфильмы с Runway и дополнительными инструментами.</p><div class="project-bottom"><div class="pills"><span>Runway</span></div><a href="studio.html#motion">Подробнее ↗</a></div></div></article></div><div class="project-empty" id="project-empty" hidden>По запросу ничего не найдено. <button type="button" id="reset-project-filters">Сбросить фильтры</button></div><p class="project-footnote">Здесь показана часть моих проектов. Ещё десятки идей и разработок появятся по мере готовности.</p>
       </div>
     </section>
 
@@ -355,13 +365,13 @@
     <div class="milestone-bar"><strong>Даты бета-версий</strong><span>Gourmet Bot — <time datetime="2025-03-05">5 марта 2025</time></span><span>J1Calc — <time datetime="2026-09-05">5 сентября 2026</time></span></div>
     <div class="upcoming-header"><h3>Что готовлю дальше</h3><p>Новые идеи разделены по стадиям, чтобы планы не выглядели как готовые продукты.</p></div>
     <div class="upcoming-grid">
-      <article class="upcoming-card"><span class="upcoming-state">ЗАПУСК В НАЧАЛЕ 2027</span><h4>Gourmet Bot «Гурман»</h4><p>Бета появилась 5 марта 2025 года. Публичный запуск гастрономического бота запланирован на начало 2027 года.</p></article>
-      <article class="upcoming-card"><span class="upcoming-state">ГОТОВИТСЯ СЕРВЕР</span><h4>Telegram-боты для каналов</h4><p>Несколько ботов будут сами искать контент, приводить его к заданному формату и публиковать в каналах. Также разрабатываются идеи других полезных ботов.</p></article>
-      <article class="upcoming-card"><span class="upcoming-state">ПЛАН ПРОЕКТА</span><h4>Приложение для мам и малышей</h4><p>Android и iPhone: менструальный цикл, беременность, колыбельные и энциклопедия для родителей — всё в одном месте.</p></article>
-      <article class="upcoming-card"><span class="upcoming-state">ПЛАН ПРОЕКТА</span><h4>B2B-маркетплейс</h4><p>План цифровой площадки, объединяющей покупателей, поставщиков, исполнителей и производителей товаров и услуг.</p></article>
-      <article class="upcoming-card"><span class="upcoming-state">ПРОЕКТИРУЕТСЯ ПРОТОТИП</span><h4>Smart Home Edge</h4><p>Умный дом с управлением через телефон: приложение, локальный сервер и электронные компоненты в разработке.</p></article>
-      <article class="upcoming-card"><span class="upcoming-state">ТВОРЧЕСКОЕ НАПРАВЛЕНИЕ</span><h4>Мультфильмы и AI Motion</h4><p>Создание мультфильмов, рекламы, анимации и видео с Runway и дополнительными инструментами.</p></article>
-      <article class="upcoming-card"><span class="upcoming-state">СТАРТ РАБОТ · КОНЕЦ 2027</span><h4>Мобильные игры</h4><p>Планирую начать разработку игр для смартфонов в конце 2027 года.</p></article>
+      <article class="upcoming-card" data-project="gourmet"><span class="upcoming-state">ЗАПУСК В НАЧАЛЕ 2027</span><h4>Gourmet Bot «Гурман»</h4><p>Бета появилась 5 марта 2025 года. Публичный запуск гастрономического бота запланирован на начало 2027 года.</p></article>
+      <article class="upcoming-card" data-project="publisher"><span class="upcoming-state">ГОТОВИТСЯ СЕРВЕР</span><h4>Telegram-боты для каналов</h4><p>Несколько ботов будут сами искать контент, приводить его к заданному формату и публиковать в каналах. Также разрабатываются идеи других полезных ботов.</p></article>
+      <article class="upcoming-card" data-project="family"><span class="upcoming-state">ПЛАН ПРОЕКТА</span><h4>Приложение для мам и малышей</h4><p>Android и iPhone: менструальный цикл, беременность, колыбельные и энциклопедия для родителей — всё в одном месте.</p></article>
+      <article class="upcoming-card" data-project="marketplace"><span class="upcoming-state">ПЛАН ПРОЕКТА</span><h4>B2B-маркетплейс</h4><p>План цифровой площадки, объединяющей покупателей, поставщиков, исполнителей и производителей товаров и услуг.</p></article>
+      <article class="upcoming-card" data-project="smarthome"><span class="upcoming-state">ПРОЕКТИРУЕТСЯ ПРОТОТИП</span><h4>Smart Home Edge</h4><p>Умный дом с управлением через телефон: приложение, локальный сервер и электронные компоненты в разработке.</p></article>
+      <article class="upcoming-card" data-project="motion"><span class="upcoming-state">ТВОРЧЕСКОЕ НАПРАВЛЕНИЕ</span><h4>Мультфильмы и AI Motion</h4><p>Создание мультфильмов, рекламы, анимации и видео с Runway и дополнительными инструментами.</p></article>
+      <article class="upcoming-card" data-project="games"><span class="upcoming-state">СТАРТ РАБОТ · КОНЕЦ 2027</span><h4>Мобильные игры</h4><p>Планирую начать разработку игр для смартфонов в конце 2027 года.</p></article>
       <article class="upcoming-card upcoming-more"><span class="upcoming-state">ДАЛЬШЕ БОЛЬШЕ</span><h4>И это только начало.</h4><p>В планах ещё Telegram-боты, мобильные приложения, сервисы и собственные цифровые продукты.</p></article>
     </div>
   </div>
@@ -434,6 +444,13 @@
     <div class="command-search"><span aria-hidden="true">⌕</span><input id="command-input" type="search" autocomplete="off" aria-label="Найти раздел или проект" placeholder="Поиск раздела, проекта, направления..."><kbd>↵</kbd></div>
     <div class="command-list" id="command-list" role="listbox" aria-label="Результаты навигации"></div>
     <div class="command-bottom"><span>↑ ↓ ВЫБОР</span><span>ENTER ПЕРЕЙТИ</span><span>ESC ЗАКРЫТЬ</span></div>
+  </dialog>
+
+  <dialog class="project-detail-dialog" id="project-detail-dialog" aria-labelledby="pd-title" aria-describedby="pd-intro">
+    <div class="pd-shell">
+      <div class="pd-topbar"><span class="pd-brand">JAKHON / PROJECT PROFILE</span><button type="button" class="pd-close" aria-label="Закрыть описание проекта">×</button></div>
+      <div class="pd-content" id="pd-content" tabindex="-1"></div>
+    </div>
   </dialog>
 
   <dialog class="case-dialog" id="case-dialog" aria-labelledby="case-dialog-title">
