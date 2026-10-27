@@ -161,14 +161,14 @@
     const descriptions = Object.freeze({
       calc: {
         label:"INTERACTIVE CONCEPT / J1CALC",
-        category:"ENGINEERING / ANDROID",
-        headline:"Калькулятор для инженеров, который работает без интернета.",
-        description:"Расчёты, проверка приборов и сохранение результатов прямо на Android."
+        category:"ANDROID / OFFLINE",
+        headline:"Калькулятор, который работает без интернета.",
+        description:"Расчёты и сохранение результатов прямо на Android."
       },
       database: {
         label:"INTERACTIVE CONCEPT / LOCAL_DB",
         category:"DATA PLATFORM / ON-PREMISE",
-        headline:"Учёт оборудования и документов в одной программе.",
+        headline:"Записи, документы и задачи в одной программе.",
         description:"Локальная база: поиск, сроки проверки, история изменений и Excel. Бета работает."
       },
       edge: {
@@ -225,13 +225,13 @@
     const list = $("#command-list",command);
     const categories = [
       ["Начало","#top","Главный экран · Манифест"],
-      ["Обо мне","#about","Девять лет в энергетике"],
-      ["Интерактивная инженерия","#lab","АСУ ТП · Данные · Local AI"],
+      ["Обо мне","#about","Кто создаёт эти продукты"],
+      ["Как это работает","#lab","Приложение · База · Local AI"],
       ["Направления","#services","Компетенции и специализации"],
       ["Избранные системы","#masterworks","J1Calc · Local_DB · Smart Home Edge"],
-      ["Все проекты","#projects","11 проектов, поиск и фильтры"],
+      ["Все проекты","#projects","10 проектов, поиск и фильтры"],
       ["Планы и релизы","#roadmap","Проекты до конца 2027 года"],
-      ["Профессиональный путь","#career","ВЧ-связь → АСУ ТП"],
+      
       ["Стоимость услуг","#pricing","Ориентировочный прайс"],
       ["Контакты","#contacts","Телефон · Telegram · Instagram"],
       ["AI Motion Studio","studio.html#motion","Runway · Видеокалькулятор"],
