@@ -3,3 +3,31 @@ for(const line of "JAKHON — независимый разработчик пр
 
 window.JakhonDictionary["Создаю программы"]={en:"I build software",uz:"Dasturlarni yarataman"};
 window.JakhonDictionary["и автоматизирую работу."]={en:"and automate workflows.",uz:"va ishlarni avtomatlashtiraman."};
+
+/* Search-facing strings for the home page and internal navigation. */
+window.JakhonDictionary["Jahongir Jurayev (Juraev) — программист в Ташкенте | JAKHON.UZ"]={en:"Jahongir Jurayev (Juraev) — Software Developer in Tashkent | JAKHON.UZ",uz:"Jahongir Jurayev (Juraev) — Toshkentdagi dasturchi | JAKHON.UZ"};
+window.JakhonDictionary["Jahongir Jurayev (Jahongir Juraev) — программист и разработчик ПО в Ташкенте, Узбекистан. Android-приложения, Telegram-боты, локальный AI, базы данных и примеры проектов."]={en:"Jahongir Jurayev (Juraev), software developer in Tashkent, Uzbekistan. Android apps, Telegram bots, local AI, databases and portfolio projects.",uz:"Jahongir Jurayev (Juraev) — Toshkent, O'zbekistondagi dasturchi. Android ilovalari, Telegram botlar, mahalliy AI, bazalar va loyihalar."};
+window.JakhonDictionary["Jahongir Jurayev — разработчик программ в Ташкенте | JAKHON.UZ"]={en:"Jahongir Jurayev — Software Developer in Tashkent | JAKHON.UZ",uz:"Jahongir Jurayev — Toshkentdagi dasturchi | JAKHON.UZ"};
+window.JakhonDictionary["Портфолио разработчика Jahongir Juraev (Jurayev): Android, Telegram-боты, базы данных и локальный AI. Ташкент, Узбекистан."]={en:"Developer portfolio of Jahongir Juraev (Jurayev): Android, Telegram bots, databases and local AI. Tashkent, Uzbekistan.",uz:"Jahongir Juraev (Jurayev) dasturchi portfoliosi: Android, Telegram botlar, ma'lumotlar bazalari va mahalliy AI. Toshkent, O'zbekiston."};
+window.JakhonDictionary["НАПРАВЛЕНИЯ / ТАШКЕНТ · УЗБЕКИСТАН"]={en:"FOCUS AREAS / TASHKENT · UZBEKISTAN",uz:"YO'NALISHLAR / TOSHKENT · O'ZBEKISTON"};
+window.JakhonDictionary["Чем я"]={en:"What I",uz:"Men nima"};
+window.JakhonDictionary["занимаюсь."]={en:"do.",uz:"bilan shug'ullanaman."};
+window.JakhonDictionary["Открытые страницы с объяснениями: кто я, какие программы разрабатываю, над чем работаю сейчас и что пока только планирую."]={en:"Clear pages about me, the software I build, current work and future plans.",uz:"Men haqimda, yaratadigan dasturlarim, joriy ishlarim va kelgusi rejalarim haqida tushunarli sahifalar."};
+window.JakhonDictionary["О разработчике"]={en:"About the developer",uz:"Dasturchi haqida"};
+window.JakhonDictionary["Jahongir Jurayev (Juraev), Ташкент"]={en:"Jahongir Jurayev (Juraev), Tashkent",uz:"Jahongir Jurayev (Juraev), Toshkent"};
+window.JakhonDictionary["Разработка ПО"]={en:"Software development",uz:"Dastur yaratish"};
+window.JakhonDictionary["Локальные программы, базы данных и автоматизация"]={en:"Local software, databases and automation",uz:"Mahalliy dasturlar, bazalar va avtomatlashtirish"};
+window.JakhonDictionary["Telegram-боты"]={en:"Telegram bots",uz:"Telegram botlar"};
+window.JakhonDictionary["Боты, сообщения, контент и автопубликации"]={en:"Bots, messages, content and publishing",uz:"Botlar, xabarlar, kontent va avtomatik e'lonlar"};
+window.JakhonDictionary["Мобильные приложения"]={en:"Mobile apps",uz:"Mobil ilovalar"};
+window.JakhonDictionary["Android, офлайн-инструменты и интерфейсы"]={en:"Android, offline tools and interfaces",uz:"Android, oflayn vositalar va interfeyslar"};
+window.JakhonDictionary["Локальный AI"]={en:"Local AI",uz:"Mahalliy AI"};
+window.JakhonDictionary["Поиск по документам, OCR и базы данных"]={en:"Document search, OCR and databases",uz:"Hujjatlarda qidiruv, OCR va bazalar"};
+window.JakhonDictionary["ПОДРОБНО О ПРОЕКТАХ"]={en:"PROJECT DETAILS",uz:"LOYIHALAR HAQIDA"};
+window.JakhonDictionary["Отдельная страница J1Calc ↗"]={en:"Dedicated J1Calc page ↗",uz:"J1Calc haqida alohida sahifa ↗"};
+window.JakhonDictionary["Отдельная страница Local_DB Universal ↗"]={en:"Dedicated Local_DB Universal page ↗",uz:"Local_DB Universal haqida alohida sahifa ↗"};
+window.JakhonDictionary["Отдельная страница DB AI Core ↗"]={en:"Dedicated DB AI Core page ↗",uz:"DB AI Core haqida alohida sahifa ↗"};
+window.JakhonDictionary["Отдельная страница Visual Pack ↗"]={en:"Dedicated Visual Pack page ↗",uz:"Visual Pack haqida alohida sahifa ↗"};
+window.JakhonDictionary["Разработка ПО в Ташкенте"]={en:"Software development in Tashkent",uz:"Toshkentda dastur yaratish"};
+window.JakhonDictionary["Android-разработка"]={en:"Android development",uz:"Android dasturlash"};
+window.JakhonDictionary["Локальные AI-инструменты"]={en:"Local AI tools",uz:"Mahalliy AI vositalar"};

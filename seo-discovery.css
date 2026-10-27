@@ -1,0 +1,31 @@
+
+/* Semantic landing-page directory on the main portfolio */
+.search-paths{position:relative;background:#0a1d2c;color:#f1faf8;padding:clamp(65px,8vw,115px) 0;border-block:1px solid #274e55;overflow:hidden}
+.search-paths::before{content:"";position:absolute;right:-220px;top:-160px;width:640px;height:640px;background:radial-gradient(circle,#39bba31d,transparent 68%);pointer-events:none}
+.search-paths .search-paths-top{display:flex;justify-content:space-between;align-items:end;gap:35px;margin-bottom:33px;position:relative}
+.search-paths .search-paths-eyebrow{font:800 10px/1.5 Consolas,monospace;letter-spacing:.15em;color:#8cedc8;margin:0 0 15px}
+.search-paths h2{font-size:clamp(2.7rem,6vw,5.8rem);letter-spacing:-.069em;line-height:1.04;margin:0}
+.search-paths h2 em{font-style:normal;color:#87e8cc}
+.search-paths .search-paths-lead{max-width:430px;font-size:14px;line-height:1.8;color:#bdd2d8;margin:0 0 4px}
+.search-paths-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px;position:relative}
+.search-paths-grid a{display:flex;flex-direction:column;gap:11px;min-height:183px;background:linear-gradient(160deg,#113443,#0b2936);border:1px solid #315d62;border-radius:14px;padding:23px 19px;color:#ecfbf8;transition:transform .2s,border-color .2s,background .2s}
+.search-paths-grid a:hover{transform:translateY(-4px);border-color:#8ddbbd;background:#1a4450}
+.search-paths-grid .search-paths-index{font:800 10px Consolas,monospace;color:#8ddec3;letter-spacing:.1em}
+.search-paths-grid strong{font-size:clamp(15px,1.4vw,21px);line-height:1.18;letter-spacing:-.035em}
+.search-paths-grid a span:last-child{font-size:11px;line-height:1.65;color:#b5ccd2;margin-top:auto}
+.search-project-links{position:relative;display:flex;flex-wrap:wrap;gap:8px 17px;align-items:center;margin-top:27px}
+.search-project-links>strong{font:800 10px Consolas,monospace;color:#91dbc6;letter-spacing:.12em;margin-right:9px}
+.search-project-links a{color:#dff4ed;font-size:12px;font-weight:720;border-bottom:1px solid #3e7b78;padding-bottom:4px}
+.search-project-links a:hover{color:#9eeac9;border-color:#9eeac9}
+.project-source-link{margin:12px 0 4px!important;font-size:12px!important}
+.project-source-link a{display:inline-block;color:#047c70;text-decoration:underline;text-underline-offset:4px;font-weight:800}
+.project-source-link a:hover{color:#07594e}
+.name-search{font-size:12px!important;color:#50747c!important;padding-top:8px}
+@media(max-width:1100px){.search-paths-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.search-paths .search-paths-top{display:block}.search-paths .search-paths-lead{margin-top:20px}.search-paths-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.search-paths-grid a{min-height:145px}}
+@media(max-width:410px){.search-paths-grid{grid-template-columns:1fr}.search-paths-grid a{min-height:130px}}
+@media(prefers-reduced-motion:reduce){.search-paths-grid a{transition:none}}
+
+.seo-footer-links{display:flex;flex-wrap:wrap;gap:10px 22px;border-top:1px solid #304957;padding:19px 0!important;font-size:11px}
+.seo-footer-links a{color:#a4dccc;text-decoration:underline;text-underline-offset:4px}
+.seo-footer-links a:hover{color:#fff}

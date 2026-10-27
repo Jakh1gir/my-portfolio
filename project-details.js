@@ -172,7 +172,7 @@ for(const card of all){
  card.append(button);
  const activate=e=>{if(e){e.preventDefault();e.stopPropagation();}open(id,button);};
  button.addEventListener("click",activate);
- card.addEventListener("click",event=>{if(event.target.closest("a,button")&&event.target!==button){event.preventDefault();event.stopPropagation();open(id,button);return;} if(event.target!==button)open(id,button);});
+ card.addEventListener("click",event=>{if(event.target.closest("a[data-seo-link]"))return;if(event.target.closest("a,button")&&event.target!==button){event.preventDefault();event.stopPropagation();open(id,button);return;} if(event.target!==button)open(id,button);});
  card.addEventListener("keydown",event=>{if(event.target!==card)return;if(event.key==="Enter"||event.key===" "){event.preventDefault();open(id,card);}});
  card.tabIndex=0;
  card.setAttribute("aria-label",title+" — "+local(ui.expand));
