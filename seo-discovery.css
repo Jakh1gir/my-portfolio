@@ -29,3 +29,6 @@
 .seo-footer-links{display:flex;flex-wrap:wrap;gap:10px 22px;border-top:1px solid #304957;padding:19px 0!important;font-size:11px}
 .seo-footer-links a{color:#a4dccc;text-decoration:underline;text-underline-offset:4px}
 .seo-footer-links a:hover{color:#fff}
+
+/* Nine real service pillars: a balanced 3×3 editorial grid on wide screens. */
+@media(min-width:1101px){.search-paths-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.search-paths-grid a{min-height:154px}}
