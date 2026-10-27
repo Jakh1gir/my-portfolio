@@ -268,43 +268,7 @@
     }));
   }
 
-  // Expand project dossiers without leaving the page.
-  const dialog = document.getElementById("case-dialog");
-  if (dialog && typeof dialog.showModal === "function") {
-    const title = document.getElementById("case-dialog-title");
-    const category = document.getElementById("case-dialog-category");
-    const description = document.getElementById("case-dialog-description");
-    const tags = document.getElementById("case-dialog-tags");
-    document.querySelectorAll(".project-card").forEach(card => {
-      const info = card.querySelector(".project-info");
-      const bottom = info?.querySelector(".project-bottom");
-      if (!info || !bottom) return;
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "project-more";
-      button.textContent = "Открыть кейс";
-      button.setAttribute("aria-haspopup", "dialog");
-      bottom.before(button);
-      button.addEventListener("click", () => {
-        if (title) title.textContent = card.querySelector("h3")?.textContent.trim() || "Проект";
-        if (category) category.textContent = (card.querySelector(".project-type")?.textContent.trim() || "PROJECT") + " / " + (card.querySelector(".project-status")?.textContent.trim() || "Информация");
-        if (description) description.textContent = info.querySelector("p")?.textContent.trim() || "Описание уточняется.";
-        if (tags) {
-          tags.replaceChildren();
-          info.querySelectorAll(".pills span").forEach(item => {
-            const tag = document.createElement("span");
-            tag.textContent = item.textContent.trim();
-            tags.appendChild(tag);
-          });
-        }
-        dialog.showModal();
-      });
-    });
-    dialog.querySelector(".case-dialog-close")?.addEventListener("click", () => dialog.close());
-    dialog.addEventListener("click", event => {
-      if (event.target === dialog) dialog.close();
-    });
-  }
+  // The new project-details.js owns all project details and roadmap dialogs.
 
   // AI Studio retains its existing pricing engine; animate only display updates.
   if (!isReduced()) {
