@@ -180,5 +180,18 @@ for(const card of all){
 document.addEventListener("jakhon:languagechange",()=>{
  for(const card of all){const b=card.querySelector(".pd-open");if(!b)continue;b.textContent=local(ui.expand);b.setAttribute("aria-label",local(ui.expand)+" — "+(card.querySelector("h3,h4")?.textContent?.trim()||""));}
 });
+
+const masterworks=document.querySelector?.("[data-masterworks]");
+const masterworkButton=masterworks?.querySelector(".mw-detail");
+if(masterworkButton){
+ const changeCaption=()=>{masterworkButton.textContent=local(ui.expand)+" ↗";};
+ changeCaption();
+ masterworkButton.addEventListener("click",()=>{
+  const active=masterworks.querySelector(".masterworks-item.is-selected");
+  const map={calc:"j1calc",database:"localdb",edge:"smarthome"};
+  if(active&&map[active.dataset.work])open(map[active.dataset.work],masterworkButton);
+ });
+ document.addEventListener("jakhon:languagechange",changeCaption);
+}
 window.JakhonProjectDetails=Object.freeze({open:(id)=>open(id,document.activeElement),ids:Object.keys(projects)});
 })();
