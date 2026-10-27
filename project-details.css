@@ -69,3 +69,11 @@
 @media(max-width:820px){.hero-media-stack{min-height:480px;max-width:600px;width:100%;margin-inline:auto}.hero-persona{width:min(69%,390px)}.hero-media-stack .hero-visual{width:60%;right:0;bottom:0}.pd-columns{gap:20px}}
 @media(max-width:570px){.hero-media-stack{min-height:405px;padding:10px 0 18px}.hero-persona{width:75%;margin-left:0;transform:rotate(-1deg);padding:7px}.hero-persona figcaption{padding:11px}.hero-persona figcaption strong{font-size:19px}.hero-persona figcaption .persona-eyebrow{font-size:8px}.hero-persona figcaption .persona-caption{font-size:10px}.hero-persona-sticker{width:31px;height:31px;font-size:22px}.hero-media-stack .hero-visual{width:63%;right:-4%;bottom:0;transform:rotate(5deg) scale(.78)}.project-detail-dialog{width:100%;height:100dvh;max-height:100dvh;border-radius:0;border:0}.pd-content{padding:25px 19px 30px}.pd-topbar{padding:13px 18px}.pd-name{font-size:clamp(2.1rem,10vw,3rem)}.pd-columns{grid-template-columns:1fr;gap:2px}.pd-roadmap{padding:23px 17px}.pd-step{grid-template-columns:33px 1fr;gap:13px;min-height:79px}.pd-step-index{width:33px;height:33px}.pd-step:not(:last-child)::after{left:16px;top:34px}.pd-step-title{font-size:14px}.pd-contact,.pd-service{width:100%}.pd-open{margin:10px 16px 17px}}
 @media(prefers-reduced-motion:reduce){.hero-persona,.pd-open,.pd-contact,.pd-service{transition:none}.project-detail-dialog[open]{animation:none}}
+
+/* Localized two-line headline stays readable next to the portrait. */
+.masterpiece-hero h1{font-size:clamp(2.65rem,5.3vw,6.65rem);line-height:1.035;letter-spacing:-.07em;overflow-wrap:anywhere;max-width:850px;text-wrap:balance}
+.masterpiece-hero h1 .hero-first-line{color:#f5fcf8}
+.masterpiece-hero h1 em{display:inline-block;font-size:.76em;line-height:1.13;color:#b2f0d4;font-style:normal;letter-spacing:-.057em;margin-top:7px}
+@media(max-width:1080px){.masterpiece-hero h1{font-size:clamp(2.5rem,4.8vw,4.7rem)}}
+@media(max-width:820px){.masterpiece-hero h1{font-size:clamp(2.85rem,8.25vw,5.6rem)}}
+@media(max-width:570px){.masterpiece-hero h1{font-size:clamp(2.1rem,9.6vw,4.15rem)}.masterpiece-hero h1 em{font-size:.74em}}
