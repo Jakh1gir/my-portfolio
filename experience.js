@@ -118,7 +118,7 @@
     sections.forEach(section => sectionObserver.observe(section));
   }
 
-  // Count the user's actual nine years of energy-sector experience.
+  // Optional numeric milestones animation.
   const counter = document.querySelector(".count-up[data-count]");
   if (counter && !isReduced() && "IntersectionObserver" in window) {
     let counted = false;
@@ -194,21 +194,21 @@
     });
   }
 
-  // A transparent example topology, not actual equipment monitoring.
+  // Sample application flow, no user data or real integrations.
   const scenarios = Object.freeze({
     plc: {
-      label: "CONTROL SYSTEM / SIMULATION",
-      title: "Контроллер управляет оборудованием",
-      description: "Датчик передаёт сигнал в контроллер. Контроллер принимает решение, а человек видит результат на экране.",
-      nodes: [["INPUT","FIELD","Датчики / I/O"],["LOGIC","PLC","Control Engine"],["OUTPUT","HMI","Operator View"]],
+      label: "APPLICATION FLOW / SIMULATION",
+      title: "Приложение превращает запрос в результат",
+      description: "Пользователь вводит данные. Программа выполняет расчёт и отображает результат в интерфейсе.",
+      nodes: [["INPUT","APP","User Input"],["LOGIC","CORE","App Logic"],["OUTPUT","UI","Result"]],
       path: "M0 80 L75 80 L75 57 L140 57 L140 75 L215 75 L215 40 L275 40 L275 54 L360 54 L360 19 L440 19 L440 54 L515 54 L515 35 L610 35 L610 65 L700 65",
       logs: ["01 · INPUT REGISTERED","02 · LOGIC EXECUTED","03 · STATE VISUALIZED"]
     },
     data: {
       label: "DATA INTEGRATION / SIMULATION",
       title: "Все записи и документы в одном месте",
-      description: "База данных хранит сведения об оборудовании. Можно найти запись, увидеть изменения и получить нужный отчёт.",
-      nodes: [["SOURCE","ASSETS","KKS / Events"],["STORAGE","LOCAL DB","Audit / API"],["VIEW","DESKTOP","Search / Export"]],
+      description: "База данных сохраняет записи, позволяет искать информацию и получать отчёты.",
+      nodes: [["SOURCE","RECORDS","Forms / Files"],["STORAGE","LOCAL DB","Audit / API"],["VIEW","DESKTOP","Search / Export"]],
       path: "M0 61 L80 61 L95 41 L155 41 L165 70 L235 70 L250 35 L310 35 L325 58 L410 58 L430 18 L490 18 L512 42 L580 42 L610 65 L700 65",
       logs: ["01 · INPUT VALIDATED","02 · VERSION STORED","03 · VIEW UPDATED"]
     },
@@ -216,7 +216,7 @@
       label: "DOCUMENT INTELLIGENCE / CONCEPT",
       title: "AI помогает разобраться в документах",
       description: "AI читает предоставленные документы и помогает искать нужные сведения. Ответ можно проверить по исходному документу.",
-      nodes: [["SOURCE","DOCS","PDF / DXF"],["INDEX","VISUAL","OCR / Search"],["ASSIST","AI CORE","Grounded Q&A"]],
+      nodes: [["SOURCE","DOCS","PDF / Images"],["INDEX","VISUAL","OCR / Search"],["ASSIST","AI CORE","Grounded Q&A"]],
       path: "M0 75 L55 75 L95 62 L145 62 L190 22 L230 22 L275 55 L335 55 L370 32 L415 32 L455 72 L510 72 L570 36 L615 36 L670 53 L700 53",
       logs: ["01 · DOCUMENT READ","02 · SOURCES INDEXED","03 · ANSWER REVIEWED"]
     }
