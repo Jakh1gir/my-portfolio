@@ -1,1 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://jakhon.uz/</loc></url><url><loc>https://jakhon.uz/studio.html</loc></url></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://jakhon.uz/</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/about.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/software-development.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/telegram-bots.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/android-apps.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/local-ai.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/projects/j1calc.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/projects/local-db-universal.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/projects/db-ai-core.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/projects/visual-pack.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://jakhon.uz/studio.html</loc><lastmod>2026-10-27</lastmod></url>
+</urlset>
