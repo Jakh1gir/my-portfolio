@@ -31,3 +31,20 @@ window.JakhonDictionary["Отдельная страница Visual Pack ↗"]={
 window.JakhonDictionary["Разработка ПО в Ташкенте"]={en:"Software development in Tashkent",uz:"Toshkentda dastur yaratish"};
 window.JakhonDictionary["Android-разработка"]={en:"Android development",uz:"Android dasturlash"};
 window.JakhonDictionary["Локальные AI-инструменты"]={en:"Local AI tools",uz:"Mahalliy AI vositalar"};
+
+/* Service discovery navigation: RU / English / Uzbek Latin */
+window.JakhonDictionary["Услуги разработчика"]={en:"Developer services",uz:"Dasturchi xizmatlari"};
+window.JakhonDictionary["Разработка сайтов"]={en:"Website development",uz:"Sayt yaratish"};
+window.JakhonDictionary["Адаптивные сайты, веб-приложения и интерфейсы"]={en:"Responsive websites, web apps and interfaces",uz:"Moslashuvchan saytlar, veb ilovalar va interfeyslar"};
+window.JakhonDictionary["Python и автоматизация"]={en:"Python & automation",uz:"Python va avtomatlashtirish"};
+window.JakhonDictionary["Excel, скрипты, файлы, отчёты и процессы"]={en:"Excel, scripts, files, reports and workflows",uz:"Excel, skript, fayl, hisobot va jarayonlar"};
+window.JakhonDictionary["Создание баз данных"]={en:"Database development",uz:"Ma'lumotlar bazasini yaratish"};
+window.JakhonDictionary["Локальные базы, поиск, учёт и импорт Excel"]={en:"Local databases, search, records and Excel import",uz:"Mahalliy baza, qidiruv, hisob va Excel import"};
+window.JakhonDictionary["API-интеграции"]={en:"API integrations",uz:"API integratsiya"};
+window.JakhonDictionary["Обмен данными, REST и вебхуки"]={en:"Data exchange, REST and webhooks",uz:"Ma'lumot almashish, REST va vebhuklar"};
+window.JakhonDictionary["ВСЕ УСЛУГИ"]={en:"ALL SERVICES",uz:"BARCHA XIZMATLAR"};
+window.JakhonDictionary["Выбрать направление ↗"]={en:"Explore services ↗",uz:"Yo'nalishni tanlash ↗"};
+window.JakhonDictionary["Все услуги разработчика"]={en:"All developer services",uz:"Barcha dasturchi xizmatlari"};
+window.JakhonDictionary["Создание сайтов"]={en:"Website creation",uz:"Saytlar yaratish"};
+window.JakhonDictionary["Python-программист"]={en:"Python developer",uz:"Python dasturchisi"};
+window.JakhonDictionary["API и интеграции"]={en:"API and integrations",uz:"API va integratsiyalar"};
