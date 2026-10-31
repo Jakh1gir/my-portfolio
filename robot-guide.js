@@ -17,6 +17,7 @@
     "<linearGradient id=\"jr-face\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#16384e\"/><stop offset=\"1\" stop-color=\"#071e30\"/></linearGradient>",
     "<radialGradient id=\"jr-glow\"><stop stop-color=\"#edfff9\"/><stop offset=\".45\" stop-color=\"#82ffe0\"/><stop offset=\"1\" stop-color=\"#39bfca\"/></radialGradient>",
     "<linearGradient id=\"jr-jet\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#c3fff6\"/><stop offset=\"1\" stop-color=\"#49c5fd\" stop-opacity=\"0\"/></linearGradient>",
+    "<linearGradient id=\"jr-edge\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop stop-color=\"#ebffff\" stop-opacity=\".82\"/><stop offset=\".46\" stop-color=\"#aacbd6\" stop-opacity=\".12\"/><stop offset=\"1\" stop-color=\"#426f88\" stop-opacity=\".65\"/></linearGradient>",
     "</defs>",
     "<ellipse class=\"jr-shadow\" cx=\"37\" cy=\"92\" rx=\"19\" ry=\"2.8\" fill=\"#00131d\" opacity=\".27\"/>",
     "<g class=\"jr-thruster\" opacity=\"0\"><path d=\"M29 81 Q22 94 27 96 Q35 93 37 82Z\" fill=\"url(#jr-jet)\"/><path d=\"M45 81 Q52 94 47 96 Q39 93 37 82Z\" fill=\"url(#jr-jet)\"/></g>",
@@ -25,12 +26,15 @@
     "<g class=\"jr-arm jr-arm-left\"><rect x=\"9\" y=\"57\" width=\"11\" height=\"19\" rx=\"5.5\" fill=\"url(#jr-body)\" stroke=\"#a1d0dd\" stroke-width=\"1\"/><circle cx=\"14\" cy=\"75\" r=\"4.2\" fill=\"url(#jr-enamel)\"/></g>",
     "<g class=\"jr-arm jr-arm-right\"><rect x=\"54\" y=\"57\" width=\"11\" height=\"19\" rx=\"5.5\" fill=\"url(#jr-body)\" stroke=\"#a1d0dd\" stroke-width=\"1\"/><circle cx=\"60\" cy=\"75\" r=\"4.2\" fill=\"url(#jr-enamel)\"/></g>",
     "<rect x=\"19\" y=\"52\" width=\"36\" height=\"32\" rx=\"14\" fill=\"url(#jr-enamel)\" stroke=\"#acd7e0\" stroke-width=\"1.2\"/>",
+    "<path d=\"M44 55q11 5 7 21q-2 6-9 7q7-12 2-28z\" fill=\"#356780\" opacity=\".25\"/>",
     "<rect x=\"26\" y=\"60\" width=\"22\" height=\"16\" rx=\"8\" fill=\"url(#jr-face)\" stroke=\"#83c9ce\" stroke-width=\".8\"/>",
     "<circle cx=\"37\" cy=\"68\" r=\"5\" fill=\"#12445c\" stroke=\"#56d5ca\" stroke-width=\"1\"/><circle class=\"jr-led\" cx=\"37\" cy=\"68\" r=\"3\" fill=\"url(#jr-glow)\"/>",
     "<g class=\"jr-head\">",
     "<g class=\"jr-antenna\"><path d=\"M37 16V8\" stroke=\"#b9d8e3\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"37\" cy=\"6.5\" r=\"3.3\" fill=\"url(#jr-glow)\" stroke=\"#deffff\" stroke-width=\".8\"/></g>",
     "<rect x=\"3.7\" y=\"33\" width=\"8\" height=\"16\" rx=\"4\" fill=\"url(#jr-body)\" stroke=\"#87bdc6\" stroke-width=\".8\"/><rect x=\"62.3\" y=\"33\" width=\"8\" height=\"16\" rx=\"4\" fill=\"url(#jr-body)\" stroke=\"#87bdc6\" stroke-width=\".8\"/>",
     "<rect x=\"7\" y=\"13\" width=\"60\" height=\"49\" rx=\"21\" fill=\"url(#jr-enamel)\" stroke=\"#d3f2f7\" stroke-width=\"1.2\"/>",
+    "<path d=\"M55 18q13 12 8 31q-4 9-13 11q10-12 6-26z\" fill=\"url(#jr-edge)\" opacity=\".61\"/>",
+    "<path d=\"M13 29q0-12 13-14\" fill=\"none\" stroke=\"#ffffff\" opacity=\".68\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>",
     "<path d=\"M13 24q10-10 26-9\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".9\"/>",
     "<rect x=\"13\" y=\"23\" width=\"48\" height=\"29\" rx=\"14.5\" fill=\"url(#jr-face)\" stroke=\"#41838f\" stroke-width=\".9\"/>",
     "<path d=\"M21 27h29\" stroke=\"#a5fcf0\" stroke-opacity=\".14\" stroke-width=\"2\" stroke-linecap=\"round\"/>",
@@ -61,16 +65,17 @@
 
   // Each attachment has a real target element, a surface (ledge/side) and an
   // offset derived from getBoundingClientRect(). No absolute magic coordinates.
+  // Only visual panels and controls can support the mascot.
   const anchorsSelector = [
-    "main h1", "main h2", "main h3",
-    "main .section-label", "main .project-card", "main .service",
-    "main .price-card", "main .upcoming-card", "main .related-card",
-    "main .masterworks-item", "main .lab-tab", "main .roadmap-card",
-    "main .steps li", "main .search-paths a", "main .faq-list details",
-    "main .article-section", "main .article-section li",
-    "main .feature-card", "main .intro-actions", "main .section-head-inline",
-    "main .hero-actions", "main .project-info", "main .teaser-layout",
-    "main .section-heading", "main .studio-card", "main .card", "main .article-layout aside"
+    "main .project-card", "main .service", "main .price-card",
+    "main .release-card", "main .upcoming-card", "main .related-card",
+    "main .search-paths-grid a", "main .direction-card",
+    "main .roadmap-card", "main .feature-card", "main .studio-card",
+    "main .bot-studio-card", "main .motion-plan", "main .lab-shell",
+    "main .lab-node", "main .hero-persona", "main .hero-visual",
+    "main .developer-photo-card", "main .masterworks-item",
+    "main .faq-list details", "main .card", "main .btn",
+    "main .eyebrow", "main .tag", "main .chip", "main button"
   ].join(",");
   const protectedSelector = [
     "main h1", "main h2", "main h3", "main p", "main li",
@@ -92,6 +97,7 @@
   let lastSelected = null, obstacleCache = [], obstacleAt = -10000, obstacleScrollAt = 0;
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
   let tracking = false, teleportPending = null;
+  let patrolTarget=null,patrolTargetAt=0,patrolLastTick=0,patrolLastCheck=0;
   let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
   let suppressClickUntil = 0;
   const drag = {
@@ -140,6 +146,9 @@
     const textContainers=/^(H1|H2|H3|P|LI|LABEL|SUMMARY|A|SMALL)$/;
     for(const el of document.querySelectorAll(protectedSelector)){
       if(el.closest("[hidden], [inert]")||!el.getClientRects().length)continue;
+      // The panel itself is a landing surface, not an obstruction. Its child
+      // headings, paragraphs and controls remain in the obstacle map.
+      if(el.matches(anchorsSelector) && isPhysicalSurface(el))continue;
       let rects=el.getClientRects();
       if(textContainers.test(el.tagName)){
         try{
@@ -172,55 +181,60 @@
     const box = {l:point.x+4, t:point.y+3, r:point.x+w-4, b:point.y+h-6};
     return !obstacles.some(rect => overlaps(box, rect));
   }
-  function pointsOnSurface(el) {
-    const r = el.getBoundingClientRect(), {w,h} = bounds();
-    if (!visible(el,r)) return [];
-    const vertical = clamp(r.top + Math.min(18, r.height * .2), headerEdge()+2, innerHeight-h-10);
-    const points = [
-      {x:r.right - w*.82,y:r.top-h+7,side:"ledge",kind:"perched"},
-      {x:r.left - w*.18,y:r.top-h+7,side:"ledge",kind:"perched"},
-      {x:r.right + 3,y:vertical,side:"right",kind:"clinging"},
-      {x:r.left - w - 3,y:vertical,side:"left",kind:"clinging"}
-    ];
-    if (r.height > 75) {
-      points.push(
-        {x:r.right+3,y:r.bottom-h-8,side:"right",kind:"clinging"},
-        {x:r.left-w-3,y:r.bottom-h-8,side:"left",kind:"clinging"}
-      );
-    }
-    // No "below" point on mobile: whitespace is not a physical surface.
-    return points.map(p=>({...p,element:el}));
+  function isPhysicalSurface(el) {
+    if(!visible(el) || el.closest("dialog,[aria-modal='true']"))return false;
+    const r=el.getBoundingClientRect(),{w}=bounds();
+    if(r.width<Math.max(48,w*1.35) || r.height<19)return false;
+    const cs=window.getComputedStyle?.(el);
+    if(!cs)return false;
+    const bg=(cs.backgroundColor||"").replace(/\s/g,"").toLowerCase();
+    const solid=!!bg && bg!=="transparent" && bg!=="rgba(0,0,0,0)" &&
+      bg!=="#0000" && bg!=="#00000000";
+    const gradient=!!cs.backgroundImage && cs.backgroundImage!=="none";
+    const bc=(cs.borderTopColor||"").replace(/\s/g,"").toLowerCase();
+    const border=cs.borderTopStyle!=="none" && cs.borderTopStyle!=="hidden" &&
+      parseFloat(cs.borderTopWidth||"0")>=0.5 && bc!=="transparent" &&
+      bc!=="rgba(0,0,0,0)";
+    const shadow=!!cs.boxShadow && cs.boxShadow!=="none";
+    return solid||gradient||border||shadow;
   }
-  function chooseAnchor(preferred=null, {nearby=false, exclude=null}={}) {
-    if (modalOpen()) return null;
-    const obstacles=collectObstacles();
-    const candidates=[];
-    const allowed=anchors.filter(el=>el!==exclude && visible(el));
-    if(preferred && preferred!==exclude && visible(preferred)&&!allowed.includes(preferred))
-      allowed.unshift(preferred);
-    // The focus band is *inside* the page, not pinned against a viewport edge.
-    const focusY=clamp(innerHeight*.43,headerEdge()+125,innerHeight-145);
-    const {h}=bounds();
-    for(const el of allowed){
+  function pointsOnSurface(el) {
+    if(!isPhysicalSurface(el))return [];
+    const r=el.getBoundingClientRect(),{w}=bounds();
+    // Soles occupy y≈90/96 of the SVG, rather than the wrapper's bottom.
+    const top=r.top-w*1.205;
+    const left=Math.max(r.left+7,8);
+    const right=Math.min(r.right-w-7,innerWidth-w-8);
+    if(right<left)return [];
+    const xs=[r.left+Math.min(18,r.width*.2)-w*.5,
+      r.left+r.width*.5-w*.5,
+      r.right-Math.min(18,r.width*.2)-w*.5];
+    return xs.map((xx,slot)=>({
+      x:clamp(xx,left,right),y:top,side:"ledge",
+      slot,kind:"perched",element:el
+    }));
+  }
+  function chooseAnchor(preferred=null,{nearby=false,exclude=null}={}) {
+    if(modalOpen())return null;
+    const obstacles=collectObstacles(),candidates=[];
+    const allowed=anchors.filter(el=>el!==exclude && isPhysicalSurface(el));
+    if(preferred && preferred!==exclude && isPhysicalSurface(preferred) &&
+       !allowed.includes(preferred))allowed.unshift(preferred);
+    const reference=clamp(innerHeight*.56,headerEdge()+115,innerHeight-100);
+    for(const el of allowed) {
       const r=el.getBoundingClientRect();
-      if(nearby && current?.element &&
-        Math.abs(r.top-current.element.getBoundingClientRect().top)>innerHeight*.44)continue;
-      const preferredMatch=preferred && (el===preferred || preferred.contains?.(el));
-      for(const candidate of pointsOnSurface(el)){
-        if(!spaceFree(candidate,obstacles))continue;
-        const center=candidate.y+h*.52;
-        const dist=Math.hypot(candidate.x-x,candidate.y-y);
-        const approachingEdge=Math.max(0,headerEdge()+100-center,
-          center-(innerHeight-115));
-        let score=Math.abs(center-focusY)*.78+dist*.065+approachingEdge*2.4;
-        if(candidate.side==="ledge")score-=16;
-        if(el.matches("h1,h2,h3"))score-=24;
-        if(preferredMatch)score-=240;
-        if(current?.element===el && current.side===candidate.side &&
-            approachingEdge<18)score-=25;
-        if(current?.element===el && center>headerEdge()+140 &&
-            center<innerHeight-145)score-=30;
-        candidates.push({...candidate,score});
+      if(nearby&&current?.element &&
+         Math.abs(r.top-current.element.getBoundingClientRect().top)>innerHeight*.45)continue;
+      const preferredMatch=el===preferred || !!preferred?.contains?.(el);
+      for(const point of pointsOnSurface(el)){
+        if(!spaceFree(point,obstacles))continue;
+        let score=Math.abs(point.y-reference)*.55 +
+          Math.hypot(point.x-x,point.y-y)*.09;
+        if(preferredMatch)score-=260;
+        if(current?.element===el && current.slot===point.slot)score-=95;
+        if(r.top<headerEdge()+65)score+=75;
+        if(point.y>innerHeight-bounds().h-65)score+=55;
+        candidates.push({...point,score});
       }
     }
     candidates.sort((a,b)=>a.score-b.score);
@@ -278,11 +292,86 @@
   // Recalculate a flight target on every frame. A DOM element moves while the
   // browser smoothly scrolls; a frozen destination causes the observed stutter.
   function livePoint(point) {
-    if(!point?.element || !visible(point.element))return null;
-    const options=pointsOnSurface(point.element);
-    return options.find(p=>p.side===point.side &&
-      (p.side!=="ledge"||Math.abs(p.x-point.x)<bounds().w*.75))||
-      options.find(p=>p.side===point.side)||null;
+    if(!point?.element||!isPhysicalSurface(point.element))return null;
+    return pointsOnSurface(point.element).find(p=>p.slot===point.slot)||null;
+  }
+  function freeFlightPosition(obstacles=collectObstacles(),different=false) {
+    const {w,h}=bounds(),ceiling=headerEdge()+12;
+    const xs=[9,innerWidth-w-9,Math.round(innerWidth*.15),
+      Math.round(innerWidth*.85-w)];
+    const ys=[.28,.44,.61,.76].map(t=>clamp(innerHeight*t,ceiling,
+      Math.max(ceiling,innerHeight-h-12)));
+    const options=[];
+    for(const xx of xs)for(const yy of ys){
+      const p={x:xx,y:yy};
+      if(spaceFree(p,obstacles))options.push(p);
+    }
+    if(!options.length)return null;
+    options.sort((a,b)=>{
+      const score=p=>Math.hypot(p.x-x,p.y-y)+
+        (different&&Math.hypot(p.x-x,p.y-y)<55?500:0);
+      return score(a)-score(b);
+    });
+    return options[0];
+  }
+  function startFreeFlight() {
+    if(dragging()||modalOpen()){show(false);return;}
+    if(robot.classList.contains("is-patrolling")&&flight)return;
+    resetFlight();
+    current=null;pose(null);
+    robot.classList.remove("is-landing","is-docked","is-perched","is-clinging");
+    robot.classList.add("is-flying","is-patrolling");
+    const safe=freeFlightPosition(collectObstacles(true));
+    if(!safe){show(false);return;}
+    patrolTarget=safe;patrolTargetAt=performance.now()-1750;
+    patrolLastTick=performance.now();patrolLastCheck=0;
+    const token=flightToken;
+    const begin=()=>{
+      if(token!==flightToken||dragging())return;
+      if(reduced()){
+        setPosition(safe.x,safe.y);
+        robot.classList.remove("is-patrolling");
+        show(true);
+        return;
+      }
+      show(true);
+      function tick(now){
+        if(token!==flightToken||dragging()||modalOpen()||document.hidden){
+          flight=0;return;
+        }
+        if(now-patrolLastCheck>900){
+          patrolLastCheck=now;
+          const ground=chooseAnchor();
+          if(ground){flight=0;anchorTo(ground,true);return;}
+        }
+        const obstacles=collectObstacles();
+        if(!patrolTarget||now-patrolTargetAt>2100||
+           !spaceFree(patrolTarget,obstacles)){
+          patrolTarget=freeFlightPosition(obstacles,true);
+          patrolTargetAt=now;
+        }
+        if(!patrolTarget){flight=0;show(false);return;}
+        const dt=clamp(now-patrolLastTick,8,45);
+        patrolLastTick=now;
+        const mix=1-Math.exp(-dt/460);
+        const next={x:x+(patrolTarget.x-x)*mix,
+          y:y+(patrolTarget.y-y)*mix};
+        if(spaceFree(next,obstacles))setPosition(next.x,next.y);
+        else patrolTarget=null;
+        robot.style.setProperty("--jr-yaw",
+          clamp((patrolTarget?.x||x)-x,-13,13).toFixed(1)+"deg");
+        flight=requestAnimationFrame(tick);
+      }
+      flight=requestAnimationFrame(tick);
+    };
+    if(x<0||!spaceFree({x,y},collectObstacles())){
+      show(false);
+      setTimeout(()=>{
+        if(token!==flightToken)return;
+        setPosition(safe.x,safe.y);
+        begin();
+      },reduced()?0:245);
+    }else begin();
   }
   function teleportTo(point) {
     resetFlight();
@@ -295,7 +384,7 @@
     clearTimeout(teleportTimer);
     const token=++teleportToken;
     teleportPending=point;
-    if(!point){current=null;show(false);return;}
+    if(!point){startFreeFlight();return;}
     if(reduced()||!robot.classList.contains("is-ready")||
        robot.classList.contains("is-hidden")){
       setPosition(point.x,point.y);pose(point);show(true);return;
@@ -307,7 +396,7 @@
       teleportPending=null;
       const landing=(preferred && livePoint(preferred))||
         chooseAnchor();
-      if(!landing){current=null;show(false);return;}
+      if(!landing){startFreeFlight();return;}
       current=landing;
       setPosition(landing.x,landing.y);
       pose(landing);
@@ -329,11 +418,11 @@
   }
   function anchorTo(point,animate=false){
     if(dragging())return;
-    if(!point){resetFlight();current=null;show(false);return;}
+    if(!point){startFreeFlight();return;}
     if(modalOpen()){resetFlight();show(false);return;}
     const previous=current;
-    const same=previous?.element===point.element&&previous?.side===point.side;
-    if(same && !flight && !relocating()){
+    const same=previous?.element===point.element&&previous?.slot===point.slot;
+    if(same && !flight && !relocating()&&!robot.classList.contains("is-patrolling")){
       current=point;setPosition(point.x,point.y);pose(point);show(true);
       return; // exact surface tracking, no floating interpolation
     }
@@ -358,6 +447,7 @@
     let latest=point;
     robot.classList.remove("is-perched","is-clinging","is-docked",
       "is-inspecting","is-napping","is-waving","is-balancing","is-landing");
+    robot.classList.remove("is-patrolling");
     robot.classList.add("is-flying");
     show(true);
     function tick(now){
@@ -370,7 +460,7 @@
         // Never keep flying to its stale location.
         const alternative=chooseAnchor(null,{exclude:latest.element});
         if(alternative){latest=alternative;current=alternative;}
-        else {teleportTo(null);return;}
+        else {startFreeFlight();return;}
       }
       const q=t*t*(3-2*t),u=1-q,dx=latest.x-fromX,dy=latest.y-fromY;
       const p1x=fromX+dx*.12,p1y=fromY-lift;
@@ -401,7 +491,7 @@
     const target=(preferred&&visible(preferred)?chooseAnchor(preferred):null)||
       chooseAnchor();
     if(!target){anchorTo(null);return;}
-    if(flight && current?.element===target.element)return;
+    if(flight && current?.element===target.element && !robot.classList.contains("is-patrolling"))return;
     anchorTo(target,animate);
   }
   function followSurface(now) {
@@ -412,12 +502,17 @@
     if(!anchors.length)refreshAnchors();
     const moving=now-lastScroll<340;
     // The aircraft follows the *same world object* at every scroll frame.
+    if(flight && robot.classList.contains("is-patrolling")){
+      const ground=chooseAnchor(requested&&visible(requested)?requested:null);
+      if(ground)anchorTo(ground,true);
+      return;
+    }
     if(flight)return; // its flight frame calculates the dynamic DOM target
     const attached=livePoint(current);
     const rects=collectObstacles();
     const grounded=attached&&spaceFree(attached,rects);
     const yMid=attached?attached.y+bounds().h*.5:-1000;
-    const healthy=grounded&&yMid>headerEdge()+150&&yMid<innerHeight-150;
+    const healthy=grounded&&yMid>headerEdge()+90&&yMid<innerHeight-90;
     // Only compare anchors periodically to avoid selecting a new object
     // each time a few pixels of scroll take place.
     if(now-lastAnchorCheck>115 || !grounded){
@@ -425,7 +520,7 @@
       const preferred=requested && visible(requested)?requested:null;
       const selected=chooseAnchor(preferred) ;
       if(selected && (!current ||
-        selected.element!==current.element||selected.side!==current.side)){
+        selected.element!==current.element||selected.slot!==current.slot)){
         if(!healthy || selected.score+38<(current?.score??9999) ||
            (preferred&&selected.element===preferred)){
           anchorTo(selected,true);
@@ -477,7 +572,7 @@
   function closestAnchor(target) {
     if (!(target instanceof Element) || target.closest("dialog,footer")) return null;
     if (isTyping(target)) return null;
-    return target.closest(".project-card,.service,.price-card,.related-card,.upcoming-card,.masterworks-item,.lab-tab,.roadmap-card,.section-label,h1,h2,h3,.article-section") ||
+    return target.closest(".project-card,.service,.price-card,.related-card,.upcoming-card,.release-card,.search-paths-grid a,.hero-persona,.hero-visual,.masterworks-item,.lab-tab,.roadmap-card,.direction-card,.studio-card,.section-label,h1,h2,h3,.article-section") ||
       (target.matches("a,button") && target.closest("main") ? target : null);
   }
   // Hover fixation: select a safe outer edge after a short dwell, never chase
@@ -611,7 +706,7 @@
     drag.active=true;
     current=null;
     lastInteraction=performance.now();
-    robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden",
+    robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden","is-patrolling",
       "is-flying","is-napping","is-waving","is-landing","is-scrolling",
       "is-perched","is-clinging","is-docked");
     robot.classList.add("is-grabbed","is-dragging");
@@ -623,7 +718,7 @@
   }
   button.addEventListener("pointerdown",ev=>{
     if(dragging()||relocating()||robot.classList.contains("is-hidden")||
-       robot.classList.contains("is-flying")||(!ev.isPrimary)||
+       (robot.classList.contains("is-flying")&&!robot.classList.contains("is-patrolling"))||(!ev.isPrimary)||
        (ev.pointerType==="mouse"&&ev.button!==0))return;
     drag.armed=true;
     drag.active=false;
