@@ -103,7 +103,7 @@
   let requested = null, lastFlight = -10000, lastInteraction = performance.now();
   let lastSelected = null, obstacleCache = [], obstacleAt = -10000;
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
-  let tracking = false;
+  let tracking = false, teleportPending = null;
   let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
   let suppressClickUntil = 0;
   const drag = {
@@ -182,22 +182,16 @@
     const points = [
       {x:r.right - w*.82,y:r.top-h+7,side:"ledge",kind:"perched"},
       {x:r.left - w*.18,y:r.top-h+7,side:"ledge",kind:"perched"},
-      {x:r.right + 10,y:vertical,side:"right",kind:"clinging"},
-      {x:r.left - w - 10,y:vertical,side:"left",kind:"clinging"}
+      {x:r.right + 3,y:vertical,side:"right",kind:"clinging"},
+      {x:r.left - w - 3,y:vertical,side:"left",kind:"clinging"}
     ];
     if (r.height > 75) {
       points.push(
-        {x:r.right+9,y:r.bottom-h-8,side:"right",kind:"clinging"},
-        {x:r.left-w-9,y:r.bottom-h-8,side:"left",kind:"clinging"}
+        {x:r.right+3,y:r.bottom-h-8,side:"right",kind:"clinging"},
+        {x:r.left-w-3,y:r.bottom-h-8,side:"left",kind:"clinging"}
       );
     }
-    if (innerWidth < 820) {
-      // Narrow layouts: use the space after text, not on top of the heading.
-      points.push(
-        {x:innerWidth-w-9,y:r.bottom+12,side:"below",kind:"perched"},
-        {x:8,y:r.bottom+12,side:"below",kind:"perched"}
-      );
-    }
+    // No "below" point on mobile: whitespace is not a physical surface.
     return points.map(p=>({...p,element:el}));
   }
   function chooseAnchor(preferred=null, {nearby=false, exclude=null}={}) {
@@ -305,20 +299,32 @@
   }
   function teleportTo(point) {
     resetFlight();
+    // Once the portal opens, let it finish instead of restarting it on
+    // each new scroll event. Only the pending landing location is replaced.
+    if(relocating()){
+      teleportPending=point;
+      return;
+    }
     clearTimeout(teleportTimer);
     const token=++teleportToken;
+    teleportPending=point;
     if(!point){current=null;show(false);return;}
-    if(reduced() || !robot.classList.contains("is-ready") ||
-       robot.classList.contains("is-hidden")) {
+    if(reduced()||!robot.classList.contains("is-ready")||
+       robot.classList.contains("is-hidden")){
       setPosition(point.x,point.y);pose(point);show(true);return;
     }
     show(false);
     teleportTimer=setTimeout(()=>{
       if(token!==teleportToken || dragging())return;
-      const landing=livePoint(point)||chooseAnchor()||dock();
-      if(!landing){current=null;return;}
+      const preferred=teleportPending;
+      teleportPending=null;
+      const landing=(preferred && livePoint(preferred))||
+        chooseAnchor()||dock();
+      if(!landing){current=null;show(false);return;}
       current=landing;
-      setPosition(landing.x,landing.y);pose(landing);show(true);
+      setPosition(landing.x,landing.y);
+      pose(landing);
+      show(true);
       lastFlight=performance.now();
     },250);
   }
@@ -402,6 +408,7 @@
   }
   function settle(preferred=null,animate=true){
     if(dragging())return;
+    if(relocating())return;
     if(modalOpen()){resetFlight();show(false);return;}
     if(!anchors.length)refreshAnchors();
     const target=(preferred&&visible(preferred)?chooseAnchor(preferred):null)||
@@ -414,7 +421,7 @@
     scrollFrame=0;
     if(dragging())return;
     if(modalOpen()){resetFlight();show(false);return;}
-    if(relocating())return; // teleport is already in progress
+    if(relocating())return; // let the 250ms portal animation finish
     if(!anchors.length)refreshAnchors();
     const moving=now-lastScroll<340;
     // The aircraft follows the *same world object* at every scroll frame.
@@ -489,7 +496,7 @@
   // Hover fixation: select a safe outer edge after a short dwell, never chase
   // each mousemove. Keyboard focus gets the same surface-aware treatment.
   document.addEventListener("pointerover",ev=>{
-    if (ev.pointerType==="touch" || reduced() || modalOpen() || dragging() || flight || relocating()) return;
+    if (ev.pointerType==="touch" || reduced() || modalOpen() || dragging() || flight || relocating() || performance.now()-lastScroll<900) return;
     const el=closestAnchor(ev.target);
     if (!el || el===current?.element) return;
     clearTimeout(hoverTimeout);
@@ -503,7 +510,7 @@
   document.addEventListener("focusin",ev=>{
     if(isTyping(ev.target)){show(false);return;}
     const el=closestAnchor(ev.target);
-    if(el&&!reduced()&&!modalOpen()&&!dragging()){
+    if(el&&!reduced()&&!modalOpen()&&!dragging()&&performance.now()-lastScroll>650){
       const point=chooseAnchor(el);
       if(point?.element===el)anchorTo(point,true);
     }
@@ -521,6 +528,7 @@
   window.addEventListener("scroll",scheduleScroll,{passive:true});
   window.addEventListener("scrollend",()=>{
     if(dragging())return;
+    clearTimeout(scrollTimeout);scrollTimeout=0;
     if(requested&&visible(requested)){
       const el=requested;requested=null;settle(el,true);
     }else {requested=null;settle(null,true);}
