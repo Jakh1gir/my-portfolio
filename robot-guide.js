@@ -382,6 +382,10 @@
     }
     return waypoints;
   }
+  function livePoint(point) {
+    if(!point?.element||!isPhysicalSurface(point.element))return null;
+    return pointsOnSurface(point.element).find(p=>p.slot===point.slot)||null;
+  }
   // The same continuous motion engine drives landing and free patrol.
   function flightTick(now,token){
     if(token!==flightToken||!air||dragging()||document.hidden)return;
