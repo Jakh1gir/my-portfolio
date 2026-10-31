@@ -96,10 +96,9 @@
   let requested = null, lastFlight = -10000, lastInteraction = performance.now();
   let lastSelected = null, obstacleCache = [], obstacleAt = -10000, obstacleScrollAt = 0;
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
-  let tracking = false, teleportPending = null;
-  let patrolTarget=null,patrolTargetAt=0,patrolLastTick=0,patrolLastCheck=0;
-  let patrolLeg=null,patrolSequence=0,patrolRetryAt=0;
-  let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
+  // A single velocity-bearing flight state survives every target change.
+  // No hidden position changes, portal effects or teleport timers.
+  let air=null,patrolSequence=0;
   let suppressClickUntil = 0;
   const drag = {
     pointerId: null, armed: false, active: false, timer: 0, frame: 0,
@@ -107,7 +106,6 @@
     clientX: 0, clientY: 0, targetX: 0, targetY: 0, lastTime: 0,
     pointerType: ""
   };
-  const relocating = () => robot.classList.contains("is-teleport-out");
   const dragging = () => drag.armed || drag.active;
 
   const isTyping = target => target instanceof Element &&
@@ -246,36 +244,9 @@
     robot.style.transform="translate3d("+px.toFixed(1)+"px,"+py.toFixed(1)+"px,0)";
   }
   function show(yes) {
-    if (yes) {
-      clearTimeout(vanishTimer);
-      const returning = robot.classList.contains("is-hidden") ||
-                        robot.classList.contains("is-teleport-out");
-      robot.classList.remove("is-hidden", "is-teleport-out");
-      if (returning && !reduced() && !drag.active) {
-        robot.classList.remove("is-teleport-in");
-        void robot.offsetWidth;
-        robot.classList.add("is-teleport-in");
-        clearTimeout(appearTimer);
-        appearTimer = setTimeout(() => robot.classList.remove("is-teleport-in"), 420);
-      }
-    } else if (!robot.classList.contains("is-hidden") && !relocating()) {
-      clearTimeout(appearTimer);
-      robot.classList.remove("is-teleport-in");
-      if (reduced() || !robot.classList.contains("is-ready")) {
-        robot.classList.add("is-hidden");
-      } else {
-        robot.classList.add("is-teleport-out");
-        clearTimeout(vanishTimer);
-        vanishTimer = setTimeout(() => {
-          if (robot.classList.contains("is-teleport-out")) {
-            robot.classList.add("is-hidden");
-            robot.classList.remove("is-teleport-out");
-          }
-        }, 230);
-      }
-    }
-    button.tabIndex = yes ? 0 : -1;
-    button.setAttribute("aria-hidden", String(!yes));
+    robot.classList.toggle("is-hidden",!yes);
+    button.tabIndex=yes?0:-1;
+    button.setAttribute("aria-hidden",String(!yes));
   }
   function pose(point) {
     robot.classList.toggle("is-perched", point?.kind==="perched");
@@ -286,314 +257,346 @@
   }
   function resetFlight() {
     flightToken++;
-    if (flight) cancelAnimationFrame(flight);
-    flight = 0;
+    if(flight)cancelAnimationFrame(flight);
+    flight=0;air=null;
     robot.classList.remove("is-flying","is-patrolling","is-takeoff",
-      "is-cruising","is-descending","is-landing","is-bouncing");
+      "is-cruising","is-descending","is-flight-fast","is-flight-braking",
+      "is-landing","is-bouncing");
   }
-  // Recalculate a flight target on every frame. A DOM element moves while the
-  // browser smoothly scrolls; a frozen destination causes the observed stutter.
-  function livePoint(point) {
-    if(!point?.element||!isPhysicalSurface(point.element))return null;
-    return pointsOnSurface(point.element).find(p=>p.slot===point.slot)||null;
-  }
-  const smooth = t => {
-    const v=clamp(t,0,1);
-    return v*v*(3-2*v);
+  const smooth=t=>{
+    const a=clamp(t,0,1);return a*a*(3-2*a);
   };
   function setFlightStage(stage) {
-    const names=["is-takeoff","is-cruising","is-descending"];
-    for(const name of names)robot.classList.toggle(name,name==="is-"+stage);
+    for(const name of ["takeoff","cruising","descending"])
+      robot.classList.toggle("is-"+name,stage===name);
     robot.dataset.flightPhase=stage;
   }
-  function setFlightAttitude(dx,dy,phase,dt=16) {
-    const v=clamp(16/Math.max(dt,10),.5,1.3);
-    const yaw=clamp(dx*v*.37,-17,17);
-    const roll=clamp(dx*v*.24,-11,11);
-    const pitch=phase==="takeoff"?-15:phase==="descending"?9:
-      clamp(-dy*v*.25,-10,10);
+  function setFlightAttitude(vx,vy,phase) {
+    const speed=Math.hypot(vx,vy);
+    const yaw=clamp(vx/21,-19,19);
+    const roll=clamp(vx/30,-13,13);
+    const pitch=phase==="takeoff"?-13:phase==="descending"?10:
+      clamp(-vy/20,-11,11);
     robot.style.setProperty("--jr-yaw",yaw.toFixed(1)+"deg");
     robot.style.setProperty("--jr-roll",roll.toFixed(1)+"deg");
     robot.style.setProperty("--jr-pitch",pitch.toFixed(1)+"deg");
+    robot.style.setProperty("--jr-speed",(clamp(speed/390,0,1)).toFixed(3));
+    robot.style.setProperty("--jr-jet-period",
+      (speed>265?".13":speed>130?".21":".37")+"s");
+    robot.classList.toggle("is-flight-fast",speed>240);
+    robot.classList.toggle("is-flight-braking",speed<70 && phase!=="takeoff");
+    robot.dataset.flightDirection=Math.abs(vx)>Math.abs(vy)*1.2?
+      (vx>0?"right":"left"):(vy>0?"down":"up");
   }
-  function flightPoint(start,end,t,lift) {
-    // Three continuous stages:
-    // 0-.22: straight powered vertical take-off;
-    // .22-.78: traverse the X axis with an arched change in altitude;
-    // .78-1: vertical descent onto the actual surface.
-    if(t<=.22){
-      const u=smooth(t/.22);
-      return {x:start.x,y:start.y-lift*u,stage:"takeoff"};
-    }
-    if(t<.78){
-      const u=smooth((t-.22)/.56);
-      return {
-        x:start.x+(end.x-start.x)*u,
-        y:(start.y-lift)+(end.y-start.y)*u-
-          Math.sin(Math.PI*u)*Math.min(24,12+Math.abs(end.x-start.x)*.045),
-        stage:"cruising"
-      };
-    }
-    const u=smooth((t-.78)/.22);
-    return {x:end.x,y:end.y-lift*(1-u),stage:"descending"};
-  }
-  function routeClear(start,end,lift,obstacles=collectObstacles()) {
-    for(let i=1;i<27;i++){
-      const p=flightPoint(start,end,i/27,lift);
-      if(!spaceFree(p,obstacles))return false;
+  function segmentFree(from,to,obstacles=collectObstacles()) {
+    const d=Math.hypot(to.x-from.x,to.y-from.y);
+    if(d<.5)return true;
+    const n=Math.ceil(d/13);
+    for(let i=1;i<=n;i++){
+      const t=i/n;
+      if(!spaceFree({x:from.x+(to.x-from.x)*t,
+        y:from.y+(to.y-from.y)*t},obstacles))return false;
     }
     return true;
   }
-  function freeFlightPosition(obstacles=collectObstacles(),different=false) {
-    const {w,h}=bounds(),ceiling=headerEdge()+14;
-    const xs=[10,innerWidth-w-10,
-      Math.round(innerWidth*.18),Math.round(innerWidth*.82-w),
-      Math.round(innerWidth*.5-w*.5)];
-    const ys=[.25,.39,.55,.7,.8].map(t=>clamp(innerHeight*t,
-      ceiling,Math.max(ceiling,innerHeight-h-12)));
-    const options=[];
-    const start={x,y};
-    for(const xx of xs)for(const yy of ys){
-      const dest={x:clamp(xx,8,innerWidth-w-8),y:yy};
-      if(!spaceFree(dest,obstacles))continue;
-      const distance=Math.hypot(dest.x-x,dest.y-y);
-      const dx=Math.abs(dest.x-x),dy=Math.abs(dest.y-y);
-      const preferX=patrolSequence%2===0;
-      const directionPenalty=!different?0:preferX
-        ? (dx<Math.min(120,innerWidth*.16)?300:0)
-        : (dy<Math.min(110,innerHeight*.18)?300:0);
-      const travel=different && distance<Math.min(95,innerWidth*.2)
-        ? 450:0;
-      let blocked=0;
-      // Patrol routes must avoid text for the *whole* journey, not just at
-      // their endpoints. Keep this cheap and only sample candidate routes.
-      if(different && x>=0) {
-        for(let i=1;i<=12;i++){
-          const t=i/13;
-          const px=x+(dest.x-x)*smooth(t);
-          const py=y+(dest.y-y)*smooth(t)-
-            Math.sin(Math.PI*t)*Math.min(22,Math.abs(dest.x-x)*.06);
-          if(!spaceFree({x:px,y:py},obstacles)){blocked=10000;break;}
-        }
-      }
-      options.push({...dest,score:distance*.08+travel+blocked+directionPenalty});
+  // Grid route search happens only when the direct route is blocked.
+  // Each grid cell is a safe full-robot footprint, not just an empty point.
+  function planRoute(from,to,obstacles=collectObstacles()) {
+    if(segmentFree(from,to,obstacles))return [to];
+    const {w,h}=bounds(),left=8,top=headerEdge()+5;
+    const maxX=innerWidth-w-8,maxY=innerHeight-h-10;
+    if(maxX<left||maxY<top)return null;
+    const gap=clamp(Math.min(innerWidth,innerHeight)/13,38,64);
+    const xs=[],ys=[];
+    for(let v=left;v<maxX;v+=gap)xs.push(v);
+    xs.push(maxX);
+    for(let v=top;v<maxY;v+=gap)ys.push(v);
+    ys.push(maxY);
+    const columns=xs.length,rows=ys.length;
+    const cells=Array.from({length:columns*rows},(_,i)=>{
+      const ix=i%columns,iy=Math.floor(i/columns);
+      const p={x:xs[ix],y:ys[iy]};
+      return {...p,free:spaceFree(p,obstacles),i,ix,iy};
+    });
+    const startSeeds=[],finishSeeds=new Set();
+    const radius=gap*3.25;
+    for(const node of cells){
+      if(!node.free)continue;
+      if(Math.hypot(node.x-from.x,node.y-from.y)<radius &&
+         segmentFree(from,node,obstacles))startSeeds.push(node.i);
+      if(Math.hypot(node.x-to.x,node.y-to.y)<radius &&
+         segmentFree(node,to,obstacles))finishSeeds.add(node.i);
     }
-    options.sort((a,b)=>a.score-b.score);
-    return options.find(p=>p.score<10000)||null;
-  }
-  function startFreeFlight() {
-    if(dragging()||modalOpen()){show(false);return;}
-    if(robot.classList.contains("is-patrolling") && flight)return;
-    resetFlight();
-    current=null;pose(null);
-    robot.classList.remove("is-landing","is-docked","is-perched","is-clinging");
-    const safe=freeFlightPosition(collectObstacles(true));
-    if(!safe){show(false);return;}
-    robot.classList.add("is-flying","is-patrolling");
-    patrolLeg=null;patrolTarget=safe;patrolRetryAt=0;
-    patrolLastTick=performance.now();patrolLastCheck=0;
-    const token=flightToken;
-    const initialize=()=>{
-      if(token!==flightToken||dragging())return;
-      if(reduced()){
-        setPosition(safe.x,safe.y);
-        resetFlight();
-        show(true);
-        return;
+    if(!startSeeds.length||!finishSeeds.size)return null;
+    const dist=new Float64Array(cells.length).fill(Infinity);
+    const parent=new Int32Array(cells.length).fill(-1);
+    const visited=new Uint8Array(cells.length);
+    const open=[];
+    for(const id of startSeeds) {
+      dist[id]=Math.hypot(cells[id].x-from.x,cells[id].y-from.y);
+      open.push(id);
+    }
+    let reached=-1;
+    const dirs=[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+    let attempts=0;
+    while(open.length&&attempts++<cells.length){
+      let best=0,score=Infinity;
+      for(let i=0;i<open.length;i++){
+        const n=cells[open[i]];
+        const f=dist[n.i]+Math.hypot(n.x-to.x,n.y-to.y);
+        if(f<score){score=f;best=i;}
       }
-      show(true);
-      const tick=now=>{
-        if(token!==flightToken||dragging()||modalOpen()||document.hidden){
-          flight=0;return;
-        }
-        if(now-patrolLastCheck>760){
-          patrolLastCheck=now;
-          const support=chooseAnchor();
-          if(support){
-            flight=0;
-            anchorTo(support,true);
-            return;
-          }
-        }
-        const obstacles=collectObstacles();
-        if((!patrolLeg && now>=patrolRetryAt) ||
-           (patrolLeg && (now>=patrolLeg.endTime ||
-           !spaceFree(patrolLeg.to,obstacles)))){
-          // Each leg carries the robot through both axes on a smooth
-          // arced trajectory, with no exponential asymptote/frozen hovering.
-          const next=freeFlightPosition(obstacles,true);
-          if(next){
-            const dist=Math.hypot(next.x-x,next.y-y);
-            if(dist>12){
-              const duration=clamp(820+dist*2.6,1050,2600);
-              patrolLeg={from:{x,y},to:next,startTime:now,
-                endTime:now+duration,duration};
-              patrolSequence++;
-              setFlightStage("cruising");
-            }else {patrolLeg=null;patrolRetryAt=now+360;}
-          }else {patrolLeg=null;patrolRetryAt=now+360;}
-          patrolTarget=next;
-          patrolTargetAt=now;
-        }
-        if(patrolLeg){
-          const t=clamp((now-patrolLeg.startTime)/patrolLeg.duration,0,1);
-          const u=smooth(t);
-          const arc=Math.sin(Math.PI*u)*Math.min(22,
-            Math.abs(patrolLeg.to.x-patrolLeg.from.x)*.065+5);
-          const dest={
-            x:patrolLeg.from.x+(patrolLeg.to.x-patrolLeg.from.x)*u,
-            y:patrolLeg.from.y+(patrolLeg.to.y-patrolLeg.from.y)*u-arc
-          };
-          if(spaceFree(dest,obstacles)){
-            const dt=clamp(now-patrolLastTick,8,46);
-            setFlightAttitude(dest.x-x,dest.y-y,"cruising",dt);
-            setPosition(dest.x,dest.y);
-          }else{
-            patrolLeg=null;
-            patrolRetryAt=now+360;
-          }
-        } else {
-          // No safe corridor: remain in a quiet hovering flight posture,
-          // not a fake standing pose, and retry when content moves.
-          setFlightAttitude(0,0,"cruising");
-        }
-        patrolLastTick=now;
-        flight=requestAnimationFrame(tick);
-      };
-      flight=requestAnimationFrame(tick);
-    };
-    if(x<0 || !spaceFree({x,y},collectObstacles())){
-      show(false);
-      setTimeout(()=>{
-        if(token!==flightToken)return;
-        setPosition(safe.x,safe.y);
-        initialize();
-      },reduced()?0:245);
-    }else initialize();
+      const id=open.splice(best,1)[0];
+      if(visited[id])continue;
+      visited[id]=1;
+      if(finishSeeds.has(id)){reached=id;break;}
+      const node=cells[id];
+      for(const [dx,dy] of dirs){
+        const ix=node.ix+dx,iy=node.iy+dy;
+        if(ix<0||iy<0||ix>=columns||iy>=rows)continue;
+        const ni=iy*columns+ix,next=cells[ni];
+        if(!next.free||visited[ni])continue;
+        if(!segmentFree(node,next,obstacles))continue;
+        const nd=dist[id]+Math.hypot(next.x-node.x,next.y-node.y);
+        if(nd>=dist[ni])continue;
+        dist[ni]=nd;parent[ni]=id;
+        open.push(ni);
+      }
+    }
+    if(reached<0)return null;
+    const raw=[];
+    for(let id=reached;id>=0;id=parent[id])raw.push(cells[id]);
+    raw.reverse();raw.push(to);
+    // String-pull across visible unobstructed corridors for smooth turns.
+    const waypoints=[];
+    let base=from,i=0;
+    while(i<raw.length){
+      let last=i;
+      for(let j=i+1;j<raw.length;j++){
+        if(segmentFree(base,raw[j],obstacles))last=j;
+        else break;
+      }
+      const selected=raw[last];
+      waypoints.push({x:selected.x,y:selected.y});
+      base=selected;i=last+1;
+    }
+    return waypoints;
   }
-  function teleportTo(point) {
-    resetFlight();
-    // Once the portal opens, let it finish instead of restarting it on
-    // each new scroll event. Only the pending landing location is replaced.
-    if(relocating()){
-      teleportPending=point;
+  // The same continuous motion engine drives landing and free patrol.
+  function flightTick(now,token){
+    if(token!==flightToken||!air||dragging()||document.hidden)return;
+    if(modalOpen()){resetFlight();show(false);return;}
+    const state=air;
+    const dt=clamp((now-state.last)/1000,.008,.045);
+    state.last=now;
+    const obstacles=collectObstacles();
+    let destination=null;
+    if(state.mode==="landing"){
+      const live=livePoint(state.target);
+      if(live && spaceFree(live,obstacles)){
+        state.target=live;current=live;
+      }else{
+        const alternative=chooseAnchor(null,{exclude:state.target?.element});
+        if(alternative){state.target=alternative;current=alternative;}
+        else {state.mode="patrol";state.stage="cruising";current=null;
+          robot.classList.add("is-patrolling");}
+      }
+    }
+    if(state.mode==="landing"){
+      const target=state.target;
+      if(state.stage==="takeoff"){
+        destination={x:state.takeoffX,y:state.takeoffY};
+        if(Math.hypot(destination.x-x,destination.y-y)<3){
+          state.stage="cruising";state.path=[];state.plannedAt=0;
+        }
+      }
+      if(state.stage==="cruising"){
+        const approach={x:target.x,y:target.y-27};
+        const good=spaceFree(approach,obstacles);
+        destination=good?approach:target;
+        if(Math.hypot(destination.x-x,destination.y-y)<8 &&
+           Math.hypot(state.vx,state.vy)<70){
+          state.stage="descending";state.path=[];
+        }
+      }
+      if(state.stage==="descending")destination={x:target.x,y:target.y};
+    }else{
+      robot.classList.add("is-patrolling");
+      state.stage="cruising";
+      if(now-state.lastSupportCheck>820){
+        state.lastSupportCheck=now;
+        const found=chooseAnchor(requested&&visible(requested)?requested:null);
+        if(found){anchorTo(found,true);return;}
+      }
+      if(!state.patrolGoal || Math.hypot(x-state.patrolGoal.x,
+          y-state.patrolGoal.y)<8 || !spaceFree(state.patrolGoal,obstacles)){
+        if(now>state.nextPatrol){
+          patrolSequence++;
+          state.patrolGoal=freeFlightPosition(obstacles,true);
+          state.nextPatrol=now+2400;
+          state.path=[];
+        }
+      }
+      destination=state.patrolGoal || {x,y};
+    }
+    if(state.mode==="landing"&&state.stage==="descending" &&
+       Math.hypot(destination.x-x,destination.y-y)<2.3 &&
+       Math.hypot(state.vx,state.vy)<38){
+      const landed=livePoint(state.target)||state.target;
+      resetFlight();current=landed;
+      setPosition(landed.x,landed.y);pose(landed);show(true);
+      robot.classList.add("is-landing");
+      setTimeout(()=>robot.classList.remove("is-landing"),420);
+      lastFlight=now;
       return;
     }
-    clearTimeout(teleportTimer);
-    const token=++teleportToken;
-    teleportPending=point;
-    if(!point){startFreeFlight();return;}
-    if(reduced()||!robot.classList.contains("is-ready")||
-       robot.classList.contains("is-hidden")){
-      setPosition(point.x,point.y);pose(point);show(true);return;
+    const direct=segmentFree({x,y},destination,obstacles);
+    if(direct){
+      state.path=[];
+    }else if((!state.path.length || now-state.plannedAt>520 ||
+      !spaceFree(state.path[0],obstacles)) && now>=state.retryAt){
+      const route=planRoute({x,y},destination,obstacles);
+      state.path=route||[];
+      state.plannedAt=now;
+      if(!route)state.retryAt=now+390;
     }
-    show(false);
-    teleportTimer=setTimeout(()=>{
-      if(token!==teleportToken || dragging())return;
-      const preferred=teleportPending;
-      teleportPending=null;
-      const landing=(preferred && livePoint(preferred))||
-        chooseAnchor();
-      if(!landing){startFreeFlight();return;}
-      current=landing;
-      setPosition(landing.x,landing.y);
-      pose(landing);
-      show(true);
-      lastFlight=performance.now();
-    },250);
+    let course=destination;
+    while(state.path.length && Math.hypot(x-state.path[0].x,
+        y-state.path[0].y)<Math.max(9,Math.hypot(state.vx,state.vy)*dt*.9)){
+      state.path.shift();
+    }
+    if(state.path.length)course=state.path[0];
+    // Vector acceleration with braking-distance control; heading and engine
+    // strength are derived from actual velocity (not progress through a timer).
+    const dx=course.x-x,dy=course.y-y,d=Math.hypot(dx,dy);
+    const acceleration=state.stage==="descending"?510:680;
+    const brake=state.stage==="descending"?550:660;
+    const topSpeed=innerWidth<820?240:415;
+    const speedLimit=Math.min(topSpeed,Math.sqrt(2*brake*d));
+    const wantedX=d>0.01?dx/d*speedLimit:0;
+    const wantedY=d>0.01?dy/d*speedLimit:0;
+    let ax=wantedX-state.vx,ay=wantedY-state.vy;
+    const magnitude=Math.hypot(ax,ay);
+    const maxChange=acceleration*dt;
+    if(magnitude>maxChange){ax*=maxChange/magnitude;ay*=maxChange/magnitude;}
+    let vx=state.vx+ax,vy=state.vy+ay;
+    const next={x:x+vx*dt,y:y+vy*dt};
+    if(segmentFree({x,y},next,obstacles)){
+      state.vx=vx;state.vy=vy;
+      setPosition(next.x,next.y);
+    }else{
+      // A newly moving text block invalidated the corridor. Stop thrusting
+      // into it, keep the robot visible and replan without teleporting.
+      state.vx*=.65;state.vy*=.65;
+      state.path=[];state.plannedAt=0;state.retryAt=now+250;
+      if(!spaceFree({x,y},obstacles)){
+        // Existing position is temporarily covered by moving content.
+        // Do not snap elsewhere; wait for a free corridor.
+        state.vx=0;state.vy=0;
+      }
+    }
+    setFlightStage(state.stage);
+    setFlightAttitude(state.vx,state.vy,state.stage);
+    flight=requestAnimationFrame(t=>flightTick(t,token));
   }
-  function pathSafe(point) {
-    const dist=Math.hypot(point.x-x,point.y-y);
-    const lift=clamp(21+dist*.084,25,64);
-    return routeClear({x,y},point,lift);
+  function beginAir(mode,target=null){
+    if(dragging())return;
+    if(reduced()){
+      resetFlight();
+      if(target){current=target;setPosition(target.x,target.y);pose(target);show(true);}
+      else {
+        const safe=freeFlightPosition(collectObstacles());
+        if(safe&&x<0)setPosition(safe.x,safe.y);
+        if(safe)show(true);else show(false);
+      }
+      return;
+    }
+    if(x<0){
+      // Initial mount only: position while the robot is not yet visible.
+      const seed=target||freeFlightPosition(collectObstacles());
+      if(!seed){show(false);return;}
+      setPosition(seed.x,seed.y);
+    }
+    if(air){
+      air.mode=mode;
+      air.target=target;
+      air.stage=mode==="landing"?"cruising":"cruising";
+      air.path=[];air.plannedAt=0;
+      air.patrolGoal=null;
+      robot.classList.toggle("is-patrolling",mode==="patrol");
+      // Keep current velocity, location and the running RAF.
+      show(true);return;
+    }
+    const support=current;
+    const lift=Math.min(41,innerWidth<820?24:34);
+    const upper={x,y:y-lift};
+    const canLift=support && spaceFree(upper,collectObstacles()) &&
+      segmentFree({x,y},upper);
+    air={
+      mode,target,stage:canLift?"takeoff":"cruising",
+      takeoffX:x,takeoffY:upper.y,vx:0,vy:0,
+      last:performance.now(),path:[],plannedAt:0,retryAt:0,
+      patrolGoal:null,nextPatrol:0,lastSupportCheck:0
+    };
+    robot.classList.remove("is-perched","is-clinging","is-docked",
+      "is-landing","is-napping","is-balancing");
+    robot.classList.add("is-flying");
+    robot.classList.toggle("is-patrolling",mode==="patrol");
+    setFlightStage(air.stage);show(true);
+    const token=flightToken;
+    flight=requestAnimationFrame(t=>flightTick(t,token));
   }
-  function anchorTo(point,animate=false){
+  function freeFlightPosition(obstacles=collectObstacles(),different=false) {
+    const {w,h}=bounds();
+    const xs=[9,innerWidth-w-9,innerWidth*.2,innerWidth*.8-w,
+      innerWidth*.5-w*.5];
+    const ys=[.25,.40,.57,.73].map(v=>clamp(innerHeight*v,
+      headerEdge()+7,innerHeight-h-10));
+    const options=[];
+    for(const px of xs)for(const py of ys){
+      const pt={x:clamp(px,8,innerWidth-w-8),y:py};
+      if(!spaceFree(pt,obstacles))continue;
+      const distance=Math.hypot(pt.x-x,pt.y-y);
+      const favorX=patrolSequence%2===0;
+      const directionalPenalty=different ?
+        (favorX&&Math.abs(pt.x-x)<innerWidth*.2?180:0)+
+        (!favorX&&Math.abs(pt.y-y)<innerHeight*.16?180:0):0;
+      options.push({...pt,score:distance*.08+directionalPenalty+
+        (different&&distance<65?300:0)});
+    }
+    options.sort((a,b)=>a.score-b.score);
+    return options[0]||null;
+  }
+  function startFreeFlight(){
+    if(dragging())return;
+    if(air?.mode==="patrol")return;
+    current=null;
+    beginAir("patrol");
+  }
+  function anchorTo(point,animate=true){
     if(dragging())return;
     if(!point){startFreeFlight();return;}
     if(modalOpen()){resetFlight();show(false);return;}
-    const previous=current;
-    const same=previous?.element===point.element&&previous?.slot===point.slot;
-    if(same && !flight && !relocating() && !robot.classList.contains("is-patrolling")){
+    const same=current?.element===point.element&&current?.slot===point.slot;
+    if(same&&!air){
       current=point;setPosition(point.x,point.y);pose(point);show(true);
       return;
     }
+    if(air?.mode==="landing" && same) {
+      air.target=point;
+      return;
+    }
     current=point;
-    lastSelected=previous?.element||null;
-    const dist=Math.hypot(point.x-x,point.y-y);
-    if(reduced()||!robot.classList.contains("is-ready")){
+    lastSelected=point.element;
+    if(!robot.classList.contains("is-ready")||reduced()){
       resetFlight();setPosition(point.x,point.y);pose(point);show(true);
-      return;
-    }
-    if(robot.classList.contains("is-hidden")||relocating()||
-       dist>Math.min(1050,innerWidth*.91) || !pathSafe(point)){
-      teleportTo(point);return;
-    }
-    if(dist<13){
-      resetFlight();setPosition(point.x,point.y);pose(point);show(true);
-      return;
-    }
-    resetFlight();
-    clearTimeout(teleportTimer);
-    ++teleportToken;
-    const token=flightToken,started=performance.now();
-    const startY=y,fromX=x,initialScroll=window.scrollY||0;
-    const duration=clamp(720+dist*1.35,820,1560);
-    const lift=clamp(21+dist*.084,25,64);
-    let target=point,previousX=x,previousY=y,previousTime=started;
-    robot.classList.remove("is-perched","is-clinging","is-docked",
-      "is-inspecting","is-napping","is-waving","is-balancing","is-landing",
-      "is-patrolling");
-    robot.classList.add("is-flying");
-    setFlightStage("takeoff");
-    show(true);
-    function tick(now){
-      if(token!==flightToken||drag.active)return;
-      const t=clamp((now-started)/duration,0,1);
-      const live=livePoint(target);
-      if(live&&spaceFree(live,collectObstacles()))target=live;
-      else {
-        const alternate=chooseAnchor(null,{exclude:target.element});
-        if(alternate){target=alternate;current=alternate;}
-        else {startFreeFlight();return;}
-      }
-      // Start point scrolls with the document; the landing point is measured
-      // live. Smooth-scroll must not leave a phantom starting position.
-      const source={x:fromX,y:startY-((window.scrollY||0)-initialScroll)};
-      const destination={x:target.x,y:target.y};
-      const curve=flightPoint(source,destination,t,lift);
-      const dt=clamp(now-previousTime,8,46);
-      previousTime=now;
-      if(!spaceFree(curve,collectObstacles())){
-        // Layout changed while flying: do not pass across text or controls.
-        teleportTo(target);
-        return;
-      }
-      setFlightStage(curve.stage);
-      setFlightAttitude(curve.x-previousX,curve.y-previousY,curve.stage,dt);
-      setPosition(curve.x,curve.y);
-      previousX=curve.x;previousY=curve.y;
-      if(t<1)flight=requestAnimationFrame(tick);
-      else {
-        flight=0;
-        const final=livePoint(target)||target;
-        current=final;setPosition(final.x,final.y);pose(final);
-        robot.classList.remove("is-flying","is-takeoff",
-          "is-cruising","is-descending");
-        robot.style.setProperty("--jr-pitch","-7deg");
-        robot.style.setProperty("--jr-roll","0deg");
-        robot.classList.add("is-landing");
-        setTimeout(()=>robot.classList.remove("is-landing"),420);
-        lastFlight=performance.now();
-      }
-    }
-    flight=requestAnimationFrame(tick);
+    }else beginAir("landing",point);
   }
   function refreshAnchors() {
     anchors=Array.from(new Set(document.querySelectorAll(anchorsSelector)));
   }
   function settle(preferred=null,animate=true){
     if(dragging())return;
-    if(relocating())return;
     if(modalOpen()){resetFlight();show(false);return;}
     if(!anchors.length)refreshAnchors();
     const target=(preferred&&visible(preferred)?chooseAnchor(preferred):null)||
@@ -606,7 +609,6 @@
     scrollFrame=0;
     if(dragging())return;
     if(modalOpen()){resetFlight();show(false);return;}
-    if(relocating())return; // let the 250ms portal animation finish
     if(!anchors.length)refreshAnchors();
     const moving=now-lastScroll<340;
     // The aircraft follows the *same world object* at every scroll frame.
@@ -686,7 +688,7 @@
   // Hover fixation: select a safe outer edge after a short dwell, never chase
   // each mousemove. Keyboard focus gets the same surface-aware treatment.
   document.addEventListener("pointerover",ev=>{
-    if (ev.pointerType==="touch" || reduced() || modalOpen() || dragging() || flight || relocating() || performance.now()-lastScroll<900) return;
+    if (ev.pointerType==="touch" || reduced() || modalOpen() || dragging() || flight || performance.now()-lastScroll<900) return;
     const el=closestAnchor(ev.target);
     if (!el || el===current?.element) return;
     clearTimeout(hoverTimeout);
@@ -807,14 +809,10 @@
     if(!drag.armed || drag.active)return;
     clearTimeout(drag.timer);
     resetFlight();
-    clearTimeout(teleportTimer);
-    ++teleportToken;
-    clearTimeout(vanishTimer);
-    clearTimeout(appearTimer);
     drag.active=true;
     current=null;
     lastInteraction=performance.now();
-    robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden","is-patrolling",
+    robot.classList.remove("is-hidden","is-patrolling",
       "is-flying","is-napping","is-waving","is-landing","is-scrolling",
       "is-perched","is-clinging","is-docked");
     robot.classList.add("is-grabbed","is-dragging");
@@ -825,7 +823,7 @@
     moveDragTarget();
   }
   button.addEventListener("pointerdown",ev=>{
-    if(dragging()||relocating()||robot.classList.contains("is-hidden")||
+    if(dragging()||robot.classList.contains("is-hidden")||
        (robot.classList.contains("is-flying")&&!robot.classList.contains("is-patrolling"))||(!ev.isPrimary)||
        (ev.pointerType==="mouse"&&ev.button!==0))return;
     drag.armed=true;
@@ -913,7 +911,7 @@
     clearTimeout(idleTimeout);
     if(reduced()||document.hidden)return;
     idleTimeout=setTimeout(()=>{
-      if(modalOpen()||flight||dragging()||relocating()||!current||performance.now()-lastScroll<1200){scheduleIdle();return;}
+      if(modalOpen()||flight||dragging()||!current||performance.now()-lastScroll<1200){scheduleIdle();return;}
       if(performance.now()-lastInteraction<3800){scheduleIdle();return;}
       const cycle=(Math.floor(performance.now()/5300)%5);
       if(cycle===0)react("is-inspecting",1700);
