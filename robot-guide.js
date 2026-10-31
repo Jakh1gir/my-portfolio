@@ -97,7 +97,7 @@
   let lastSelected = null, obstacleCache = [], obstacleAt = -10000, obstacleScrollAt = 0;
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
   // A single velocity-bearing flight state survives every target change.
-  // No hidden position changes, portal effects or teleport timers.
+  // All visible relocation uses continuous velocity-controlled motion.
   let air=null,patrolSequence=0;
   let suppressClickUntil = 0;
   const drag = {
@@ -411,7 +411,7 @@
       if(state.stage==="takeoff"){
         destination={x:state.takeoffX,y:state.takeoffY};
         if(Math.hypot(destination.x-x,destination.y-y)<3){
-          state.stage="cruising";state.path=[];state.plannedAt=0;
+          state.stage="cruising";state.path=[];state.plannedAt=0;state.plannedGoal=null;
         }
       }
       if(state.stage==="cruising"){
@@ -449,6 +449,9 @@
       const landed=livePoint(state.target)||state.target;
       resetFlight();current=landed;
       setPosition(landed.x,landed.y);pose(landed);show(true);
+      robot.dataset.flightPhase="rest";
+      robot.dataset.flightDirection="idle";
+      robot.style.setProperty("--jr-speed","0");
       robot.classList.add("is-landing");
       setTimeout(()=>robot.classList.remove("is-landing"),420);
       lastFlight=now;
@@ -457,11 +460,13 @@
     const direct=segmentFree({x,y},destination,obstacles);
     if(direct){
       state.path=[];
-    }else if((!state.path.length || now-state.plannedAt>520 ||
-      !spaceFree(state.path[0],obstacles)) && now>=state.retryAt){
+    }else if((!state.path.length || !spaceFree(state.path[0],obstacles) ||
+      (state.plannedGoal&&Math.hypot(destination.x-state.plannedGoal.x,
+      destination.y-state.plannedGoal.y)>75)) && now>=state.retryAt){
       const route=planRoute({x,y},destination,obstacles);
       state.path=route||[];
       state.plannedAt=now;
+      state.plannedGoal={x:destination.x,y:destination.y};
       if(!route)state.retryAt=now+390;
     }
     let course=destination;
@@ -490,7 +495,7 @@
       setPosition(next.x,next.y);
     }else{
       // A newly moving text block invalidated the corridor. Stop thrusting
-      // into it, keep the robot visible and replan without teleporting.
+      // into it: keep the robot visible and revise the route.
       state.vx*=.65;state.vy*=.65;
       state.path=[];state.plannedAt=0;state.retryAt=now+250;
       if(!spaceFree({x,y},obstacles)){
@@ -525,7 +530,7 @@
       air.mode=mode;
       air.target=target;
       air.stage=mode==="landing"?"cruising":"cruising";
-      air.path=[];air.plannedAt=0;
+      air.path=[];air.plannedAt=0;air.plannedGoal=null;
       air.patrolGoal=null;
       robot.classList.toggle("is-patrolling",mode==="patrol");
       // Keep current velocity, location and the running RAF.
@@ -539,7 +544,7 @@
     air={
       mode,target,stage:canLift?"takeoff":"cruising",
       takeoffX:x,takeoffY:upper.y,vx:0,vy:0,
-      last:performance.now(),path:[],plannedAt:0,retryAt:0,
+      last:performance.now(),path:[],plannedAt:0,plannedGoal:null,retryAt:0,
       patrolGoal:null,nextPatrol:0,lastSupportCheck:0
     };
     robot.classList.remove("is-perched","is-clinging","is-docked",
@@ -679,7 +684,7 @@
     if(!target||dragging())return;
     requested=target;
     lastInteraction=performance.now();
-    // Browser owns smooth scrolling; don't teleport to a target off screen.
+    // Browser owns smooth scrolling; follow a target as it enters view.
     // As each surface enters the viewport, the robot follows its actual edge.
     if(visible(target))settle(target,true);
   }
