@@ -61,16 +61,17 @@
 
   // Each attachment has a real target element, a surface (ledge/side) and an
   // offset derived from getBoundingClientRect(). No absolute magic coordinates.
+  // Only visual panels and controls can support the mascot.
   const anchorsSelector = [
-    "main h1", "main h2", "main h3",
-    "main .section-label", "main .project-card", "main .service",
-    "main .price-card", "main .upcoming-card", "main .related-card",
-    "main .masterworks-item", "main .lab-tab", "main .roadmap-card",
-    "main .steps li", "main .search-paths a", "main .faq-list details",
-    "main .article-section", "main .article-section li",
-    "main .feature-card", "main .intro-actions", "main .section-head-inline",
-    "main .hero-actions", "main .project-info", "main .teaser-layout",
-    "main .section-heading", "main .studio-card", "main .card", "main .article-layout aside"
+    "main .project-card", "main .service", "main .price-card",
+    "main .release-card", "main .upcoming-card", "main .related-card",
+    "main .search-paths-grid a", "main .direction-card",
+    "main .roadmap-card", "main .feature-card", "main .studio-card",
+    "main .bot-studio-card", "main .motion-plan", "main .lab-shell",
+    "main .lab-node", "main .hero-persona", "main .hero-visual",
+    "main .developer-photo-card", "main .masterworks-item",
+    "main .faq-list details", "main .card", "main .btn",
+    "main .eyebrow", "main .tag", "main .chip", "main button"
   ].join(",");
   const protectedSelector = [
     "main h1", "main h2", "main h3", "main p", "main li",
@@ -92,6 +93,7 @@
   let lastSelected = null, obstacleCache = [], obstacleAt = -10000, obstacleScrollAt = 0;
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
   let tracking = false, teleportPending = null;
+  let patrolTarget=null,patrolTargetAt=0,patrolLastTick=0,patrolLastCheck=0;
   let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
   let suppressClickUntil = 0;
   const drag = {
@@ -172,55 +174,58 @@
     const box = {l:point.x+4, t:point.y+3, r:point.x+w-4, b:point.y+h-6};
     return !obstacles.some(rect => overlaps(box, rect));
   }
-  function pointsOnSurface(el) {
-    const r = el.getBoundingClientRect(), {w,h} = bounds();
-    if (!visible(el,r)) return [];
-    const vertical = clamp(r.top + Math.min(18, r.height * .2), headerEdge()+2, innerHeight-h-10);
-    const points = [
-      {x:r.right - w*.82,y:r.top-h+7,side:"ledge",kind:"perched"},
-      {x:r.left - w*.18,y:r.top-h+7,side:"ledge",kind:"perched"},
-      {x:r.right + 3,y:vertical,side:"right",kind:"clinging"},
-      {x:r.left - w - 3,y:vertical,side:"left",kind:"clinging"}
-    ];
-    if (r.height > 75) {
-      points.push(
-        {x:r.right+3,y:r.bottom-h-8,side:"right",kind:"clinging"},
-        {x:r.left-w-3,y:r.bottom-h-8,side:"left",kind:"clinging"}
-      );
-    }
-    // No "below" point on mobile: whitespace is not a physical surface.
-    return points.map(p=>({...p,element:el}));
+  function isPhysicalSurface(el) {
+    if(!visible(el) || el.closest("dialog,[aria-modal='true']"))return false;
+    const r=el.getBoundingClientRect(),{w}=bounds();
+    if(r.width<Math.max(48,w*1.35) || r.height<19)return false;
+    const cs=window.getComputedStyle?.(el);
+    if(!cs)return false;
+    const bg=(cs.backgroundColor||"").replace(/\s/g,"").toLowerCase();
+    const solid=!!bg && bg!=="transparent" && bg!=="rgba(0,0,0,0)" &&
+      bg!=="#0000" && bg!=="#00000000";
+    const gradient=!!cs.backgroundImage && cs.backgroundImage!=="none";
+    const border=cs.borderTopStyle!=="none" && cs.borderTopStyle!=="hidden" &&
+      parseFloat(cs.borderTopWidth||"0")>=0.5;
+    const shadow=!!cs.boxShadow && cs.boxShadow!=="none";
+    return solid||gradient||border||shadow;
   }
-  function chooseAnchor(preferred=null, {nearby=false, exclude=null}={}) {
-    if (modalOpen()) return null;
-    const obstacles=collectObstacles();
-    const candidates=[];
-    const allowed=anchors.filter(el=>el!==exclude && visible(el));
-    if(preferred && preferred!==exclude && visible(preferred)&&!allowed.includes(preferred))
-      allowed.unshift(preferred);
-    // The focus band is *inside* the page, not pinned against a viewport edge.
-    const focusY=clamp(innerHeight*.43,headerEdge()+125,innerHeight-145);
-    const {h}=bounds();
-    for(const el of allowed){
+  function pointsOnSurface(el) {
+    if(!isPhysicalSurface(el))return [];
+    const r=el.getBoundingClientRect(),{w}=bounds();
+    // Soles occupy y≈90/96 of the SVG, rather than the wrapper's bottom.
+    const top=r.top-w*1.205;
+    const left=Math.max(r.left+7,8);
+    const right=Math.min(r.right-w-7,innerWidth-w-8);
+    if(right<left)return [];
+    const xs=[r.left+Math.min(18,r.width*.2)-w*.5,
+      r.left+r.width*.5-w*.5,
+      r.right-Math.min(18,r.width*.2)-w*.5];
+    return xs.map((xx,slot)=>({
+      x:clamp(xx,left,right),y:top,side:"ledge",
+      slot,kind:"perched",element:el
+    }));
+  }
+  function chooseAnchor(preferred=null,{nearby=false,exclude=null}={}) {
+    if(modalOpen())return null;
+    const obstacles=collectObstacles(),candidates=[];
+    const allowed=anchors.filter(el=>el!==exclude && isPhysicalSurface(el));
+    if(preferred && preferred!==exclude && isPhysicalSurface(preferred) &&
+       !allowed.includes(preferred))allowed.unshift(preferred);
+    const reference=clamp(innerHeight*.56,headerEdge()+115,innerHeight-100);
+    for(const el of allowed) {
       const r=el.getBoundingClientRect();
-      if(nearby && current?.element &&
-        Math.abs(r.top-current.element.getBoundingClientRect().top)>innerHeight*.44)continue;
-      const preferredMatch=preferred && (el===preferred || preferred.contains?.(el));
-      for(const candidate of pointsOnSurface(el)){
-        if(!spaceFree(candidate,obstacles))continue;
-        const center=candidate.y+h*.52;
-        const dist=Math.hypot(candidate.x-x,candidate.y-y);
-        const approachingEdge=Math.max(0,headerEdge()+100-center,
-          center-(innerHeight-115));
-        let score=Math.abs(center-focusY)*.78+dist*.065+approachingEdge*2.4;
-        if(candidate.side==="ledge")score-=16;
-        if(el.matches("h1,h2,h3"))score-=24;
-        if(preferredMatch)score-=240;
-        if(current?.element===el && current.side===candidate.side &&
-            approachingEdge<18)score-=25;
-        if(current?.element===el && center>headerEdge()+140 &&
-            center<innerHeight-145)score-=30;
-        candidates.push({...candidate,score});
+      if(nearby&&current?.element &&
+         Math.abs(r.top-current.element.getBoundingClientRect().top)>innerHeight*.45)continue;
+      const preferredMatch=el===preferred || !!preferred?.contains?.(el);
+      for(const point of pointsOnSurface(el)){
+        if(!spaceFree(point,obstacles))continue;
+        let score=Math.abs(point.y-reference)*.55 +
+          Math.hypot(point.x-x,point.y-y)*.09;
+        if(preferredMatch)score-=260;
+        if(current?.element===el && current.slot===point.slot)score-=95;
+        if(r.top<headerEdge()+65)score+=75;
+        if(point.y>innerHeight-bounds().h-65)score+=55;
+        candidates.push({...point,score});
       }
     }
     candidates.sort((a,b)=>a.score-b.score);
