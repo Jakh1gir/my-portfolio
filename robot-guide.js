@@ -18,6 +18,7 @@
       '<radialGradient id="jr-glow"><stop stop-color="#c4fff3"/><stop offset=".5" stop-color="#52e8d2"/><stop offset="1" stop-color="#148c91"/></radialGradient>',
     '</defs>',
     '<ellipse class="jr-shadow" cx="37" cy="92" rx="22" ry="3.5" fill="#03131a"/>',
+    '<g class="jr-thruster"><path d="M29 81q-6 15 0 14q8-5 8-14z" fill="#74fff0"/><path d="M45 81q6 15 0 14q-8-5-8-14z" fill="#b4e3ff"/><ellipse cx="37" cy="91" rx="12" ry="3" fill="#52e9e1" opacity=".65"/></g>',
     '<g class="jr-leg jr-leg-left"><rect x="23" y="74" width="9" height="12" rx="4" fill="#6c91a6" stroke="#d8eaf1" stroke-width="1"/><path d="M20 85q-1-4 4-4h8q5 0 5 5v3H20z" fill="url(#jr-metal)" stroke="#426e86" stroke-width="1.2"/></g>',
     '<g class="jr-leg jr-leg-right"><rect x="43" y="74" width="9" height="12" rx="4" fill="#6c91a6" stroke="#d8eaf1" stroke-width="1"/><path d="M40 85q-1-4 4-4h8q5 0 5 5v3H40z" fill="url(#jr-metal)" stroke="#426e86" stroke-width="1.2"/></g>',
     '<g class="jr-arm jr-arm-left"><rect x="9" y="57" width="10" height="19" rx="5" transform="rotate(16 14 60)" fill="url(#jr-metal)" stroke="#48738c" stroke-width="1.3"/><circle cx="10" cy="75" r="5" fill="#b9e4ea" stroke="#4f8f9e" stroke-width="1.3"/></g>',
@@ -91,6 +92,16 @@
   let hoverTimeout = 0, actionTimeout = 0, bubbleTimeout = 0, idleTimeout = 0;
   let requested = null, lastFlight = -10000, lastInteraction = performance.now();
   let lastSelected = null, obstacleCache = [], obstacleAt = -10000;
+  let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
+  let suppressClickUntil = 0;
+  const drag = {
+    pointerId: null, armed: false, active: false, timer: 0, frame: 0,
+    startX: 0, startY: 0, grabX: 0, grabY: 0,
+    clientX: 0, clientY: 0, targetX: 0, targetY: 0, lastTime: 0,
+    pointerType: ""
+  };
+  const relocating = () => robot.classList.contains("is-teleport-out");
+  const dragging = () => drag.armed || drag.active;
 
   const isTyping = target => target instanceof Element &&
     !!target.closest("input,textarea,select,[contenteditable='true']");
@@ -222,7 +233,34 @@
     robot.style.transform="translate3d("+px.toFixed(1)+"px,"+py.toFixed(1)+"px,0)";
   }
   function show(yes) {
-    robot.classList.toggle("is-hidden", !yes);
+    if (yes) {
+      clearTimeout(vanishTimer);
+      const returning = robot.classList.contains("is-hidden") ||
+                        robot.classList.contains("is-teleport-out");
+      robot.classList.remove("is-hidden", "is-teleport-out");
+      if (returning && !reduced() && !drag.active) {
+        robot.classList.remove("is-teleport-in");
+        void robot.offsetWidth;
+        robot.classList.add("is-teleport-in");
+        clearTimeout(appearTimer);
+        appearTimer = setTimeout(() => robot.classList.remove("is-teleport-in"), 420);
+      }
+    } else if (!robot.classList.contains("is-hidden") && !relocating()) {
+      clearTimeout(appearTimer);
+      robot.classList.remove("is-teleport-in");
+      if (reduced() || !robot.classList.contains("is-ready")) {
+        robot.classList.add("is-hidden");
+      } else {
+        robot.classList.add("is-teleport-out");
+        clearTimeout(vanishTimer);
+        vanishTimer = setTimeout(() => {
+          if (robot.classList.contains("is-teleport-out")) {
+            robot.classList.add("is-hidden");
+            robot.classList.remove("is-teleport-out");
+          }
+        }, 230);
+      }
+    }
     button.tabIndex = yes ? 0 : -1;
     button.setAttribute("aria-hidden", String(!yes));
   }
@@ -236,55 +274,88 @@
   function resetFlight() {
     flightToken++;
     if (flight) cancelAnimationFrame(flight);
-    flight=0;
-    robot.classList.remove("is-flying","is-landing","is-bouncing");
+    flight = 0;
+    robot.classList.remove("is-flying", "is-landing", "is-bouncing");
+  }
+  // Teleport over long distances or where a safe flight corridor is unavailable.
+  // Never change the robot's location while it is still visible.
+  function teleportTo(point) {
+    if (!point) { resetFlight(); show(false); return; }
+    resetFlight();
+    clearTimeout(teleportTimer);
+    const token = ++teleportToken;
+    if (reduced() || !robot.classList.contains("is-ready") ||
+        robot.classList.contains("is-hidden")) {
+      setPosition(point.x,point.y);
+      pose(point);
+      show(true);
+      return;
+    }
+    show(false);
+    teleportTimer = setTimeout(() => {
+      if (token !== teleportToken || drag.active) return;
+      setPosition(point.x,point.y);
+      pose(point);
+      show(true);
+      lastFlight=performance.now();
+    }, 250);
   }
   function anchorTo(point, animate=false) {
+    if (dragging()) return;
     if (!point) {
-      resetFlight();
-      current=null;show(false);return;
+      resetFlight();current=null;show(false);return;
     }
     if (modalOpen()) {resetFlight();show(false);return;}
-    const same = current?.element===point.element && current?.side===point.side &&
-                 Math.hypot(point.x-x,point.y-y)<15;
-    if (same) {current=point;pose(point);show(true);return;}
-    const prior=current?.element;
+    const previous=current;
+    const same=previous?.element===point.element && previous?.side===point.side &&
+               Math.hypot(point.x-x,point.y-y)<15;
+    if (same && !relocating()) {current=point;pose(point);show(true);return;}
     current=point;
-    lastSelected=prior;
-    if (reduced()) {
+    lastSelected=previous?.element||null;
+    const dx=point.x-x,dy=point.y-y,dist=Math.hypot(dx,dy);
+    const currentlyHidden=robot.classList.contains("is-hidden")||relocating();
+    if(reduced()||!robot.classList.contains("is-ready")) {
       resetFlight();setPosition(point.x,point.y);pose(point);show(true);return;
     }
-    const dx=point.x-x,dy=point.y-y,dist=Math.hypot(dx,dy);
-    if (!animate || dist<20 || dist>innerHeight*1.5) {
+    // A positional change is never a sudden snap: short moves lift off, long
+    // jumps disappear and reappear in place with a visible teleport effect.
+    if (currentlyHidden || dist>520) {
+      teleportTo(point);return;
+    }
+    if(dist<12) {current=point;pose(point);return;}
+    if(!animate && previous?.element===point.element && dist<35) {
       resetFlight();setPosition(point.x,point.y);pose(point);show(true);return;
     }
     resetFlight();
+    clearTimeout(teleportTimer);
+    ++teleportToken;
     const token=flightToken;
-    const start=performance.now(), startX=x,startY=y;
-    const duration=clamp(290+dist*.53,390,880);
-    const height=clamp(23+dist*.13,28,94);
-    const railMode=dist>250; // travel near screen margins, not across a paragraph
-    const railX = dx>=0 ? Math.min(innerWidth-bounds().w-9,Math.max(startX,point.x)+24) :
-                           Math.max(9,Math.min(startX,point.x)-24);
-    robot.classList.remove("is-perched","is-clinging","is-docked");
+    const fromX=x, fromY=y, started=performance.now();
+    const duration=clamp(510+dist*.6,520,960);
+    const lift=clamp(33+dist*.10,38,85);
+    // Cubic Bézier: thrust upwards, horizontal cruise, soft powered descent.
+    const p0={x:fromX,y:fromY};
+    const p1={x:fromX+dx*.12,y:fromY-lift};
+    const p2={x:point.x-dx*.12,y:point.y-lift};
+    const p3={x:point.x,y:point.y};
+    robot.classList.remove("is-perched","is-clinging","is-docked",
+      "is-inspecting","is-napping","is-waving","is-balancing","is-landing");
     robot.classList.add("is-flying");
-    robot.classList.remove("is-inspecting","is-napping","is-waving","is-balancing");
     show(true);
-    // Flight passes over content briefly. It is translucent and unclickable.
     function tick(now) {
-      if(token!==flightToken) return;
-      const t=clamp((now-start)/duration,0,1);
-      const ease=t*t*(3-2*t);
-      let xx=startX+(point.x-startX)*ease;
-      let yy=startY+(point.y-startY)*ease-Math.sin(Math.PI*t)*height;
-      if (railMode) {
-        const corner=Math.sin(Math.PI*t)**2;
-        xx=xx*(1-corner*.66)+railX*(corner*.66);
-      }
-      setPosition(xx,yy);
-      if(t<1)flight=requestAnimationFrame(tick);
+      if(token!==flightToken || drag.active) return;
+      const t=clamp((now-started)/duration,0,1);
+      const q=t*t*(3-2*t), inv=1-q;
+      const px=inv*inv*inv*p0.x+3*inv*inv*q*p1.x+
+               3*inv*q*q*p2.x+q*q*q*p3.x;
+      const py=inv*inv*inv*p0.y+3*inv*inv*q*p1.y+
+               3*inv*q*q*p2.y+q*q*q*p3.y;
+      setPosition(px,py);
+      if(t<1) flight=requestAnimationFrame(tick);
       else {
-        flight=0;setPosition(point.x,point.y);pose(point);
+        flight=0;
+        setPosition(point.x,point.y);
+        pose(point);
         robot.classList.remove("is-flying");
         robot.classList.add("is-landing");
         setTimeout(()=>robot.classList.remove("is-landing"),420);
@@ -297,14 +368,16 @@
     anchors=Array.from(new Set(document.querySelectorAll(anchorsSelector)));
   }
   function settle(preferred, animate=false) {
+    if (dragging()) return;
     if (modalOpen()) {resetFlight();show(false);return;}
+    if (flight && !preferred) return;
     refreshAnchors();
     const selected=chooseAnchor(preferred)||chooseAnchor()||dock();
     anchorTo(selected,animate);
   }
   function followSurface() {
     scrollFrame=0;
-    if (!current || flight) return;
+    if (!current || flight || dragging() || relocating()) return;
     if (modalOpen()) {show(false);return;}
     const surface=current.element;
     if (!surface) {
@@ -321,6 +394,7 @@
     show(true);
   }
   function scheduleScroll() {
+    if (dragging()) return;
     robot.classList.add("is-scrolling");
     if (!scrollFrame) scrollFrame=requestAnimationFrame(followSurface);
     clearTimeout(scrollTimeout);
@@ -335,7 +409,7 @@
     },230);
   }
   function navigateTo(target) {
-    if(!target)return;
+    if(!target||dragging())return;
     lastInteraction=performance.now();
     requested=target;
     clearTimeout(navTimeout);
@@ -354,7 +428,7 @@
   // Hover fixation: select a safe outer edge after a short dwell, never chase
   // each mousemove. Keyboard focus gets the same surface-aware treatment.
   document.addEventListener("pointerover",ev=>{
-    if (ev.pointerType==="touch" || reduced() || modalOpen()) return;
+    if (ev.pointerType==="touch" || reduced() || modalOpen() || dragging() || flight || relocating()) return;
     const el=closestAnchor(ev.target);
     if (!el || el===current?.element) return;
     clearTimeout(hoverTimeout);
@@ -368,12 +442,12 @@
   document.addEventListener("focusin",ev=>{
     if(isTyping(ev.target)){show(false);return;}
     const el=closestAnchor(ev.target);
-    if(el&&!reduced()&&!modalOpen()){
+    if(el&&!reduced()&&!modalOpen()&&!dragging()){
       const point=chooseAnchor(el);
       if(point?.element===el)anchorTo(point,true);
     }
   });
-  document.addEventListener("focusout",()=>setTimeout(()=>settle(null,false),200));
+  document.addEventListener("focusout",()=>setTimeout(()=>{if(!dragging())settle(null,false)},200));
   document.addEventListener("click",ev=>{
     if(!(ev.target instanceof Element))return;
     const link=ev.target.closest('a[href^="#"]');
@@ -385,12 +459,14 @@
   });
   window.addEventListener("scroll",scheduleScroll,{passive:true});
   window.addEventListener("scrollend",()=>{
+    if(dragging())return;
     robot.classList.remove("is-scrolling");
     if(requested){const target=requested;requested=null;clearTimeout(navTimeout);settle(target,true);}
     else settle(null,false);
   },{passive:true});
   window.addEventListener("hashchange",scheduleScroll);
   window.addEventListener("resize",()=>{
+    if(dragging())return;
     resetFlight();refreshAnchors();settle(current?.element,false);
   },{passive:true});
   document.addEventListener("visibilitychange",()=>{
@@ -447,8 +523,119 @@
     clearTimeout(bubbleTimeout);
     bubbleTimeout=setTimeout(()=>bubble.classList.remove("is-visible"),1450);
   }
+  // Pointer Events: hold and drag using the same logic for mouse, touch and pen.
+  // Pointer capture means the robot stays in your hand even when you move fast.
+  function dragTick(now) {
+    drag.frame=0;
+    if (!drag.active) return;
+    const dt=clamp(now-(drag.lastTime||now-16),8,45);
+    drag.lastTime=now;
+    const smooth=1-Math.exp(-dt/48);
+    setPosition(x+(drag.targetX-x)*smooth,y+(drag.targetY-y)*smooth);
+    if(Math.abs(x-drag.targetX)+Math.abs(y-drag.targetY)>.35)
+      drag.frame=requestAnimationFrame(dragTick);
+  }
+  function moveDragTarget() {
+    const {w,h}=bounds();
+    drag.targetX=clamp(drag.clientX-drag.grabX,6,Math.max(6,innerWidth-w-6));
+    drag.targetY=clamp(drag.clientY-drag.grabY,headerEdge()+4,
+      Math.max(headerEdge()+4,innerHeight-h-8));
+    if(!drag.frame)drag.frame=requestAnimationFrame(dragTick);
+  }
+  function startDrag() {
+    if(!drag.armed || drag.active)return;
+    clearTimeout(drag.timer);
+    resetFlight();
+    clearTimeout(teleportTimer);
+    ++teleportToken;
+    clearTimeout(vanishTimer);
+    clearTimeout(appearTimer);
+    drag.active=true;
+    current=null;
+    lastInteraction=performance.now();
+    robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden",
+      "is-flying","is-napping","is-waving","is-landing","is-scrolling");
+    robot.classList.add("is-grabbed","is-dragging");
+    button.tabIndex=0;
+    button.setAttribute("aria-hidden","false");
+    bubble.classList.remove("is-visible");
+    drag.lastTime=performance.now();
+    moveDragTarget();
+  }
+  button.addEventListener("pointerdown",ev=>{
+    if(dragging()||relocating()||robot.classList.contains("is-hidden")||
+       robot.classList.contains("is-flying")||(!ev.isPrimary)||
+       (ev.pointerType==="mouse"&&ev.button!==0))return;
+    drag.armed=true;
+    drag.active=false;
+    drag.pointerId=ev.pointerId;
+    drag.pointerType=ev.pointerType;
+    drag.startX=drag.clientX=ev.clientX;
+    drag.startY=drag.clientY=ev.clientY;
+    drag.grabX=ev.clientX-x;
+    drag.grabY=ev.clientY-y;
+    clearTimeout(idleTimeout);
+    clearTimeout(hoverTimeout);
+    clearTimeout(drag.timer);
+    drag.timer=setTimeout(startDrag,ev.pointerType==="touch"?180:190);
+    try{button.setPointerCapture(ev.pointerId)}catch{}
+  });
+  button.addEventListener("pointermove",ev=>{
+    if(!drag.armed||ev.pointerId!==drag.pointerId)return;
+    drag.clientX=ev.clientX;drag.clientY=ev.clientY;
+    const distance=Math.hypot(ev.clientX-drag.startX,ev.clientY-drag.startY);
+    if(!drag.active && drag.pointerType!=="touch" && distance>7)startDrag();
+    if(drag.active){ev.preventDefault();moveDragTarget();}
+    else if(distance>15 && drag.pointerType==="touch"){
+      // A scroll gesture started before the long-press: do not steal it.
+      clearTimeout(drag.timer);drag.armed=false;
+      try{button.releasePointerCapture(ev.pointerId)}catch{}
+      scheduleIdle();
+    }
+  });
+  function dropRobot(ev, cancelled=false) {
+    if(!drag.armed && !drag.active)return;
+    if(ev?.pointerId!=null && ev.pointerId!==drag.pointerId)return;
+    clearTimeout(drag.timer);
+    const wasDragged=drag.active;
+    drag.armed=false;
+    drag.active=false;
+    if(drag.frame)cancelAnimationFrame(drag.frame);
+    drag.frame=0;
+    robot.classList.remove("is-grabbed","is-dragging");
+    try{if(drag.pointerId!=null && button.hasPointerCapture?.(drag.pointerId))
+      button.releasePointerCapture(drag.pointerId)}catch{}
+    drag.pointerId=null;
+    if(wasDragged){
+      suppressClickUntil=performance.now()+450;
+      lastInteraction=performance.now();
+      refreshAnchors();
+      let nearest=null,closest=Infinity;
+      const px=ev?.clientX??drag.clientX,py=ev?.clientY??drag.clientY;
+      // Magnetic snap uses actual nearby surfaces, not arbitrary coordinates.
+      for(const el of anchors){
+        if(!visible(el))continue;
+        const r=el.getBoundingClientRect();
+        const distance=Math.hypot(
+          px-clamp(px,r.left,r.right),py-clamp(py,r.top,r.bottom));
+        if(distance<closest){closest=distance;nearest=el;}
+      }
+      const target=chooseAnchor(nearest)||chooseAnchor()||dock();
+      if(target)anchorTo(target,!cancelled);
+      else anchorTo(null);
+    }
+    scheduleIdle();
+  }
+  button.addEventListener("pointerup",ev=>dropRobot(ev));
+  button.addEventListener("pointercancel",ev=>dropRobot(ev,true));
+  button.addEventListener("lostpointercapture",ev=>{
+    if(drag.armed||drag.active)dropRobot(ev,true);
+  });
+  window.addEventListener("blur",()=>dropRobot(null,true));
+
   button.addEventListener("click",ev=>{
     ev.stopPropagation();
+    if(drag.active || performance.now()<suppressClickUntil) return;
     lastInteraction=performance.now();
     const phrases=localized();
     showBubble(phrases[clicks++%phrases.length]);
@@ -464,7 +651,7 @@
     clearTimeout(idleTimeout);
     if(reduced()||document.hidden)return;
     idleTimeout=setTimeout(()=>{
-      if(modalOpen()||flight||!current){scheduleIdle();return;}
+      if(modalOpen()||flight||dragging()||relocating()||!current){scheduleIdle();return;}
       if(performance.now()-lastInteraction<3800){scheduleIdle();return;}
       const cycle=(Math.floor(performance.now()/5300)%5);
       if(cycle===0)react("is-inspecting",1700);
