@@ -430,7 +430,7 @@
     const rects=collectObstacles();
     const grounded=attached&&spaceFree(attached,rects);
     const yMid=attached?attached.y+bounds().h*.5:-1000;
-    const healthy=grounded&&yMid>headerEdge()+105&&yMid<innerHeight-105;
+    const healthy=grounded&&yMid>headerEdge()+150&&yMid<innerHeight-150;
     // Only compare anchors periodically to avoid selecting a new object
     // each time a few pixels of scroll take place.
     if(now-lastAnchorCheck>115 || !grounded){
@@ -624,7 +624,8 @@
     current=null;
     lastInteraction=performance.now();
     robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden",
-      "is-flying","is-napping","is-waving","is-landing","is-scrolling");
+      "is-flying","is-napping","is-waving","is-landing","is-scrolling",
+      "is-perched","is-clinging","is-docked");
     robot.classList.add("is-grabbed","is-dragging");
     button.tabIndex=0;
     button.setAttribute("aria-hidden","false");
