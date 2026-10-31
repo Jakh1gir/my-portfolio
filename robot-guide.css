@@ -114,3 +114,7 @@
   }
   .jakhon-robot.is-flying .jakhon-robot__art { transform: none; }
 }
+
+/* Hide mascot while the mobile navigation is open. */
+body.menu-open .jakhon-robot { opacity: 0; }
+body.menu-open .jakhon-robot__button { pointer-events: none; }

@@ -52,6 +52,7 @@
   const bubble = robot.querySelector(".jakhon-robot__bubble");
   const waypoints = Array.from(new Set(document.querySelectorAll("main > section, main section[id]")))
     .filter(section => section.querySelector("h1,h2"));
+  if (!waypoints.length && main.querySelector("h1,h2")) waypoints.push(main);
   const position = { x: 0, y: 0 };
   let frame = 0;
   let scrollTimer = 0;
