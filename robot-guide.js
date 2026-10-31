@@ -238,16 +238,6 @@
     candidates.sort((a,b)=>a.score-b.score);
     return candidates[0]||null;
   }
-  function dock() {
-    const {w,h}=bounds(), obstacles=collectObstacles();
-    const docks=[
-      {x:innerWidth-w-12,y:innerHeight-h-13,side:"dock",kind:"docked"},
-      {x:9,y:innerHeight-h-13,side:"dock",kind:"docked"},
-      {x:innerWidth-w-12,y:headerEdge()+13,side:"dock",kind:"docked"},
-      {x:9,y:headerEdge()+13,side:"dock",kind:"docked"}
-    ];
-    return docks.find(p=>spaceFree(p,obstacles))||null;
-  }
   function setPosition(px,py) {
     x=px;y=py;
     robot.style.transform="translate3d("+px.toFixed(1)+"px,"+py.toFixed(1)+"px,0)";
@@ -328,7 +318,7 @@
       const preferred=teleportPending;
       teleportPending=null;
       const landing=(preferred && livePoint(preferred))||
-        chooseAnchor()||dock();
+        chooseAnchor();
       if(!landing){current=null;show(false);return;}
       current=landing;
       setPosition(landing.x,landing.y);
@@ -421,7 +411,7 @@
     if(modalOpen()){resetFlight();show(false);return;}
     if(!anchors.length)refreshAnchors();
     const target=(preferred&&visible(preferred)?chooseAnchor(preferred):null)||
-      chooseAnchor()||dock();
+      chooseAnchor();
     if(!target){anchorTo(null);return;}
     if(flight && current?.element===target.element)return;
     anchorTo(target,animate);
@@ -445,7 +435,7 @@
     if(now-lastAnchorCheck>115 || !grounded){
       lastAnchorCheck=now;
       const preferred=requested && visible(requested)?requested:null;
-      const selected=chooseAnchor(preferred) || dock();
+      const selected=chooseAnchor(preferred) ;
       if(selected && (!current ||
         selected.element!==current.element||selected.side!==current.side)){
         if(!healthy || selected.score+38<(current?.score??9999) ||
@@ -701,7 +691,7 @@
           px-clamp(px,r.left,r.right),py-clamp(py,r.top,r.bottom));
         if(distance<closest){closest=distance;nearest=el;}
       }
-      const target=chooseAnchor(nearest)||chooseAnchor()||dock();
+      const target=chooseAnchor(nearest)||chooseAnchor();
       if(target)anchorTo(target,!cancelled);
       else anchorTo(null);
     }
