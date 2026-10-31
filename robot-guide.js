@@ -469,6 +469,15 @@
       state.plannedGoal={x:destination.x,y:destination.y};
       if(!route)state.retryAt=now+390;
     }
+    if(!direct&&!state.path.length&&now<state.retryAt){
+      // Wait for the next bounded path search instead of repeatedly pushing
+      // into the same obstacle and postponing replanning on every frame.
+      state.vx*=.76;state.vy*=.76;
+      setFlightStage(state.stage);
+      setFlightAttitude(state.vx,state.vy,state.stage);
+      flight=requestAnimationFrame(t=>flightTick(t,token));
+      return;
+    }
     let course=destination;
     while(state.path.length && Math.hypot(x-state.path[0].x,
         y-state.path[0].y)<Math.max(9,Math.hypot(state.vx,state.vy)*dt*.9)){
@@ -497,7 +506,8 @@
       // A newly moving text block invalidated the corridor. Stop thrusting
       // into it: keep the robot visible and revise the route.
       state.vx*=.65;state.vy*=.65;
-      state.path=[];state.plannedAt=0;state.retryAt=now+250;
+      state.path=[];state.plannedAt=0;state.plannedGoal=null;
+      state.retryAt=now+220;
       if(!spaceFree({x,y},obstacles)){
         // Existing position is temporarily covered by moving content.
         // Do not snap elsewhere; wait for a free corridor.
