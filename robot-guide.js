@@ -51,7 +51,7 @@
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const reduced = () => motion.matches;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-  const bounds = () => ({ w: robot.offsetWidth || 74, h: robot.offsetHeight || 104 });
+  const bounds = () => ({ w: robot.offsetWidth || (innerWidth <= 820 ? 30 : 37), h: robot.offsetHeight || (innerWidth <= 820 ? 44 : 52) });
   const headerEdge = () => {
     const header = document.querySelector(".site-header");
     if (!header) return 8;
