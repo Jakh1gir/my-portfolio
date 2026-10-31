@@ -729,10 +729,8 @@
       else if(cycle===1)react("is-balancing",1300);
       else if(cycle===2)react("is-napping",2200);
       else if(cycle===3){
-        const near=chooseAnchor(null,{nearby:true});
-        if(near&&near.element!==current.element &&
-           Math.hypot(near.x-x,near.y-y)<260)anchorTo(near,true);
-        else react("is-inspecting",1100);
+        // No autonomous relocation while someone reads the page.
+        react("is-inspecting",1450);
       }else react("is-waving",800);
       scheduleIdle();
     },6900+Math.floor(Math.random()*2200));
