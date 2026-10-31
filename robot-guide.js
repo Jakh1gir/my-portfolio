@@ -283,11 +283,80 @@
   // Recalculate a flight target on every frame. A DOM element moves while the
   // browser smoothly scrolls; a frozen destination causes the observed stutter.
   function livePoint(point) {
-    if(!point?.element || !visible(point.element))return null;
-    const options=pointsOnSurface(point.element);
-    return options.find(p=>p.side===point.side &&
-      (p.side!=="ledge"||Math.abs(p.x-point.x)<bounds().w*.75))||
-      options.find(p=>p.side===point.side)||null;
+    if(!point?.element||!isPhysicalSurface(point.element))return null;
+    return pointsOnSurface(point.element).find(p=>p.slot===point.slot)||null;
+  }
+  function freeFlightPosition(obstacles=collectObstacles(),different=false) {
+    const {w,h}=bounds(),ceiling=headerEdge()+12;
+    const xs=[9,innerWidth-w-9,Math.round(innerWidth*.15),
+      Math.round(innerWidth*.85-w)];
+    const ys=[.28,.44,.61,.76].map(t=>clamp(innerHeight*t,ceiling,
+      Math.max(ceiling,innerHeight-h-12)));
+    const options=[];
+    for(const xx of xs)for(const yy of ys){
+      const p={x:xx,y:yy};
+      if(spaceFree(p,obstacles))options.push(p);
+    }
+    if(!options.length)return null;
+    options.sort((a,b)=>{
+      const score=p=>Math.hypot(p.x-x,p.y-y)+
+        (different&&Math.hypot(p.x-x,p.y-y)<55?500:0);
+      return score(a)-score(b);
+    });
+    return options[0];
+  }
+  function startFreeFlight() {
+    if(dragging()||modalOpen()){show(false);return;}
+    if(robot.classList.contains("is-patrolling")&&flight)return;
+    resetFlight();
+    current=null;pose(null);
+    robot.classList.remove("is-landing","is-docked","is-perched","is-clinging");
+    robot.classList.add("is-flying","is-patrolling");
+    const safe=freeFlightPosition(collectObstacles(true));
+    if(!safe){show(false);return;}
+    patrolTarget=safe;patrolTargetAt=performance.now();
+    patrolLastTick=performance.now();patrolLastCheck=0;
+    const token=flightToken;
+    const begin=()=>{
+      if(token!==flightToken||dragging())return;
+      show(true);
+      function tick(now){
+        if(token!==flightToken||dragging()||modalOpen()||document.hidden){
+          flight=0;return;
+        }
+        if(now-patrolLastCheck>900){
+          patrolLastCheck=now;
+          const ground=chooseAnchor();
+          if(ground){flight=0;anchorTo(ground,true);return;}
+        }
+        const obstacles=collectObstacles();
+        if(!patrolTarget||now-patrolTargetAt>2100||
+           !spaceFree(patrolTarget,obstacles)){
+          patrolTarget=freeFlightPosition(obstacles,true);
+          patrolTargetAt=now;
+        }
+        if(!patrolTarget){flight=0;show(false);return;}
+        const dt=clamp(now-patrolLastTick,8,45);
+        patrolLastTick=now;
+        const mix=1-Math.exp(-dt/460);
+        const next={x:x+(patrolTarget.x-x)*mix,
+          y:y+(patrolTarget.y-y)*mix};
+        if(spaceFree(next,obstacles))setPosition(next.x,next.y);
+        else patrolTarget=null;
+        robot.style.setProperty("--jr-yaw",
+          clamp((patrolTarget?.x||x)-x,-13,13).toFixed(1)+"deg");
+        flight=requestAnimationFrame(tick);
+      }
+      flight=requestAnimationFrame(tick);
+    };
+    if(x<0||!spaceFree({x,y},collectObstacles())){
+      show(false);
+      setTimeout(()=>{
+        if(token!==flightToken)return;
+        setPosition(safe.x,safe.y);
+        begin();
+      },reduced()?0:245);
+    }else begin();
   }
   function teleportTo(point) {
     resetFlight();
@@ -300,7 +369,7 @@
     clearTimeout(teleportTimer);
     const token=++teleportToken;
     teleportPending=point;
-    if(!point){current=null;show(false);return;}
+    if(!point){startFreeFlight();return;}
     if(reduced()||!robot.classList.contains("is-ready")||
        robot.classList.contains("is-hidden")){
       setPosition(point.x,point.y);pose(point);show(true);return;
@@ -312,7 +381,7 @@
       teleportPending=null;
       const landing=(preferred && livePoint(preferred))||
         chooseAnchor();
-      if(!landing){current=null;show(false);return;}
+      if(!landing){startFreeFlight();return;}
       current=landing;
       setPosition(landing.x,landing.y);
       pose(landing);
@@ -334,11 +403,11 @@
   }
   function anchorTo(point,animate=false){
     if(dragging())return;
-    if(!point){resetFlight();current=null;show(false);return;}
+    if(!point){startFreeFlight();return;}
     if(modalOpen()){resetFlight();show(false);return;}
     const previous=current;
-    const same=previous?.element===point.element&&previous?.side===point.side;
-    if(same && !flight && !relocating()){
+    const same=previous?.element===point.element&&previous?.slot===point.slot;
+    if(same && !flight && !relocating()&&!robot.classList.contains("is-patrolling")){
       current=point;setPosition(point.x,point.y);pose(point);show(true);
       return; // exact surface tracking, no floating interpolation
     }
@@ -363,6 +432,7 @@
     let latest=point;
     robot.classList.remove("is-perched","is-clinging","is-docked",
       "is-inspecting","is-napping","is-waving","is-balancing","is-landing");
+    robot.classList.remove("is-patrolling");
     robot.classList.add("is-flying");
     show(true);
     function tick(now){
@@ -375,7 +445,7 @@
         // Never keep flying to its stale location.
         const alternative=chooseAnchor(null,{exclude:latest.element});
         if(alternative){latest=alternative;current=alternative;}
-        else {teleportTo(null);return;}
+        else {startFreeFlight();return;}
       }
       const q=t*t*(3-2*t),u=1-q,dx=latest.x-fromX,dy=latest.y-fromY;
       const p1x=fromX+dx*.12,p1y=fromY-lift;
@@ -406,7 +476,7 @@
     const target=(preferred&&visible(preferred)?chooseAnchor(preferred):null)||
       chooseAnchor();
     if(!target){anchorTo(null);return;}
-    if(flight && current?.element===target.element)return;
+    if(flight && current?.element===target.element && !robot.classList.contains("is-patrolling"))return;
     anchorTo(target,animate);
   }
   function followSurface(now) {
@@ -417,12 +487,17 @@
     if(!anchors.length)refreshAnchors();
     const moving=now-lastScroll<340;
     // The aircraft follows the *same world object* at every scroll frame.
+    if(flight && robot.classList.contains("is-patrolling")){
+      const ground=chooseAnchor(requested&&visible(requested)?requested:null);
+      if(ground)anchorTo(ground,true);
+      return;
+    }
     if(flight)return; // its flight frame calculates the dynamic DOM target
     const attached=livePoint(current);
     const rects=collectObstacles();
     const grounded=attached&&spaceFree(attached,rects);
     const yMid=attached?attached.y+bounds().h*.5:-1000;
-    const healthy=grounded&&yMid>headerEdge()+150&&yMid<innerHeight-150;
+    const healthy=grounded&&yMid>headerEdge()+90&&yMid<innerHeight-90;
     // Only compare anchors periodically to avoid selecting a new object
     // each time a few pixels of scroll take place.
     if(now-lastAnchorCheck>115 || !grounded){
@@ -430,7 +505,7 @@
       const preferred=requested && visible(requested)?requested:null;
       const selected=chooseAnchor(preferred) ;
       if(selected && (!current ||
-        selected.element!==current.element||selected.side!==current.side)){
+        selected.element!==current.element||selected.slot!==current.slot)){
         if(!healthy || selected.score+38<(current?.score??9999) ||
            (preferred&&selected.element===preferred)){
           anchorTo(selected,true);
@@ -616,7 +691,7 @@
     drag.active=true;
     current=null;
     lastInteraction=performance.now();
-    robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden",
+    robot.classList.remove("is-teleport-out","is-teleport-in","is-hidden","is-patrolling",
       "is-flying","is-napping","is-waving","is-landing","is-scrolling",
       "is-perched","is-clinging","is-docked");
     robot.classList.add("is-grabbed","is-dragging");
@@ -628,7 +703,7 @@
   }
   button.addEventListener("pointerdown",ev=>{
     if(dragging()||relocating()||robot.classList.contains("is-hidden")||
-       robot.classList.contains("is-flying")||(!ev.isPrimary)||
+       (robot.classList.contains("is-flying")&&!robot.classList.contains("is-patrolling"))||(!ev.isPrimary)||
        (ev.pointerType==="mouse"&&ev.button!==0))return;
     drag.armed=true;
     drag.active=false;
