@@ -124,8 +124,8 @@ body.menu-open .jakhon-robot__button{pointer-events:none}
   animation:nano-grip-3d .9s ease-in-out infinite alternate;
 }
 @keyframes nano-flight-3d {
-  from {transform:perspective(180px) rotateY(calc(var(--jr-yaw) - 5deg)) rotateX(-12deg) rotateZ(-3deg)}
-  to   {transform:perspective(180px) rotateY(calc(var(--jr-yaw) + 5deg)) rotateX(5deg) rotateZ(3deg)}
+  from {transform:perspective(180px) rotateY(calc(var(--jr-yaw) - 5deg)) rotateX(-12deg) rotateZ(-3deg) translateY(-1px)}
+  to   {transform:perspective(180px) rotateY(calc(var(--jr-yaw) + 5deg)) rotateX(5deg) rotateZ(3deg) translateY(-5px)}
 }
 @keyframes nano-grip-3d {
   from {transform:perspective(180px) rotateY(-12deg) rotateX(-10deg) rotateZ(-5deg) translateY(-2px)}
