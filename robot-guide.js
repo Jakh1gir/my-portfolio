@@ -262,6 +262,12 @@
     robot.classList.remove("is-flying","is-patrolling","is-takeoff",
       "is-cruising","is-descending","is-flight-fast","is-flight-braking",
       "is-landing","is-bouncing");
+    robot.style.setProperty("--jr-speed","0");
+    robot.style.setProperty("--jr-yaw","0deg");
+    robot.style.setProperty("--jr-roll","0deg");
+    robot.style.setProperty("--jr-pitch","-7deg");
+    robot.dataset.flightDirection="idle";
+    robot.dataset.flightPhase="rest";
   }
   const smooth=t=>{
     const a=clamp(t,0,1);return a*a*(3-2*a);
