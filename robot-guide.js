@@ -98,7 +98,7 @@
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
   let tracking = false, teleportPending = null;
   let patrolTarget=null,patrolTargetAt=0,patrolLastTick=0,patrolLastCheck=0;
-  let patrolLeg=null,patrolSequence=0;
+  let patrolLeg=null,patrolSequence=0,patrolRetryAt=0;
   let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
   let suppressClickUntil = 0;
   const drag = {
@@ -390,7 +390,7 @@
     const safe=freeFlightPosition(collectObstacles(true));
     if(!safe){show(false);return;}
     robot.classList.add("is-flying","is-patrolling");
-    patrolLeg=null;patrolTarget=safe;
+    patrolLeg=null;patrolTarget=safe;patrolRetryAt=0;
     patrolLastTick=performance.now();patrolLastCheck=0;
     const token=flightToken;
     const initialize=()=>{
@@ -416,8 +416,9 @@
           }
         }
         const obstacles=collectObstacles();
-        if(!patrolLeg || now>=patrolLeg.endTime ||
-           !spaceFree(patrolLeg.to,obstacles)){
+        if((!patrolLeg && now>=patrolRetryAt) ||
+           (patrolLeg && (now>=patrolLeg.endTime ||
+           !spaceFree(patrolLeg.to,obstacles)))){
           // Each leg carries the robot through both axes on a smooth
           // arced trajectory, with no exponential asymptote/frozen hovering.
           const next=freeFlightPosition(obstacles,true);
@@ -429,8 +430,8 @@
                 endTime:now+duration,duration};
               patrolSequence++;
               setFlightStage("cruising");
-            }else patrolLeg=null;
-          }else patrolLeg=null;
+            }else {patrolLeg=null;patrolRetryAt=now+360;}
+          }else {patrolLeg=null;patrolRetryAt=now+360;}
           patrolTarget=next;
           patrolTargetAt=now;
         }
@@ -449,6 +450,7 @@
             setPosition(dest.x,dest.y);
           }else{
             patrolLeg=null;
+            patrolRetryAt=now+360;
           }
         } else {
           // No safe corridor: remain in a quiet hovering flight posture,
@@ -561,6 +563,11 @@
       const curve=flightPoint(source,destination,t,lift);
       const dt=clamp(now-previousTime,8,46);
       previousTime=now;
+      if(!spaceFree(curve,collectObstacles())){
+        // Layout changed while flying: do not pass across text or controls.
+        teleportTo(target);
+        return;
+      }
       setFlightStage(curve.stage);
       setFlightAttitude(curve.x-previousX,curve.y-previousY,curve.stage,dt);
       setPosition(curve.x,curve.y);
