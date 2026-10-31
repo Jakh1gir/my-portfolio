@@ -74,3 +74,70 @@ body.menu-open .jakhon-robot__button{pointer-events:none}
 @keyframes nano-portal-in{0%{opacity:0;transform:scale(1.5)}45%{opacity:.8;transform:scale(.9)}100%{opacity:0;transform:scale(.5)}}
 @media(max-width:820px){.jakhon-robot{width:30px;height:44px}.jakhon-robot__button{width:30px;height:39px}.jakhon-robot__art{width:30px;height:39px}.jakhon-robot__bubble{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.jakhon-robot,.jakhon-robot *,.jakhon-robot *::before,.jakhon-robot *::after{animation:none!important;transition:none!important}.jakhon-robot.is-hidden{visibility:hidden!important;opacity:0!important}}
+
+
+/* v7: lightweight perspective depth; no WebGL library or extra network loads.
+   Use real screen-space contact instead of visual floating next to text. */
+.jakhon-robot {
+  --jr-yaw: 7deg;
+  --jr-sole: 44.6px;
+  perspective: 220px;
+}
+.jakhon-robot__button { transform-style: preserve-3d; }
+.jakhon-robot__art {
+  transform-style: preserve-3d;
+  transform-origin: 50% 66%;
+  transform: perspective(180px) rotateY(var(--jr-yaw)) rotateX(-7deg);
+  filter: drop-shadow(2px 3px 4px rgba(0,16,31,.35))
+          drop-shadow(-1px 0 1px rgba(126,250,236,.17));
+}
+.jakhon-robot.is-facing-left:not(.is-flying):not(.is-dragging) .jakhon-robot__art {
+  transform: perspective(180px) rotateY(-9deg) rotateX(-7deg);
+}
+.jakhon-robot.is-perched .jakhon-robot__button::after {
+  content:"";
+  position:absolute;
+  top:calc(var(--jr-sole) - 2px);
+  left:calc(50% - 9px);
+  bottom:auto;
+  width:18px;
+  height:4px;
+  border:0;
+  border-radius:50%;
+  background:radial-gradient(ellipse,#48ddc1b8 0%,#48ddc159 32%,transparent 80%);
+  transform:scale(1);
+  opacity:.88;
+  pointer-events:none;
+}
+.jakhon-robot.is-flying .jakhon-robot__art {
+  animation:nano-flight-3d 1.05s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-patrolling .jakhon-robot__button {
+  pointer-events:auto;
+  cursor:grab;
+}
+.jakhon-robot.is-patrolling .jr-thruster {
+  opacity:1;
+  animation:nano-thrust .24s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-dragging .jakhon-robot__art {
+  animation:nano-grip-3d .9s ease-in-out infinite alternate;
+}
+@keyframes nano-flight-3d {
+  from {transform:perspective(180px) rotateY(calc(var(--jr-yaw) - 5deg)) rotateX(-12deg) rotateZ(-3deg)}
+  to   {transform:perspective(180px) rotateY(calc(var(--jr-yaw) + 5deg)) rotateX(5deg) rotateZ(3deg)}
+}
+@keyframes nano-grip-3d {
+  from {transform:perspective(180px) rotateY(-12deg) rotateX(-10deg) rotateZ(-5deg) translateY(-2px)}
+  to   {transform:perspective(180px) rotateY(12deg) rotateX(5deg) rotateZ(5deg) translateY(-5px)}
+}
+@media(max-width:820px){
+  .jakhon-robot { --jr-sole:36.2px; }
+  .jakhon-robot.is-perched .jakhon-robot__button::after {
+    width:14px;left:calc(50% - 7px);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .jakhon-robot.is-flying .jakhon-robot__art,
+  .jakhon-robot.is-dragging .jakhon-robot__art {animation:none!important}
+}
