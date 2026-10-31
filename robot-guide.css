@@ -118,3 +118,198 @@
 /* Hide mascot while the mobile navigation is open. */
 body.menu-open .jakhon-robot { opacity: 0; }
 body.menu-open .jakhon-robot__button { pointer-events: none; }
+
+
+/* Robot v2: attach to genuine card/heading borders without obscuring copy. */
+.jakhon-robot {
+  z-index: 120;
+  isolation: isolate;
+  contain: layout style;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.jakhon-robot.is-ready.is-hidden {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+.jakhon-robot.is-ready:not(.is-hidden) {
+  opacity: 1;
+  visibility: visible;
+}
+.jakhon-robot.is-flying.is-ready:not(.is-hidden) {
+  opacity: .46; /* readable content stays visible during transits */
+}
+.jakhon-robot.is-flying .jakhon-robot__button {
+  pointer-events: none;
+}
+.jakhon-robot__button {
+  touch-action: manipulation;
+}
+.jakhon-robot__button::after {
+  content: "";
+  position: absolute;
+  height: 4px;
+  width: 29px;
+  left: calc(50% - 14px);
+  bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(81,225,196,.75), transparent 80%);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(.8);
+  transition: opacity .2s, transform .3s;
+}
+.jakhon-robot.is-perched .jakhon-robot__button::after {
+  opacity: .8;
+  transform: scale(1.2);
+}
+.jakhon-robot.is-clinging .jakhon-robot__art {
+  animation: jr-cling-breath 2.7s ease-in-out infinite;
+}
+.jakhon-robot.is-clinging .jr-arm-left,
+.jakhon-robot.is-clinging .jr-arm-right {
+  animation: jr-grab 2.8s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-clinging[data-anchor-side="right"] .jakhon-robot__button::after {
+  left: -14px; bottom: 38px; width: 24px; transform: rotate(90deg);
+  opacity: .95;
+}
+.jakhon-robot.is-clinging[data-anchor-side="left"] .jakhon-robot__button::after {
+  left: auto; right: -14px; bottom: 38px; width: 24px; transform: rotate(90deg);
+  opacity: .95;
+}
+.jakhon-robot.is-inspecting .jr-head {
+  animation: jr-look-around 1.45s ease-in-out 1 both;
+}
+.jakhon-robot.is-inspecting .jr-eye-left ellipse:last-child,
+.jakhon-robot.is-inspecting .jr-eye-right ellipse:last-child {
+  animation: jr-eye-scan 1.45s ease-in-out 1 both;
+}
+.jakhon-robot.is-balancing .jakhon-robot__art {
+  animation: jr-balance 1.25s ease-in-out 1 both;
+}
+.jakhon-robot.is-balancing .jr-arm-left {
+  animation: jr-balance-left .31s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-balancing .jr-arm-right {
+  animation: jr-balance-right .31s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-waving .jr-arm-right {
+  animation: jr-wave .19s ease-in-out 5 alternate;
+}
+.jakhon-robot.is-waving .jr-head {
+  animation: jr-happy-nod .65s ease-in-out;
+}
+.jakhon-robot.is-napping .jr-head {
+  animation: jr-sleep 2s ease-in-out 1;
+}
+.jakhon-robot.is-napping .jr-eye {
+  animation: jr-sleepy-eyes 2s ease-in-out 1 both;
+}
+.jakhon-robot.is-bouncing .jakhon-robot__art {
+  animation: jr-boing .82s cubic-bezier(.2,.65,.3,1.2) 1 both;
+}
+.jakhon-robot.is-bouncing .jr-leg-left {
+  animation: jr-kick .21s ease-in-out 4 alternate;
+}
+.jakhon-robot.is-bouncing .jr-leg-right {
+  animation: jr-kick .17s ease-in-out 5 alternate-reverse;
+}
+.jakhon-robot.is-flying .jr-antenna {
+  animation: jr-antenna-flight .27s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-landing .jakhon-robot__button::after {
+  animation: jr-ground-glow .43s ease-out;
+}
+.jakhon-robot__bubble {
+  max-width: 130px;
+  right: calc(100% + 5px);
+  top: 2px;
+  line-height: 1.4;
+  overflow-wrap: normal;
+  white-space: normal;
+}
+.jakhon-robot__bubble.on-right {
+  left: calc(100% + 5px);
+  right: auto;
+  border-radius: 13px 13px 13px 3px;
+}
+@keyframes jr-cling-breath {
+  0%,100% {transform: translateX(0) rotate(-1deg)}
+  50% {transform: translateX(-2px) rotate(2deg)}
+}
+@keyframes jr-grab {
+  from {transform: rotate(-24deg)} to {transform: rotate(14deg)}
+}
+@keyframes jr-look-around {
+  0%,100% {transform: rotate(0)}
+  22%,38% {transform: rotate(-9deg) translateX(-2px)}
+  60%,78% {transform: rotate(9deg) translateX(2px)}
+}
+@keyframes jr-eye-scan {
+  0%,100% {transform: translateX(0)}
+  25%,40% {transform: translateX(-2px)}
+  60%,80% {transform: translateX(2px)}
+}
+@keyframes jr-balance {
+  0%,100% {transform: rotate(0) translateY(0)}
+  18% {transform: rotate(-12deg) translateY(-4px)}
+  43% {transform: rotate(13deg) translateY(-6px)}
+  68% {transform: rotate(-8deg) translateY(-3px)}
+  86% {transform: rotate(4deg)}
+}
+@keyframes jr-balance-left {from{transform:rotate(-34deg)}to{transform:rotate(27deg)}}
+@keyframes jr-balance-right {from{transform:rotate(34deg)}to{transform:rotate(-27deg)}}
+@keyframes jr-happy-nod {0%,100%{transform:rotate(0)}40%{transform:rotate(10deg)}70%{transform:rotate(-8deg)}}
+@keyframes jr-sleep {0%,100%{transform:translateY(0)}40%,72%{transform:translateY(4px) rotate(5deg)}}
+@keyframes jr-sleepy-eyes {
+  0%,100% {transform:scaleY(1)}
+  30%,78% {transform:scaleY(.15)}
+}
+@keyframes jr-boing {
+  0%,100%{transform:translateY(0) scale(1)}
+  14%{transform:translateY(3px) scale(1.12,.87)}
+  36%{transform:translateY(-22px) scale(.92,1.09)}
+  66%{transform:translateY(-6px) rotate(-6deg)}
+  83%{transform:translateY(2px) scale(1.07,.91)}
+}
+@keyframes jr-antenna-flight {from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@keyframes jr-ground-glow {0%{opacity:.2;transform:scale(.5)}65%{opacity:1;transform:scale(1.8)}100%{opacity:.7;transform:scale(1.1)}}
+@media (max-width:820px) {
+  .jakhon-robot__button::after {width:22px;left:calc(50% - 11px)}
+}
+@media (prefers-reduced-motion:reduce) {
+  .jakhon-robot.is-clinging .jakhon-robot__art,
+  .jakhon-robot.is-inspecting .jr-head,
+  .jakhon-robot.is-balancing .jakhon-robot__art,
+  .jakhon-robot.is-waving .jr-arm-right,
+  .jakhon-robot.is-napping .jr-head,
+  .jakhon-robot.is-bouncing .jakhon-robot__art {
+    animation:none !important;
+  }
+  .jakhon-robot.is-ready:not(.is-hidden) { opacity: 1; }
+}
+
+
+/* A moving character never blocks readability or interaction. */
+.jakhon-robot.is-scrolling.is-ready:not(.is-hidden) { opacity: .27; }
+.jakhon-robot.is-scrolling .jakhon-robot__button { pointer-events: none; }
+.jakhon-robot.is-flying.is-ready:not(.is-hidden) { opacity: .28; }
+.jr-stars {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.jakhon-robot.is-waving .jr-stars,
+.jakhon-robot.is-bouncing .jr-stars,
+.jakhon-robot.is-landing .jr-stars {
+  animation: jr-twinkle .85s ease-in-out 1;
+}
+@keyframes jr-twinkle {
+  0%,100% { opacity: 0; transform:scale(.3) rotate(-25deg); }
+  30%,65% { opacity: .95; transform:scale(1.1) rotate(15deg); }
+}
+@media (prefers-reduced-motion:reduce){
+  .jakhon-robot.is-scrolling.is-ready:not(.is-hidden) {opacity:1}
+  .jr-stars {animation:none!important;opacity:0!important}
+}

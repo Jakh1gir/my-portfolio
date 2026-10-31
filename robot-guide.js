@@ -5,7 +5,6 @@
   const main = document.querySelector("main");
   if (!main || document.getElementById("jakhon-robot")) return;
 
-  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const robot = document.createElement("div");
   robot.id = "jakhon-robot";
   robot.className = "jakhon-robot";
@@ -42,247 +41,450 @@
       '<circle cx="13" cy="46" r="2" fill="#f9b3c1" opacity=".78"/>',
       '<circle cx="61" cy="46" r="2" fill="#f9b3c1" opacity=".78"/>',
     '</g>',
+    '<g class="jr-stars" fill="#9bfff0" stroke="#d6fff9" stroke-width=".6"><path d="M5 15l2 4 4 2-4 2-2 4-2-4-4-2 4-2z"/><path d="M66 7l1.7 3.3L71 12l-3.3 1.7L66 17l-1.7-3.3L61 12l3.3-1.7z"/><circle cx="70" cy="30" r="1.7"/></g>',
     '</svg>',
     '</button>',
     '<div class="jakhon-robot__bubble" aria-hidden="true"></div>'
   ].join("");
   document.body.append(robot);
 
+  // v2: surface-aware positioning. Layout is measured, never altered.
   const button = robot.querySelector("button");
   const bubble = robot.querySelector(".jakhon-robot__bubble");
-  const waypoints = Array.from(new Set(document.querySelectorAll("main > section, main section[id]")))
-    .filter(section => section.querySelector("h1,h2"));
-  if (!waypoints.length && main.querySelector("h1,h2")) waypoints.push(main);
-  const position = { x: 0, y: 0 };
-  let frame = 0;
-  let scrollTimer = 0;
-  let navTimer = 0;
-  let bubbleTimer = 0;
-  let pendingTarget = null;
-  let currentTarget = null;
-  let lastMove = 0;
+  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const reduced = () => motion.matches;
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const bounds = () => ({ w: robot.offsetWidth || 74, h: robot.offsetHeight || 104 });
+  const headerEdge = () => {
+    const header = document.querySelector(".site-header");
+    if (!header) return 8;
+    const r = header.getBoundingClientRect();
+    return r.top < 4 ? Math.max(8, r.bottom + 8) : 8;
+  };
 
-  const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
-  const headerBottom = () => document.querySelector(".site-header")?.getBoundingClientRect().bottom || 0;
-  const dimensions = () => ({ width: robot.getBoundingClientRect().width || 74, height: robot.getBoundingClientRect().height || 96 });
+  // Each attachment has a real target element, a surface (ledge/side) and an
+  // offset derived from getBoundingClientRect(). No absolute magic coordinates.
+  const anchorsSelector = [
+    "main h1", "main h2", "main h3",
+    "main .section-label", "main .project-card", "main .service",
+    "main .price-card", "main .upcoming-card", "main .related-card",
+    "main .masterworks-item", "main .lab-tab", "main .roadmap-card",
+    "main .steps li", "main .search-paths a", "main .faq-list details",
+    "main .article-section", "main .article-section li",
+    "main .feature-card", "main .intro-actions", "main .section-head-inline"
+  ].join(",");
+  const protectedSelector = [
+    "main h1", "main h2", "main h3", "main p", "main li",
+    "main a", "main button", "main input", "main textarea", "main select",
+    "main .section-label", "main .price-value", "main .price-label",
+    "main .project-top", "main .project-type",
+    "main summary", "main label", "main .project-status",
+    "header a", "header button", "header select", "footer a",
+    "main [role='button']", "main [contenteditable='true']"
+  ].join(",");
 
-  function positionAt(x, y) {
-    position.x = x;
-    position.y = y;
-    robot.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+  let anchors = [];
+  let current = null; // { element, side, kind, x, y }
+  let x = -200, y = -200;
+  let flight = 0, flightToken = 0;
+  let scrollFrame = 0, scrollTimeout = 0, navTimeout = 0;
+  let hoverTimeout = 0, actionTimeout = 0, bubbleTimeout = 0, idleTimeout = 0;
+  let requested = null, lastFlight = -10000, lastInteraction = performance.now();
+  let lastSelected = null, obstacleCache = [], obstacleAt = -10000;
+
+  const isTyping = target => target instanceof Element &&
+    !!target.closest("input,textarea,select,[contenteditable='true']");
+  function modalOpen() {
+    return document.body.classList.contains("menu-open") ||
+      !!document.querySelector('dialog[open], [aria-modal="true"]:not([hidden])') ||
+      isTyping(document.activeElement) ||
+      !!(window.getSelection && window.getSelection()?.toString().trim());
   }
-
-  function homePosition() {
-    const size = dimensions();
-    return { x: innerWidth - size.width - 17, y: innerHeight - size.height - 32 };
+  function visible(el, rect) {
+    if (!el || !el.isConnected || el.closest("[hidden], [inert]")) return false;
+    if (!el.getClientRects().length) return false;
+    const r = rect || el.getBoundingClientRect();
+    return r.width > 9 && r.height > 7 && r.bottom > headerEdge() + 4 &&
+      r.top < innerHeight - 12 && r.right > 0 && r.left < innerWidth;
   }
-
-  function headingFor(element) {
-    if (!element) return document.querySelector("#hero-title");
-    if (element.id === "top") return document.querySelector("#hero-title");
-    if (element.matches("h1,h2")) return element;
-    return element.querySelector("h1,h2") || element;
+  function blockedRect(r) {
+    const pad = 7;
+    return { l:r.left-pad, t:r.top-pad, r:r.right+pad, b:r.bottom+pad };
   }
-
-  function headingPosition(element) {
-    const heading = headingFor(element);
-    if (!heading || !heading.isConnected) return homePosition();
-    const r = heading.getBoundingClientRect();
-    const size = dimensions();
-    const minY = Math.max(14, headerBottom() + 10);
-    let x;
-    if (innerWidth <= 820) {
-      x = innerWidth - size.width - 12; // Avoid covering narrow mobile headings.
-    } else {
-      // Measure the actual text lines, not the full block box of a heading.
-      const range = document.createRange();
-      range.selectNodeContents(heading);
-      const rects = Array.from(range.getClientRects()).filter(b => b.width > 5 && b.height > 5);
-      range.detach?.();
-      const top = rects.length ? Math.min(...rects.map(b => b.top)) : r.top;
-      const firstLine = rects.filter(b => Math.abs(b.top - top) < 12);
-      const right = firstLine.length ? Math.max(...firstLine.map(b => b.right)) : r.right;
-      x = right + 13;
-      if (x > innerWidth - size.width - 15) x = r.left - size.width - 12;
-      x = clamp(x, 12, innerWidth - size.width - 12);
+  function collectObstacles(force=false) {
+    const now=performance.now();
+    if(!force && now-obstacleAt<90) return obstacleCache;
+    obstacleAt=now;
+    const out=[];
+    const range=document.createRange();
+    const textContainers=/^(H1|H2|H3|P|LI|LABEL|SUMMARY|A|SMALL)$/;
+    for(const el of document.querySelectorAll(protectedSelector)) {
+      if(el.closest("[hidden], [inert]") || !el.getClientRects().length)continue;
+      // Actual rendered text line rectangles, not the full width of a block <p>.
+      // This makes the mascot aware of glyph occupied space and nearby whitespace.
+      let rects=el.getClientRects();
+      if(textContainers.test(el.tagName)){
+        try {
+          range.selectNodeContents(el);
+          const lines=range.getClientRects();
+          if(lines.length)rects=lines;
+        }catch{ /* Keep element bounds if Range cannot measure it. */ }
+      }
+      for(const r of rects){
+        if(r.width<3||r.height<3||r.bottom<headerEdge()||
+           r.top>innerHeight||r.right<0||r.left>innerWidth)continue;
+        out.push(blockedRect(r));
+      }
     }
-    const y = clamp(r.top - size.height * .38, minY, innerHeight - size.height - 14);
-    return { x, y };
+    range.detach?.();
+    obstacleCache=out;
+    return out;
   }
-
-  function linkPosition(link) {
-    const r = link.getBoundingClientRect();
-    const size = dimensions();
-    return {
-      x: clamp(r.right - size.width / 2, 10, innerWidth - size.width - 10),
-      y: clamp(r.bottom + 7, headerBottom() + 6, innerHeight - size.height - 10)
-    };
+  function overlaps(a, b) {
+    return a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
   }
-
-  function clearFlight() {
-    if (frame) cancelAnimationFrame(frame);
-    frame = 0;
-    robot.classList.remove("is-flying", "is-landing", "is-facing-left");
+  function spaceFree(point, obstacles) {
+    if (!point) return false;
+    const {w, h} = bounds();
+    if (point.x < 7 || point.y < headerEdge() ||
+        point.x + w > innerWidth - 7 || point.y + h > innerHeight - 10) return false;
+    // Exclude the entire opaque robot, not merely its feet, from text and controls.
+    const box = {l:point.x+4, t:point.y+3, r:point.x+w-4, b:point.y+h-6};
+    return !obstacles.some(rect => overlaps(box, rect));
   }
-
-  function hopTo(point, quick = false) {
-    if (!point || motion.matches) return;
-    clearFlight();
-    const fromX = position.x, fromY = position.y;
-    const dx = point.x - fromX, dy = point.y - fromY;
-    const distance = Math.hypot(dx, dy);
-    if (distance < 16) return;
-    const duration = quick ? clamp(330 + distance * .26, 360, 570) : clamp(460 + distance * .36, 480, 920);
-    const height = clamp(28 + distance * .16, 36, 115);
-    const started = performance.now();
+  function pointsOnSurface(el) {
+    const r = el.getBoundingClientRect(), {w,h} = bounds();
+    if (!visible(el,r)) return [];
+    const vertical = clamp(r.top + Math.min(18, r.height * .2), headerEdge()+2, innerHeight-h-10);
+    const points = [
+      {x:r.right - w*.82,y:r.top-h+7,side:"ledge",kind:"perched"},
+      {x:r.left - w*.18,y:r.top-h+7,side:"ledge",kind:"perched"},
+      {x:r.right + 10,y:vertical,side:"right",kind:"clinging"},
+      {x:r.left - w - 10,y:vertical,side:"left",kind:"clinging"}
+    ];
+    if (r.height > 75) {
+      points.push(
+        {x:r.right+9,y:r.bottom-h-8,side:"right",kind:"clinging"},
+        {x:r.left-w-9,y:r.bottom-h-8,side:"left",kind:"clinging"}
+      );
+    }
+    if (innerWidth < 820) {
+      // Narrow layouts: use the space after text, not on top of the heading.
+      points.push(
+        {x:innerWidth-w-9,y:r.bottom+12,side:"below",kind:"perched"},
+        {x:8,y:r.bottom+12,side:"below",kind:"perched"}
+      );
+    }
+    return points.map(p=>({...p,element:el}));
+  }
+  function chooseAnchor(preferred, {nearby=false}={}) {
+    if (modalOpen()) return null;
+    const obstacles = collectObstacles();
+    const candidates = [];
+    const allowed = anchors.filter(el => visible(el));
+    if (preferred && visible(preferred) && !allowed.includes(preferred)) allowed.unshift(preferred);
+    const referenceY = clamp(innerHeight*.43, 170, 440);
+    for (const el of allowed) {
+      const r = el.getBoundingClientRect();
+      const isPreferred = !!preferred && (el===preferred || preferred.contains?.(el));
+      if (nearby && current && Math.abs(r.top-current.element.getBoundingClientRect().top)>innerHeight*.42) continue;
+      for (const candidate of pointsOnSurface(el)) {
+        if (!spaceFree(candidate, obstacles)) continue;
+        // Priority: explicitly requested element, nearby visual focal point,
+        // real top edges (contact with the surface), minimal distance to robot.
+        const centerY = candidate.y+bounds().h/2;
+        const travel = Math.hypot(candidate.x-x, candidate.y-y);
+        let score = Math.abs(centerY-referenceY)*.65+travel*.11;
+        if (candidate.side==="ledge") score -= 34;
+        if (isPreferred) score -= 395;
+        if (current?.element===el) score -= 48;
+        if (current?.element===el && current.side===candidate.side) score -= 45;
+        if (lastSelected===el && nearby) score += 60;
+        if (el.matches("h1,h2,h3")) score -= 28;
+        candidates.push({...candidate,score});
+      }
+    }
+    candidates.sort((a,b)=>a.score-b.score);
+    return candidates[0] || null;
+  }
+  function dock() {
+    const {w,h}=bounds(), obstacles=collectObstacles();
+    const docks=[
+      {x:innerWidth-w-12,y:innerHeight-h-13,side:"dock",kind:"docked"},
+      {x:9,y:innerHeight-h-13,side:"dock",kind:"docked"},
+      {x:innerWidth-w-12,y:headerEdge()+13,side:"dock",kind:"docked"},
+      {x:9,y:headerEdge()+13,side:"dock",kind:"docked"}
+    ];
+    return docks.find(p=>spaceFree(p,obstacles))||null;
+  }
+  function setPosition(px,py) {
+    x=px;y=py;
+    robot.style.transform="translate3d("+px.toFixed(1)+"px,"+py.toFixed(1)+"px,0)";
+  }
+  function show(yes) {
+    robot.classList.toggle("is-hidden", !yes);
+    button.tabIndex = yes ? 0 : -1;
+    button.setAttribute("aria-hidden", String(!yes));
+  }
+  function pose(point) {
+    robot.classList.toggle("is-perched", point?.kind==="perched");
+    robot.classList.toggle("is-clinging", point?.kind==="clinging");
+    robot.classList.toggle("is-docked", point?.kind==="docked");
+    robot.classList.toggle("is-facing-left", point?.side==="left");
+    robot.dataset.anchorSide=point?.side||"none";
+  }
+  function resetFlight() {
+    flightToken++;
+    if (flight) cancelAnimationFrame(flight);
+    flight=0;
+    robot.classList.remove("is-flying","is-landing","is-bouncing");
+  }
+  function anchorTo(point, animate=false) {
+    if (!point) {
+      resetFlight();
+      current=null;show(false);return;
+    }
+    if (modalOpen()) {resetFlight();show(false);return;}
+    const same = current?.element===point.element && current?.side===point.side &&
+                 Math.hypot(point.x-x,point.y-y)<15;
+    if (same) {current=point;pose(point);show(true);return;}
+    const prior=current?.element;
+    current=point;
+    lastSelected=prior;
+    if (reduced()) {
+      resetFlight();setPosition(point.x,point.y);pose(point);show(true);return;
+    }
+    const dx=point.x-x,dy=point.y-y,dist=Math.hypot(dx,dy);
+    if (!animate || dist<20 || dist>innerHeight*1.5) {
+      resetFlight();setPosition(point.x,point.y);pose(point);show(true);return;
+    }
+    resetFlight();
+    const token=flightToken;
+    const start=performance.now(), startX=x,startY=y;
+    const duration=clamp(290+dist*.53,390,880);
+    const height=clamp(23+dist*.13,28,94);
+    const railMode=dist>250; // travel near screen margins, not across a paragraph
+    const railX = dx>=0 ? Math.min(innerWidth-bounds().w-9,Math.max(startX,point.x)+24) :
+                           Math.max(9,Math.min(startX,point.x)-24);
+    robot.classList.remove("is-perched","is-clinging","is-docked");
     robot.classList.add("is-flying");
-    if (dx < -5) robot.classList.add("is-facing-left");
-
-    function draw(now) {
-      const t = clamp((now - started) / duration, 0, 1);
-      const travel = t * t * (3 - 2 * t);
-      const bounce = Math.sin(t * Math.PI) * height;
-      positionAt(fromX + dx * travel, fromY + dy * travel - bounce);
-      if (t < 1) {
-        frame = requestAnimationFrame(draw);
-      } else {
-        frame = 0;
-        positionAt(point.x, point.y);
-        robot.classList.remove("is-flying", "is-facing-left");
+    robot.classList.remove("is-inspecting","is-napping","is-waving","is-balancing");
+    show(true);
+    // Flight passes over content briefly. It is translucent and unclickable.
+    function tick(now) {
+      if(token!==flightToken) return;
+      const t=clamp((now-start)/duration,0,1);
+      const ease=t*t*(3-2*t);
+      let xx=startX+(point.x-startX)*ease;
+      let yy=startY+(point.y-startY)*ease-Math.sin(Math.PI*t)*height;
+      if (railMode) {
+        const corner=Math.sin(Math.PI*t)**2;
+        xx=xx*(1-corner*.66)+railX*(corner*.66);
+      }
+      setPosition(xx,yy);
+      if(t<1)flight=requestAnimationFrame(tick);
+      else {
+        flight=0;setPosition(point.x,point.y);pose(point);
+        robot.classList.remove("is-flying");
         robot.classList.add("is-landing");
-        window.setTimeout(() => robot.classList.remove("is-landing"), 430);
+        setTimeout(()=>robot.classList.remove("is-landing"),420);
+        lastFlight=performance.now();
       }
     }
-    frame = requestAnimationFrame(draw);
-    lastMove = performance.now();
+    flight=requestAnimationFrame(tick);
   }
-
-  function placeBy(element, animated = true) {
-    if (!element || motion.matches) return;
-    currentTarget = element;
-    const point = headingPosition(element);
-    if (animated) hopTo(point);
-    else {
-      clearFlight();
-      positionAt(point.x, point.y);
+  function refreshAnchors() {
+    anchors=Array.from(new Set(document.querySelectorAll(anchorsSelector)));
+  }
+  function settle(preferred, animate=false) {
+    if (modalOpen()) {resetFlight();show(false);return;}
+    refreshAnchors();
+    const selected=chooseAnchor(preferred)||chooseAnchor()||dock();
+    anchorTo(selected,animate);
+  }
+  function followSurface() {
+    scrollFrame=0;
+    if (!current || flight) return;
+    if (modalOpen()) {show(false);return;}
+    const surface=current.element;
+    if (!surface) {
+      const candidate=dock();if(candidate)anchorTo(candidate,false);else show(false);
+      return;
     }
+    // Stick to the same edge as the page scrolls; calculate its new geometry.
+    const next=pointsOnSurface(surface).find(p=>p.side===current.side && Math.abs(p.x-current.x)<2)||
+               pointsOnSurface(surface).find(p=>p.side===current.side);
+    if (!next || !spaceFree(next,collectObstacles())) {show(false);return;}
+    current=next;
+    setPosition(next.x,next.y);
+    pose(next);
+    show(true);
   }
-
-  function activeSection() {
-    const marker = clamp(innerHeight * .38, 170, 360);
-    let chosen = null;
-    for (const section of waypoints) {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= marker && rect.bottom > headerBottom() + 15) chosen = section;
+  function scheduleScroll() {
+    robot.classList.add("is-scrolling");
+    if (!scrollFrame) scrollFrame=requestAnimationFrame(followSurface);
+    clearTimeout(scrollTimeout);
+    scrollTimeout=setTimeout(()=>{
+      scrollTimeout=0;
+      robot.classList.remove("is-scrolling");
+      if (requested) {
+        const target=requested;requested=null;
+        clearTimeout(navTimeout);
+        settle(target,true);
+      } else settle(null,performance.now()-lastFlight>1200);
+    },230);
+  }
+  function navigateTo(target) {
+    if(!target)return;
+    lastInteraction=performance.now();
+    requested=target;
+    clearTimeout(navTimeout);
+    navTimeout=setTimeout(()=>{
+      if(!requested)return;
+      const next=requested;requested=null;
+      settle(next,true);
+    },1200);
+  }
+  function closestAnchor(target) {
+    if (!(target instanceof Element) || target.closest("dialog,footer")) return null;
+    if (isTyping(target)) return null;
+    return target.closest(".project-card,.service,.price-card,.related-card,.upcoming-card,.masterworks-item,.lab-tab,.roadmap-card,.section-label,h1,h2,h3,.article-section") ||
+      (target.matches("a,button") && target.closest("main") ? target : null);
+  }
+  // Hover fixation: select a safe outer edge after a short dwell, never chase
+  // each mousemove. Keyboard focus gets the same surface-aware treatment.
+  document.addEventListener("pointerover",ev=>{
+    if (ev.pointerType==="touch" || reduced() || modalOpen()) return;
+    const el=closestAnchor(ev.target);
+    if (!el || el===current?.element) return;
+    clearTimeout(hoverTimeout);
+    hoverTimeout=setTimeout(()=>{
+      if(performance.now()-lastFlight<550 || modalOpen())return;
+      const point=chooseAnchor(el);
+      if(point?.element===el)anchorTo(point,true);
+    },360);
+  },{passive:true});
+  document.addEventListener("pointerout",()=>clearTimeout(hoverTimeout),{passive:true});
+  document.addEventListener("focusin",ev=>{
+    if(isTyping(ev.target)){show(false);return;}
+    const el=closestAnchor(ev.target);
+    if(el&&!reduced()&&!modalOpen()){
+      const point=chooseAnchor(el);
+      if(point?.element===el)anchorTo(point,true);
     }
-    if (!chosen) chosen = waypoints.find(section => section.getBoundingClientRect().bottom > marker);
-    return chosen || waypoints[waypoints.length - 1];
-  }
-
-  function finishNavigation() {
-    if (!pendingTarget) return;
-    const target = pendingTarget;
-    pendingTarget = null;
-    if (navTimer) clearTimeout(navTimer);
-    navTimer = 0;
-    if (!motion.matches) placeBy(target);
-  }
-
-  function settleAfterScroll() {
-    if (scrollTimer) clearTimeout(scrollTimer);
-    scrollTimer = window.setTimeout(() => {
-      scrollTimer = 0;
-      if (pendingTarget) finishNavigation();
-      else if (!motion.matches && performance.now() - lastMove > 620) {
-        const next = activeSection();
-        if (next && next !== currentTarget) placeBy(next);
-      }
-    }, 185);
-  }
-
-  document.addEventListener("click", event => {
-    if (!(event.target instanceof Element)) return;
-    const link = event.target.closest('a[href^="#"]');
-    if (!link || link.closest(".skip-link")) return;
-    const hash = link.getAttribute("href");
-    if (!hash || hash.length < 2) return;
-    let id;
-    try { id = decodeURIComponent(hash.slice(1)); } catch { return; }
-    const target = id === "top" ? document.querySelector(".hero") : document.getElementById(id);
-    if (!target) return;
-    pendingTarget = target;
-    clearTimeout(navTimer);
-    if (!motion.matches && link.closest(".site-header") && innerWidth > 820) {
-      hopTo(linkPosition(link), true);
-    }
-    // Keep the browser's native hash navigation, focus handling, and smooth scroll.
-    navTimer = window.setTimeout(finishNavigation, 1050);
   });
-
-  window.addEventListener("scroll", settleAfterScroll, { passive: true });
-  window.addEventListener("scrollend", () => {
-    if (pendingTarget) finishNavigation();
-  }, { passive: true });
-  window.addEventListener("hashchange", () => {
-    if (!pendingTarget) settleAfterScroll();
+  document.addEventListener("focusout",()=>setTimeout(()=>settle(null,false),200));
+  document.addEventListener("click",ev=>{
+    if(!(ev.target instanceof Element))return;
+    const link=ev.target.closest('a[href^="#"]');
+    if(link&&!link.closest(".skip-link")){
+      let id;
+      try {id=decodeURIComponent((link.getAttribute("href")||"").slice(1));}catch{return;}
+      if(id)navigateTo(id==="top"? document.querySelector(".hero")||main : document.getElementById(id));
+    }
   });
-  window.addEventListener("resize", () => {
-    if (motion.matches) positionAt(homePosition().x, homePosition().y);
-    else if (currentTarget) placeBy(currentTarget, false);
-    else positionAt(homePosition().x, homePosition().y);
-  }, { passive: true });
+  window.addEventListener("scroll",scheduleScroll,{passive:true});
+  window.addEventListener("scrollend",()=>{
+    robot.classList.remove("is-scrolling");
+    if(requested){const target=requested;requested=null;clearTimeout(navTimeout);settle(target,true);}
+    else settle(null,false);
+  },{passive:true});
+  window.addEventListener("hashchange",scheduleScroll);
+  window.addEventListener("resize",()=>{
+    resetFlight();refreshAnchors();settle(current?.element,false);
+  },{passive:true});
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden){resetFlight();clearTimeout(idleTimeout);}
+    else {settle(null,false);scheduleIdle();}
+  });
+  document.addEventListener("selectionchange",()=>{
+    // Selection remains readable, and the mascot cannot steal drag events.
+    if(window.getSelection?.()?.toString().trim())show(false);
+    else if(!modalOpen())scheduleScroll();
+  });
 
   function language() {
-    const value = (document.documentElement.lang || "ru").toLowerCase();
-    return value.startsWith("uz") ? "uz" : value.startsWith("en") ? "en" : "ru";
+    const value=(document.documentElement.lang||"ru").toLowerCase();
+    return value.startsWith("uz")?"uz":value.startsWith("en")?"en":"ru";
   }
-  function localizeButton() {
-    const lang = language();
-    const labels = {
-      ru: ["Поздороваться с роботом", "Нажми на меня", "Привет!"],
-      en: ["Say hello to the robot", "Tap me", "Hello!"],
-      uz: ["Robot bilan salomlashing", "Meni bosing", "Salom!"]
+  function localized() {
+    const labels={
+      ru:["Поздороваться с роботом","Нажми на меня",["Привет!","Я рядом!","Прыжок!","Смотрю!"]],
+      en:["Say hello to the robot","Tap me",["Hello!","I'm here!","Boing!","Looking!"]],
+      uz:["Robot bilan salomlashing","Meni bosing",["Salom!","Men shu yerdaman!","Sakradim!","Ko'ryapman!"]]
     };
-    const words = labels[lang];
-    button.setAttribute("aria-label", words[0]);
-    button.title = words[1];
-    return words[2];
+    const tr=labels[language()];
+    button.setAttribute("aria-label",tr[0]);
+    button.title=tr[1];
+    return tr[2];
+  }
+  let clicks=0;
+  function safeBounce() {
+    const {w,h}=bounds();
+    const box={l:x-7,t:y-32,r:x+w+7,b:y+h-6};
+    return !collectObstacles(true).some(rect=>overlaps(box,rect));
+  }
+  function react(name,duration=850) {
+    clearTimeout(actionTimeout);
+    robot.classList.remove("is-inspecting","is-waving","is-napping","is-bouncing","is-balancing");
+    void robot.offsetWidth;
+    robot.classList.add(name);
+    actionTimeout=setTimeout(()=>robot.classList.remove(name),duration);
+  }
+  function showBubble(message) {
+    bubble.textContent=message;
+    // Only show the speech bubble if it also fits into unoccupied space.
+    const pt={x,y};
+    const {w}=bounds();
+    const obstacles=collectObstacles();
+    const isRight=x<innerWidth/2;
+    const bx=isRight?x+w+5:x-135;
+    const bubbleRect={l:bx,t:y,r:bx+130,b:y+45};
+    const safe=bx>=4 && bx+130<innerWidth-4 &&
+      !obstacles.some(r=>overlaps(bubbleRect,r));
+    bubble.classList.toggle("on-right",isRight);
+    bubble.classList.toggle("is-visible",safe);
+    clearTimeout(bubbleTimeout);
+    bubbleTimeout=setTimeout(()=>bubble.classList.remove("is-visible"),1450);
+  }
+  button.addEventListener("click",ev=>{
+    ev.stopPropagation();
+    lastInteraction=performance.now();
+    const phrases=localized();
+    showBubble(phrases[clicks++%phrases.length]);
+    if(!reduced())react(clicks%3===0&&safeBounce()?"is-bouncing":"is-waving",900);
+    scheduleIdle();
+  });
+  document.getElementById("site-language-select")?.addEventListener("change",localized);
+  motion.addEventListener?.("change",()=>{resetFlight();settle(null,false);scheduleIdle();});
+
+  // Periodic micro-interactions: a head scan, a short balance, or an occasional
+  // small hop to a nearby safe surface. Never continuously wander over text.
+  function scheduleIdle() {
+    clearTimeout(idleTimeout);
+    if(reduced()||document.hidden)return;
+    idleTimeout=setTimeout(()=>{
+      if(modalOpen()||flight||!current){scheduleIdle();return;}
+      if(performance.now()-lastInteraction<3800){scheduleIdle();return;}
+      const cycle=(Math.floor(performance.now()/5300)%5);
+      if(cycle===0)react("is-inspecting",1700);
+      else if(cycle===1)react("is-balancing",1300);
+      else if(cycle===2)react("is-napping",2200);
+      else if(cycle===3){
+        const near=chooseAnchor(null,{nearby:true});
+        if(near&&near.element!==current.element &&
+           Math.hypot(near.x-x,near.y-y)<260)anchorTo(near,true);
+        else react("is-inspecting",1100);
+      }else react("is-waving",800);
+      scheduleIdle();
+    },6900+Math.floor(Math.random()*2200));
   }
 
-  button.addEventListener("click", event => {
-    event.stopPropagation();
-    const greeting = localizeButton();
-    bubble.textContent = greeting;
-    bubble.classList.add("is-visible");
-    if (!motion.matches) {
-      robot.classList.remove("is-excited", "is-landing");
-      // Re-trigger the reaction on every click.
-      void robot.offsetWidth;
-      robot.classList.add("is-excited");
-      window.setTimeout(() => robot.classList.remove("is-excited"), 740);
-    }
-    clearTimeout(bubbleTimer);
-    bubbleTimer = window.setTimeout(() => bubble.classList.remove("is-visible"), 1700);
-  });
-
-  const langSelector = document.getElementById("site-language-select");
-  langSelector?.addEventListener("change", () => window.setTimeout(localizeButton, 0));
-  motion.addEventListener?.("change", () => {
-    clearFlight();
-    if (motion.matches) positionAt(homePosition().x, homePosition().y);
-    else placeBy(activeSection(), false);
-  });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden && frame) {
-      clearFlight();
-      if (currentTarget && !motion.matches) placeBy(currentTarget, false);
-    }
-  });
-
-  localizeButton();
-  const start = motion.matches ? homePosition() : headingPosition(activeSection());
-  positionAt(start.x, start.y);
-  currentTarget = activeSection();
+  // Start on a measured safe surface or hide if the viewport has no free space.
+  refreshAnchors();
+  settle(null,false);
   robot.classList.add("is-ready");
-  if (location.hash.length > 1) window.setTimeout(settleAfterScroll, 500);
+  localized();
+  scheduleIdle();
+  if(location.hash.length>1) setTimeout(()=>settle(document.getElementById(decodeURIComponent(location.hash.slice(1))),false),500);
 })();
