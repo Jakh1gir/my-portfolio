@@ -17,6 +17,7 @@
     "<linearGradient id=\"jr-face\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#16384e\"/><stop offset=\"1\" stop-color=\"#071e30\"/></linearGradient>",
     "<radialGradient id=\"jr-glow\"><stop stop-color=\"#edfff9\"/><stop offset=\".45\" stop-color=\"#82ffe0\"/><stop offset=\"1\" stop-color=\"#39bfca\"/></radialGradient>",
     "<linearGradient id=\"jr-jet\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#c3fff6\"/><stop offset=\"1\" stop-color=\"#49c5fd\" stop-opacity=\"0\"/></linearGradient>",
+    "<linearGradient id=\"jr-edge\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop stop-color=\"#ebffff\" stop-opacity=\".82\"/><stop offset=\".46\" stop-color=\"#aacbd6\" stop-opacity=\".12\"/><stop offset=\"1\" stop-color=\"#426f88\" stop-opacity=\".65\"/></linearGradient>",
     "</defs>",
     "<ellipse class=\"jr-shadow\" cx=\"37\" cy=\"92\" rx=\"19\" ry=\"2.8\" fill=\"#00131d\" opacity=\".27\"/>",
     "<g class=\"jr-thruster\" opacity=\"0\"><path d=\"M29 81 Q22 94 27 96 Q35 93 37 82Z\" fill=\"url(#jr-jet)\"/><path d=\"M45 81 Q52 94 47 96 Q39 93 37 82Z\" fill=\"url(#jr-jet)\"/></g>",
@@ -25,12 +26,15 @@
     "<g class=\"jr-arm jr-arm-left\"><rect x=\"9\" y=\"57\" width=\"11\" height=\"19\" rx=\"5.5\" fill=\"url(#jr-body)\" stroke=\"#a1d0dd\" stroke-width=\"1\"/><circle cx=\"14\" cy=\"75\" r=\"4.2\" fill=\"url(#jr-enamel)\"/></g>",
     "<g class=\"jr-arm jr-arm-right\"><rect x=\"54\" y=\"57\" width=\"11\" height=\"19\" rx=\"5.5\" fill=\"url(#jr-body)\" stroke=\"#a1d0dd\" stroke-width=\"1\"/><circle cx=\"60\" cy=\"75\" r=\"4.2\" fill=\"url(#jr-enamel)\"/></g>",
     "<rect x=\"19\" y=\"52\" width=\"36\" height=\"32\" rx=\"14\" fill=\"url(#jr-enamel)\" stroke=\"#acd7e0\" stroke-width=\"1.2\"/>",
+    "<path d=\"M44 55q11 5 7 21q-2 6-9 7q7-12 2-28z\" fill=\"#356780\" opacity=\".25\"/>",
     "<rect x=\"26\" y=\"60\" width=\"22\" height=\"16\" rx=\"8\" fill=\"url(#jr-face)\" stroke=\"#83c9ce\" stroke-width=\".8\"/>",
     "<circle cx=\"37\" cy=\"68\" r=\"5\" fill=\"#12445c\" stroke=\"#56d5ca\" stroke-width=\"1\"/><circle class=\"jr-led\" cx=\"37\" cy=\"68\" r=\"3\" fill=\"url(#jr-glow)\"/>",
     "<g class=\"jr-head\">",
     "<g class=\"jr-antenna\"><path d=\"M37 16V8\" stroke=\"#b9d8e3\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"37\" cy=\"6.5\" r=\"3.3\" fill=\"url(#jr-glow)\" stroke=\"#deffff\" stroke-width=\".8\"/></g>",
     "<rect x=\"3.7\" y=\"33\" width=\"8\" height=\"16\" rx=\"4\" fill=\"url(#jr-body)\" stroke=\"#87bdc6\" stroke-width=\".8\"/><rect x=\"62.3\" y=\"33\" width=\"8\" height=\"16\" rx=\"4\" fill=\"url(#jr-body)\" stroke=\"#87bdc6\" stroke-width=\".8\"/>",
     "<rect x=\"7\" y=\"13\" width=\"60\" height=\"49\" rx=\"21\" fill=\"url(#jr-enamel)\" stroke=\"#d3f2f7\" stroke-width=\"1.2\"/>",
+    "<path d=\"M55 18q13 12 8 31q-4 9-13 11q10-12 6-26z\" fill=\"url(#jr-edge)\" opacity=\".61\"/>",
+    "<path d=\"M13 29q0-12 13-14\" fill=\"none\" stroke=\"#ffffff\" opacity=\".68\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>",
     "<path d=\"M13 24q10-10 26-9\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".9\"/>",
     "<rect x=\"13\" y=\"23\" width=\"48\" height=\"29\" rx=\"14.5\" fill=\"url(#jr-face)\" stroke=\"#41838f\" stroke-width=\".9\"/>",
     "<path d=\"M21 27h29\" stroke=\"#a5fcf0\" stroke-opacity=\".14\" stroke-width=\"2\" stroke-linecap=\"round\"/>",
@@ -319,6 +323,12 @@
     const token=flightToken;
     const begin=()=>{
       if(token!==flightToken||dragging())return;
+      if(reduced()){
+        setPosition(safe.x,safe.y);
+        robot.classList.remove("is-patrolling");
+        show(true);
+        return;
+      }
       show(true);
       function tick(now){
         if(token!==flightToken||dragging()||modalOpen()||document.hidden){
