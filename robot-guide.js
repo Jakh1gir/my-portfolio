@@ -357,8 +357,13 @@
       const dest={x:clamp(xx,8,innerWidth-w-8),y:yy};
       if(!spaceFree(dest,obstacles))continue;
       const distance=Math.hypot(dest.x-x,dest.y-y);
-      const travel=different && distance<Math.min(115,innerWidth*.24)
-        ? 400:0;
+      const dx=Math.abs(dest.x-x),dy=Math.abs(dest.y-y);
+      const preferX=patrolSequence%2===0;
+      const directionPenalty=!different?0:preferX
+        ? (dx<Math.min(120,innerWidth*.16)?300:0)
+        : (dy<Math.min(110,innerHeight*.18)?300:0);
+      const travel=different && distance<Math.min(95,innerWidth*.2)
+        ? 450:0;
       let blocked=0;
       // Patrol routes must avoid text for the *whole* journey, not just at
       // their endpoints. Keep this cheap and only sample candidate routes.
@@ -371,7 +376,7 @@
           if(!spaceFree({x:px,y:py},obstacles)){blocked=10000;break;}
         }
       }
-      options.push({...dest,score:distance*.08+travel+blocked});
+      options.push({...dest,score:distance*.08+travel+blocked+directionPenalty});
     }
     options.sort((a,b)=>a.score-b.score);
     return options.find(p=>p.score<10000)||null;
@@ -422,6 +427,7 @@
               const duration=clamp(820+dist*2.6,1050,2600);
               patrolLeg={from:{x,y},to:next,startTime:now,
                 endTime:now+duration,duration};
+              patrolSequence++;
               setFlightStage("cruising");
             }else patrolLeg=null;
           }else patrolLeg=null;
@@ -517,7 +523,7 @@
       return;
     }
     if(robot.classList.contains("is-hidden")||relocating()||
-       dist>540 || !pathSafe(point)){
+       dist>Math.min(1050,innerWidth*.91) || !pathSafe(point)){
       teleportTo(point);return;
     }
     if(dist<13){
