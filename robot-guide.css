@@ -302,3 +302,206 @@ body.menu-open .jakhon-robot__button{pointer-events:none}
     transition:none!important;
   }
 }
+
+
+/* Aero Orb v10 — spherical drone, two counter-rotating stabilizers.
+   Rendered dimensions stay 37x52px desktop and 30x44px mobile. */
+.jakhon-robot--aero {
+  --jr-rotor-period: .66s;
+  --jr-jet-period: .36s;
+  --jr-pitch: -6deg;
+  --jr-roll: 0deg;
+  --jr-yaw: 0deg;
+}
+.jakhon-robot--aero .jakhon-robot__art {
+  transform-origin: 50% 57%;
+  filter: drop-shadow(0 5px 7px rgba(0,12,27,.32))
+          drop-shadow(0 0 2px rgba(123,252,234,.19));
+}
+.jakhon-robot--aero .jr-hull {
+  filter: drop-shadow(0 1px 1px rgba(14,60,76,.27));
+}
+.jakhon-robot--aero .jr-rotor {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: aero-rotor-spin var(--jr-rotor-period) linear infinite;
+}
+.jakhon-robot--aero .jr-rotor-right {
+  animation-direction: reverse;
+}
+.jakhon-robot--aero .jr-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: aero-blink 6.4s ease-in-out infinite;
+}
+.jakhon-robot--aero .jr-antenna {
+  animation: aero-beacon 2.7s ease-in-out infinite;
+}
+.jakhon-robot--aero .jr-head {
+  transform-box: fill-box;
+  transform-origin: 50% 60%;
+  animation: aero-idle-look 5.5s ease-in-out infinite;
+}
+.jakhon-robot--aero .jr-shadow {
+  opacity: .24;
+  transform: scale(.88);
+}
+.jakhon-robot--aero.is-perched .jr-rotor {
+  animation-duration: 1.2s;
+  opacity: .66;
+}
+.jakhon-robot--aero.is-perched .jr-thruster {
+  opacity: 0;
+}
+.jakhon-robot--aero.is-perched .jr-leg {
+  animation: none;
+}
+.jakhon-robot--aero.is-flying .jakhon-robot__art {
+  transform: perspective(180px) rotateY(var(--jr-yaw))
+    rotateX(var(--jr-pitch)) rotateZ(var(--jr-roll));
+  animation: none !important;
+  transition: transform 120ms linear;
+}
+.jakhon-robot--aero.is-flying .jr-rotor {
+  animation-duration: var(--jr-jet-period, .3s);
+  opacity: 1;
+}
+.jakhon-robot--aero.is-flying .jr-thruster {
+  opacity: .85;
+  animation: aero-reactor var(--jr-jet-period, .3s) ease-in-out infinite alternate;
+}
+.jakhon-robot--aero.is-flight-fast .jr-rotor {
+  animation-duration: .11s;
+}
+.jakhon-robot--aero.is-flight-fast .jr-thruster {
+  animation-duration: .12s;
+  opacity: 1;
+}
+.jakhon-robot--aero.is-flight-braking .jr-rotor {
+  animation-duration: .42s;
+}
+.jakhon-robot--aero.is-descending .jr-thruster {
+  animation: aero-retrothrust .19s ease-in-out infinite alternate;
+}
+.jakhon-robot--aero.is-takeoff .jr-thruster {
+  animation: aero-takeoff-boost .13s ease-in-out infinite alternate;
+}
+.jakhon-robot--aero.is-flying .jr-leg {
+  animation: aero-gear-retract .38s ease-out both;
+}
+.jakhon-robot--aero.is-landing .jr-leg {
+  animation: aero-touchdown-skid .43s cubic-bezier(.2,.7,.2,1) both;
+}
+.jakhon-robot--aero.is-landing .jr-thruster {
+  animation: aero-engine-stop .38s ease-out forwards;
+}
+.jakhon-robot--aero.is-dragging .jakhon-robot__art {
+  animation: aero-held-stabilization .85s ease-in-out infinite alternate !important;
+}
+.jakhon-robot--aero.is-dragging .jr-rotor {
+  animation-duration: .19s;
+}
+.jakhon-robot--aero.is-dragging .jr-thruster {
+  opacity: .75;
+  animation: aero-reactor .28s ease-in-out infinite alternate;
+}
+.jakhon-robot--aero.is-waving .jr-arm-right {
+  animation: aero-rotor-salute .72s ease-in-out both;
+}
+.jakhon-robot--aero.is-bouncing .jakhon-robot__art {
+  animation: aero-small-liftoff .78s ease-in-out both;
+}
+.jakhon-robot--aero.is-inspecting .jr-head {
+  animation: aero-scan-horizon 1.6s ease-in-out both;
+}
+.jakhon-robot--aero.is-balancing .jakhon-robot__art {
+  animation: aero-stabilizer-correction 1.2s ease-in-out both;
+}
+.jakhon-robot--aero.is-napping .jr-rotor {
+  animation-duration: 2.1s;
+  opacity: .4;
+}
+.jakhon-robot--aero.is-napping .jr-eye {
+  animation: aero-rest-eyes 2s ease-in-out both;
+}
+@keyframes aero-rotor-spin {
+  0%,100% {transform:scaleX(1)}
+  25% {transform:scaleX(.13)}
+  50% {transform:scaleX(-1)}
+  75% {transform:scaleX(-.13)}
+}
+@keyframes aero-blink {
+  0%,40%,45%,100% {transform:scaleY(1)}
+  42% {transform:scaleY(.12)}
+}
+@keyframes aero-beacon {
+  0%,100% {opacity:.46}
+  50% {opacity:1;filter:drop-shadow(0 0 2px #8dffe5)}
+}
+@keyframes aero-idle-look {
+  0%,26%,80%,100% {transform:rotate(0deg)}
+  34%,45% {transform:rotate(-2.5deg)}
+  58%,66% {transform:rotate(2.5deg)}
+}
+@keyframes aero-reactor {
+  from {transform:scale(.82,.73);opacity:.48}
+  to {transform:scale(1.12,1.19);opacity:1}
+}
+@keyframes aero-takeoff-boost {
+  from {transform:scale(.92,1);opacity:.83}
+  to {transform:scale(1.18,1.48);opacity:1}
+}
+@keyframes aero-retrothrust {
+  from {transform:scale(1,.62);opacity:.64}
+  to {transform:scale(1.15,1.12);opacity:.95}
+}
+@keyframes aero-gear-retract {
+  from {transform:rotate(0deg)}
+  to {transform:rotate(10deg)}
+}
+@keyframes aero-touchdown-skid {
+  0% {transform:translateY(-3px)}
+  60% {transform:translateY(1.3px)}
+  100% {transform:none}
+}
+@keyframes aero-engine-stop {
+  from {opacity:1;transform:scale(1)}
+  to {opacity:0;transform:scale(.25)}
+}
+@keyframes aero-held-stabilization {
+  from {transform:perspective(180px) rotateY(-12deg) rotateZ(-5deg) translateY(-3px)}
+  to {transform:perspective(180px) rotateY(12deg) rotateZ(5deg) translateY(-5px)}
+}
+@keyframes aero-rotor-salute {
+  0%,100% {transform:rotate(0)}
+  45%,70% {transform:rotate(-13deg)}
+}
+@keyframes aero-small-liftoff {
+  0%,100% {transform:translateY(0) scale(1)}
+  35% {transform:translateY(-9px) scale(.96,1.03)}
+  70% {transform:translateY(-2px)}
+}
+@keyframes aero-scan-horizon {
+  0%,100% {transform:rotate(0)}
+  30%,45% {transform:rotate(-7deg)}
+  65%,82% {transform:rotate(7deg)}
+}
+@keyframes aero-stabilizer-correction {
+  0%,100% {transform:rotate(0)}
+  25% {transform:rotate(-5deg)}
+  70% {transform:rotate(5deg)}
+}
+@keyframes aero-rest-eyes {
+  0%,100% {transform:scaleY(1)}
+  25%,80% {transform:scaleY(.13)}
+}
+@media(prefers-reduced-motion: reduce) {
+  .jakhon-robot--aero .jr-rotor,
+  .jakhon-robot--aero .jr-head,
+  .jakhon-robot--aero .jr-eye,
+  .jakhon-robot--aero .jr-antenna,
+  .jakhon-robot--aero.is-flying .jr-thruster {
+    animation:none!important;
+    transition:none!important;
+  }
+}
