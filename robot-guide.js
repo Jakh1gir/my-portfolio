@@ -323,7 +323,7 @@
     robot.classList.add("is-flying","is-patrolling");
     const safe=freeFlightPosition(collectObstacles(true));
     if(!safe){show(false);return;}
-    patrolTarget=safe;patrolTargetAt=performance.now();
+    patrolTarget=safe;patrolTargetAt=performance.now()-1750;
     patrolLastTick=performance.now();patrolLastCheck=0;
     const token=flightToken;
     const begin=()=>{
@@ -572,7 +572,7 @@
   function closestAnchor(target) {
     if (!(target instanceof Element) || target.closest("dialog,footer")) return null;
     if (isTyping(target)) return null;
-    return target.closest(".project-card,.service,.price-card,.related-card,.upcoming-card,.masterworks-item,.lab-tab,.roadmap-card,.section-label,h1,h2,h3,.article-section") ||
+    return target.closest(".project-card,.service,.price-card,.related-card,.upcoming-card,.release-card,.search-paths-grid a,.hero-persona,.hero-visual,.masterworks-item,.lab-tab,.roadmap-card,.direction-card,.studio-card,.section-label,h1,h2,h3,.article-section") ||
       (target.matches("a,button") && target.closest("main") ? target : null);
   }
   // Hover fixation: select a safe outer edge after a short dwell, never chase
