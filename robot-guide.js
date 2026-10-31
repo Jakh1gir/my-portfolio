@@ -41,6 +41,7 @@
       '<circle cx="13" cy="46" r="2" fill="#f9b3c1" opacity=".78"/>',
       '<circle cx="61" cy="46" r="2" fill="#f9b3c1" opacity=".78"/>',
     '</g>',
+    '<g class="jr-stars" fill="#9bfff0" stroke="#d6fff9" stroke-width=".6"><path d="M5 15l2 4 4 2-4 2-2 4-2-4-4-2 4-2z"/><path d="M66 7l1.7 3.3L71 12l-3.3 1.7L66 17l-1.7-3.3L61 12l3.3-1.7z"/><circle cx="70" cy="30" r="1.7"/></g>',
     '</svg>',
     '</button>',
     '<div class="jakhon-robot__bubble" aria-hidden="true"></div>'
@@ -418,6 +419,11 @@
     return tr[2];
   }
   let clicks=0;
+  function safeBounce() {
+    const {w,h}=bounds();
+    const box={l:x-7,t:y-32,r:x+w+7,b:y+h-6};
+    return !collectObstacles(true).some(rect=>overlaps(box,rect));
+  }
   function react(name,duration=850) {
     clearTimeout(actionTimeout);
     robot.classList.remove("is-inspecting","is-waving","is-napping","is-bouncing","is-balancing");
@@ -446,7 +452,7 @@
     lastInteraction=performance.now();
     const phrases=localized();
     showBubble(phrases[clicks++%phrases.length]);
-    if(!reduced())react(clicks%3===0?"is-bouncing":"is-waving",900);
+    if(!reduced())react(clicks%3===0&&safeBounce()?"is-bouncing":"is-waving",900);
     scheduleIdle();
   });
   document.getElementById("site-language-select")?.addEventListener("change",localized);
