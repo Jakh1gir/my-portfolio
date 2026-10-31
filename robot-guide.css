@@ -326,6 +326,9 @@ body.menu-open .jakhon-robot__button{pointer-events:none}
   transform-origin: 50% 50%;
   animation: aero-rotor-spin var(--jr-rotor-period) linear infinite;
 }
+.jakhon-robot--aero .jr-rotor-left {
+  animation-direction: normal;
+}
 .jakhon-robot--aero .jr-rotor-right {
   animation-direction: reverse;
 }
