@@ -146,6 +146,9 @@
     const textContainers=/^(H1|H2|H3|P|LI|LABEL|SUMMARY|A|SMALL)$/;
     for(const el of document.querySelectorAll(protectedSelector)){
       if(el.closest("[hidden], [inert]")||!el.getClientRects().length)continue;
+      // The panel itself is a landing surface, not an obstruction. Its child
+      // headings, paragraphs and controls remain in the obstacle map.
+      if(el.matches(anchorsSelector) && isPhysicalSurface(el))continue;
       let rects=el.getClientRects();
       if(textContainers.test(el.tagName)){
         try{
@@ -188,8 +191,10 @@
     const solid=!!bg && bg!=="transparent" && bg!=="rgba(0,0,0,0)" &&
       bg!=="#0000" && bg!=="#00000000";
     const gradient=!!cs.backgroundImage && cs.backgroundImage!=="none";
+    const bc=(cs.borderTopColor||"").replace(/\s/g,"").toLowerCase();
     const border=cs.borderTopStyle!=="none" && cs.borderTopStyle!=="hidden" &&
-      parseFloat(cs.borderTopWidth||"0")>=0.5;
+      parseFloat(cs.borderTopWidth||"0")>=0.5 && bc!=="transparent" &&
+      bc!=="rgba(0,0,0,0)";
     const shadow=!!cs.boxShadow && cs.boxShadow!=="none";
     return solid||gradient||border||shadow;
   }
