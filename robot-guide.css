@@ -494,3 +494,93 @@ body.menu-open .jakhon-robot__button { pointer-events: none; }
   .jakhon-robot__button::before,
   .jakhon-robot .jr-thruster {animation:none!important;opacity:0!important;}
 }
+
+
+/* Scout IV / motion compositor. Keep a solid, physically attached silhouette. */
+.jakhon-robot {
+  --jr-teal: #82f5dd;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.jakhon-robot.is-scrolling.is-ready:not(.is-hidden),
+.jakhon-robot.is-flying.is-ready:not(.is-hidden) {
+  opacity: 1 !important;
+}
+.jakhon-robot.is-teleport-in.is-ready:not(.is-hidden) {opacity:1!important;}
+.jakhon-robot.is-flying .jakhon-robot__button {pointer-events:none;}
+/* Fixation is rigid: the hands/feet stay on a real ledge; only head and
+   eye servos move. Previously the full body floated horizontally. */
+.jakhon-robot.is-clinging .jakhon-robot__art {
+  animation: none !important;
+}
+.jakhon-robot.is-perched:not(.is-flying) .jakhon-robot__art {
+  animation: none !important;
+}
+.jakhon-robot.is-perched .jr-shadow {
+  opacity: .36;
+  transform: scale(.85);
+}
+.jakhon-robot .jr-side-jet,
+.jakhon-robot .jr-thruster,
+.jakhon-robot .jr-iris {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.jakhon-robot .jr-side-jet circle {
+  animation: jr-servo-glow 2.8s ease-in-out infinite;
+}
+.jakhon-robot.is-flying .jr-side-jet {
+  animation: jr-flight-stabilizers .27s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying .jr-thruster {
+  animation: jr-thrust-pulse .16s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying .jakhon-robot__art {
+  animation: jr-rocket-tilt .9s ease-in-out infinite alternate;
+  filter: drop-shadow(0 8px 15px rgba(0, 19, 32, .45))
+          drop-shadow(0 0 6px rgba(94, 250, 218, .23));
+}
+.jakhon-robot .jr-eye {animation: jr-blink 5.8s ease-in-out infinite;}
+.jakhon-robot .jr-head {animation:jr-scout-look 5.6s ease-in-out infinite;}
+.jakhon-robot .jr-antenna {animation:jr-antenna 3.8s ease-in-out infinite;}
+.jakhon-robot.is-inspecting .jr-head {
+  animation: jr-look-around 1.45s ease-in-out 1 both;
+}
+.jakhon-robot.is-dragging .jr-head {
+  animation: jr-grab-look .8s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-clinging .jr-arm-left,
+.jakhon-robot.is-clinging .jr-arm-right {
+  animation: jr-edge-grip 4.8s ease-in-out infinite alternate;
+}
+.jakhon-robot__button::after {
+  bottom: 3px;
+  background:radial-gradient(ellipse,rgba(83,243,219,.7),transparent 80%);
+}
+.jakhon-robot.is-perched .jakhon-robot__button::after {opacity:.7;}
+@keyframes jr-servo-glow {
+  0%,100% {opacity:.55}
+  50% {opacity:1}
+}
+@keyframes jr-flight-stabilizers {
+  from {transform:rotate(-3deg)}
+  to {transform:rotate(3deg)}
+}
+@keyframes jr-scout-look {
+  0%,22%,82%,100% {transform:rotate(0)}
+  30%,39% {transform:rotate(-3deg)}
+  57%,67% {transform:rotate(3deg)}
+}
+@keyframes jr-edge-grip {
+  0%,95%,100% {transform:rotate(0deg)}
+  50% {transform:rotate(5deg)}
+}
+@media (prefers-reduced-motion:reduce) {
+  .jakhon-robot .jr-side-jet,
+  .jakhon-robot .jr-side-jet circle,
+  .jakhon-robot .jr-eye,
+  .jakhon-robot .jr-head,
+  .jakhon-robot .jr-antenna,
+  .jakhon-robot.is-clinging .jr-arm {
+    animation:none!important;
+  }
+}
