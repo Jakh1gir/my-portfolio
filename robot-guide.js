@@ -75,6 +75,8 @@
   const protectedSelector = [
     "main h1", "main h2", "main h3", "main p", "main li",
     "main a", "main button", "main input", "main textarea", "main select",
+    "main .section-label", "main .price-value", "main .price-label",
+    "main .project-top", "main .project-type",
     "main summary", "main label", "main .project-status",
     "header a", "header button", "header select", "footer a",
     "main [role='button']", "main [contenteditable='true']"
@@ -87,7 +89,7 @@
   let scrollFrame = 0, scrollTimeout = 0, navTimeout = 0;
   let hoverTimeout = 0, actionTimeout = 0, bubbleTimeout = 0, idleTimeout = 0;
   let requested = null, lastFlight = -10000, lastInteraction = performance.now();
-  let lastSelected = null, selection = 0;
+  let lastSelected = null, obstacleCache = [], obstacleAt = -10000;
 
   const isTyping = target => target instanceof Element &&
     !!target.closest("input,textarea,select,[contenteditable='true']");
@@ -108,18 +110,33 @@
     const pad = 7;
     return { l:r.left-pad, t:r.top-pad, r:r.right+pad, b:r.bottom+pad };
   }
-  function collectObstacles() {
-    const out = [];
-    for (const el of document.querySelectorAll(protectedSelector)) {
-      if (el.closest("[hidden], [inert]") || !el.getClientRects().length) continue;
-      const rects = el.getClientRects();
-      // An inline anchor may wrap onto several lines; each line needs protection.
-      for (const r of rects) {
-        if (r.width < 3 || r.height < 3 || r.bottom < headerEdge() ||
-            r.top > innerHeight || r.right < 0 || r.left > innerWidth) continue;
+  function collectObstacles(force=false) {
+    const now=performance.now();
+    if(!force && now-obstacleAt<90) return obstacleCache;
+    obstacleAt=now;
+    const out=[];
+    const range=document.createRange();
+    const textContainers=/^(H1|H2|H3|P|LI|LABEL|SUMMARY|A|SMALL)$/;
+    for(const el of document.querySelectorAll(protectedSelector)) {
+      if(el.closest("[hidden], [inert]") || !el.getClientRects().length)continue;
+      // Actual rendered text line rectangles, not the full width of a block <p>.
+      // This makes the mascot aware of glyph occupied space and nearby whitespace.
+      let rects=el.getClientRects();
+      if(textContainers.test(el.tagName)){
+        try {
+          range.selectNodeContents(el);
+          const lines=range.getClientRects();
+          if(lines.length)rects=lines;
+        }catch{ /* Keep element bounds if Range cannot measure it. */ }
+      }
+      for(const r of rects){
+        if(r.width<3||r.height<3||r.bottom<headerEdge()||
+           r.top>innerHeight||r.right<0||r.left>innerWidth)continue;
         out.push(blockedRect(r));
       }
     }
+    range.detach?.();
+    obstacleCache=out;
     return out;
   }
   function overlaps(a, b) {
@@ -178,7 +195,7 @@
         const travel = Math.hypot(candidate.x-x, candidate.y-y);
         let score = Math.abs(centerY-referenceY)*.65+travel*.11;
         if (candidate.side==="ledge") score -= 34;
-        if (isPreferred) score -= 170;
+        if (isPreferred) score -= 395;
         if (current?.element===el) score -= 48;
         if (current?.element===el && current.side===candidate.side) score -= 45;
         if (lastSelected===el && nearby) score += 60;
@@ -248,8 +265,9 @@
     const railMode=dist>250; // travel near screen margins, not across a paragraph
     const railX = dx>=0 ? Math.min(innerWidth-bounds().w-9,Math.max(startX,point.x)+24) :
                            Math.max(9,Math.min(startX,point.x)-24);
+    robot.classList.remove("is-perched","is-clinging","is-docked");
     robot.classList.add("is-flying");
-    robot.classList.remove("is-inspecting","is-napping","is-waving");
+    robot.classList.remove("is-inspecting","is-napping","is-waving","is-balancing");
     show(true);
     // Flight passes over content briefly. It is translucent and unclickable.
     function tick(now) {
@@ -302,10 +320,12 @@
     show(true);
   }
   function scheduleScroll() {
+    robot.classList.add("is-scrolling");
     if (!scrollFrame) scrollFrame=requestAnimationFrame(followSurface);
     clearTimeout(scrollTimeout);
     scrollTimeout=setTimeout(()=>{
       scrollTimeout=0;
+      robot.classList.remove("is-scrolling");
       if (requested) {
         const target=requested;requested=null;
         clearTimeout(navTimeout);
@@ -364,6 +384,7 @@
   });
   window.addEventListener("scroll",scheduleScroll,{passive:true});
   window.addEventListener("scrollend",()=>{
+    robot.classList.remove("is-scrolling");
     if(requested){const target=requested;requested=null;clearTimeout(navTimeout);settle(target,true);}
     else settle(null,false);
   },{passive:true});
@@ -399,7 +420,7 @@
   let clicks=0;
   function react(name,duration=850) {
     clearTimeout(actionTimeout);
-    robot.classList.remove("is-inspecting","is-waving","is-napping","is-bouncing");
+    robot.classList.remove("is-inspecting","is-waving","is-napping","is-bouncing","is-balancing");
     void robot.offsetWidth;
     robot.classList.add(name);
     actionTimeout=setTimeout(()=>robot.classList.remove(name),duration);
