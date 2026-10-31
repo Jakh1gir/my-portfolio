@@ -289,3 +289,27 @@ body.menu-open .jakhon-robot__button { pointer-events: none; }
   }
   .jakhon-robot.is-ready:not(.is-hidden) { opacity: 1; }
 }
+
+
+/* A moving character never blocks readability or interaction. */
+.jakhon-robot.is-scrolling.is-ready:not(.is-hidden) { opacity: .27; }
+.jakhon-robot.is-scrolling .jakhon-robot__button { pointer-events: none; }
+.jakhon-robot.is-flying.is-ready:not(.is-hidden) { opacity: .28; }
+.jr-stars {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.jakhon-robot.is-waving .jr-stars,
+.jakhon-robot.is-bouncing .jr-stars,
+.jakhon-robot.is-landing .jr-stars {
+  animation: jr-twinkle .85s ease-in-out 1;
+}
+@keyframes jr-twinkle {
+  0%,100% { opacity: 0; transform:scale(.3) rotate(-25deg); }
+  30%,65% { opacity: .95; transform:scale(1.1) rotate(15deg); }
+}
+@media (prefers-reduced-motion:reduce){
+  .jakhon-robot.is-scrolling.is-ready:not(.is-hidden) {opacity:1}
+  .jr-stars {animation:none!important;opacity:0!important}
+}
