@@ -141,3 +141,114 @@ body.menu-open .jakhon-robot__button{pointer-events:none}
   .jakhon-robot.is-flying .jakhon-robot__art,
   .jakhon-robot.is-dragging .jakhon-robot__art {animation:none!important}
 }
+
+
+/* Nano v8 flight dynamics: body attitude follows actual X/Y velocity. */
+.jakhon-robot {
+  --jr-pitch:-7deg;
+  --jr-roll:0deg;
+  --jr-yaw:0deg;
+}
+.jakhon-robot.is-flying .jakhon-robot__art {
+  animation:none;
+  transform:perspective(180px)
+    rotateY(var(--jr-yaw))
+    rotateX(var(--jr-pitch))
+    rotateZ(var(--jr-roll));
+  transition:transform 105ms linear;
+  filter:drop-shadow(1px 7px 7px rgba(0,17,37,.36))
+         drop-shadow(0 0 3px rgba(97,243,218,.18));
+}
+.jakhon-robot.is-flying .jr-shadow {
+  opacity:.1;
+  transform:scale(.64);
+}
+.jakhon-robot.is-flying .jr-leg-left {
+  animation:nano-flight-left-foot .32s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying .jr-leg-right {
+  animation:nano-flight-right-foot .27s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying .jr-arm-left {
+  animation:nano-flight-left-arm .48s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying .jr-arm-right {
+  animation:nano-flight-right-arm .46s ease-in-out infinite alternate;
+}
+/* Jet intensity changes with the active flight phase. */
+.jakhon-robot.is-takeoff .jr-thruster {
+  opacity:1;
+  animation:nano-v8-liftoff-jet .115s ease-in-out infinite alternate;
+  filter:drop-shadow(0 2px 4px rgba(68,227,235,.7));
+}
+.jakhon-robot.is-cruising .jr-thruster {
+  opacity:.88;
+  animation:nano-v8-cruise-jet .23s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-descending .jr-thruster {
+  opacity:.75;
+  animation:nano-v8-landing-jet .17s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-patrolling .jr-thruster {
+  opacity:.8;
+  animation:nano-v8-cruise-jet .22s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-takeoff .jr-head {
+  animation:nano-v8-look-up .48s ease-out both;
+}
+.jakhon-robot.is-descending .jr-head {
+  animation:nano-v8-look-down .45s ease-in-out both;
+}
+.jakhon-robot.is-landing .jr-thruster {
+  animation:nano-v8-engine-cut .38s ease-out both;
+}
+@keyframes nano-v8-liftoff-jet {
+  from {transform:scale(.83,.85) translateY(0);opacity:.82}
+  to {transform:scale(1.13,1.55) translateY(2px);opacity:1}
+}
+@keyframes nano-v8-cruise-jet {
+  from {transform:scale(.8,.75);opacity:.62}
+  to {transform:scale(1.08,1.17);opacity:.95}
+}
+@keyframes nano-v8-landing-jet {
+  from {transform:scale(.92,.62);opacity:.58}
+  to {transform:scale(1.14,1.05);opacity:.9}
+}
+@keyframes nano-v8-engine-cut {
+  from {transform:scale(1);opacity:.8}
+  to {transform:scale(.35,.2);opacity:0}
+}
+@keyframes nano-v8-look-up {
+  from {transform:rotate(0)}
+  to {transform:rotate(-7deg)}
+}
+@keyframes nano-v8-look-down {
+  from {transform:rotate(0)}
+  to {transform:rotate(7deg)}
+}
+@keyframes nano-flight-left-foot {
+  from {transform:rotate(9deg)}
+  to {transform:rotate(-10deg)}
+}
+@keyframes nano-flight-right-foot {
+  from {transform:rotate(-11deg)}
+  to {transform:rotate(9deg)}
+}
+@keyframes nano-flight-left-arm {
+  from {transform:rotate(-13deg)}
+  to {transform:rotate(10deg)}
+}
+@keyframes nano-flight-right-arm {
+  from {transform:rotate(11deg)}
+  to {transform:rotate(-12deg)}
+}
+@media (prefers-reduced-motion:reduce) {
+  .jakhon-robot.is-flying .jakhon-robot__art,
+  .jakhon-robot.is-flying .jr-leg,
+  .jakhon-robot.is-flying .jr-arm,
+  .jakhon-robot.is-flying .jr-thruster,
+  .jakhon-robot.is-flying .jr-head {
+    animation:none!important;
+    transition:none!important;
+  }
+}
