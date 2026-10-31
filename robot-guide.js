@@ -101,7 +101,7 @@
   let scrollFrame = 0, scrollTimeout = 0, navTimeout = 0;
   let hoverTimeout = 0, actionTimeout = 0, bubbleTimeout = 0, idleTimeout = 0;
   let requested = null, lastFlight = -10000, lastInteraction = performance.now();
-  let lastSelected = null, obstacleCache = [], obstacleAt = -10000;
+  let lastSelected = null, obstacleCache = [], obstacleAt = -10000, obstacleScrollAt = 0;
   let lastScroll = -10000, lastAnchorCheck = -10000, scrollVelocity = 0, lastScrollY = window.scrollY || 0;
   let tracking = false, teleportPending = null;
   let vanishTimer = 0, appearTimer = 0, teleportTimer = 0, teleportToken = 0;
@@ -134,29 +134,38 @@
     const pad = 7;
     return { l:r.left-pad, t:r.top-pad, r:r.right+pad, b:r.bottom+pad };
   }
+  // Cache in document space: scrolling only translates rectangles. Avoid
+  // measuring hundreds of Range glyph boxes on every animation frame.
   function collectObstacles(force=false) {
     const now=performance.now();
-    if(!force && now-obstacleAt<90) return obstacleCache;
+    const sy=window.scrollY||0, delta=sy-obstacleScrollAt;
+    if(!force && obstacleCache.length && now-obstacleAt<150 &&
+       Math.abs(delta)<Math.min(160,innerHeight*.18)) {
+      if(delta===0)return obstacleCache;
+      return obstacleCache.map(r=>r.fixed?r:{
+        l:r.l,t:r.t-delta,r:r.r,b:r.b-delta,fixed:false
+      });
+    }
     obstacleAt=now;
-    const out=[];
-    const range=document.createRange();
+    obstacleScrollAt=sy;
+    const out=[],range=document.createRange();
     const textContainers=/^(H1|H2|H3|P|LI|LABEL|SUMMARY|A|SMALL)$/;
-    for(const el of document.querySelectorAll(protectedSelector)) {
-      if(el.closest("[hidden], [inert]") || !el.getClientRects().length)continue;
-      // Actual rendered text line rectangles, not the full width of a block <p>.
-      // This makes the mascot aware of glyph occupied space and nearby whitespace.
+    for(const el of document.querySelectorAll(protectedSelector)){
+      if(el.closest("[hidden], [inert]")||!el.getClientRects().length)continue;
       let rects=el.getClientRects();
       if(textContainers.test(el.tagName)){
-        try {
+        try{
           range.selectNodeContents(el);
           const lines=range.getClientRects();
           if(lines.length)rects=lines;
-        }catch{ /* Keep element bounds if Range cannot measure it. */ }
+        }catch{/* Fall back to the element rectangle. */}
       }
+      const fixed=!!el.closest("header") ||
+        window.getComputedStyle?.(el)?.position==="fixed";
       for(const r of rects){
         if(r.width<3||r.height<3||r.bottom<headerEdge()||
            r.top>innerHeight||r.right<0||r.left>innerWidth)continue;
-        out.push(blockedRect(r));
+        out.push({...blockedRect(r),fixed});
       }
     }
     range.detach?.();
@@ -463,7 +472,7 @@
     lastScroll=performance.now();
     const cy=window.scrollY||0;
     scrollVelocity=cy-lastScrollY;lastScrollY=cy;
-    obstacleAt=-10000; // text boxes move with the document
+    // Cached text boxes follow scrollY without forcing a layout read.
     clearTimeout(idleTimeout);
     if(!scrollFrame)scrollFrame=requestAnimationFrame(followSurface);
     clearTimeout(scrollTimeout);
@@ -517,6 +526,7 @@
   });
   document.addEventListener("focusout",()=>setTimeout(()=>{if(!dragging())settle(null,false)},200));
   document.addEventListener("click",ev=>{
+    obstacleAt=-10000; // cards, filters and accordions may change layout
     if(!(ev.target instanceof Element))return;
     const link=ev.target.closest('a[href^="#"]');
     if(link&&!link.closest(".skip-link")){
