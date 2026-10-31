@@ -313,3 +313,184 @@ body.menu-open .jakhon-robot__button { pointer-events: none; }
   .jakhon-robot.is-scrolling.is-ready:not(.is-hidden) {opacity:1}
   .jr-stars {animation:none!important;opacity:0!important}
 }
+
+
+/* === JAKHON Robot v3: flight, teleportation, grip and smooth dragging === */
+.jakhon-robot {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.jakhon-robot__art { backface-visibility: hidden; }
+.jakhon-robot__button {
+  cursor: grab;
+  touch-action: none; /* only the robot blocks native touch gestures */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.jakhon-robot.is-grabbed .jakhon-robot__button,
+.jakhon-robot.is-dragging .jakhon-robot__button { cursor: grabbing; }
+.jakhon-robot.is-dragging.is-ready:not(.is-hidden) { opacity: .91; }
+.jakhon-robot.is-dragging .jakhon-robot__art {
+  animation: jr-grab-float 1s ease-in-out infinite !important;
+  filter: drop-shadow(0 13px 16px rgba(6, 23, 41, .5));
+}
+.jakhon-robot.is-dragging .jr-head {
+  animation: jr-grab-look .8s ease-in-out infinite alternate !important;
+}
+.jakhon-robot.is-dragging .jr-arm-left {
+  animation: jr-grab-left .65s ease-in-out infinite alternate !important;
+}
+.jakhon-robot.is-dragging .jr-arm-right {
+  animation: jr-grab-right .65s ease-in-out infinite alternate !important;
+}
+.jakhon-robot.is-dragging .jr-leg-left,
+.jakhon-robot.is-dragging .jr-leg-right {
+  animation: jr-drag-dangle .45s ease-in-out infinite alternate !important;
+}
+.jakhon-robot.is-dragging .jr-thruster {
+  opacity: .5;
+  animation: jr-thrust-pulse .3s ease-in-out infinite alternate !important;
+}
+.jr-thruster {
+  opacity: 0;
+  transform-origin: 50% 20%;
+  transform-box: fill-box;
+  pointer-events: none;
+}
+.jakhon-robot.is-flying .jr-thruster {
+  opacity: .96;
+  animation: jr-thrust-pulse .14s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying.is-ready:not(.is-hidden) {
+  opacity: .42; /* see the ascent without obscuring foreground text */
+}
+.jakhon-robot.is-flying .jakhon-robot__art {
+  transform: rotate(-7deg) scale(1.04);
+  animation: jr-rocket-tilt .72s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-flying .jr-leg {
+  animation: jr-engine-legs .23s ease-in-out infinite alternate;
+}
+.jakhon-robot.is-landing .jr-thruster {
+  animation: jr-shut-engine .38s ease-out forwards;
+}
+.jakhon-robot.is-teleport-out.is-ready:not(.is-hidden) {
+  opacity: .9;
+  pointer-events: none;
+}
+.jakhon-robot.is-teleport-out .jakhon-robot__button {
+  pointer-events: none;
+}
+.jakhon-robot.is-teleport-out .jakhon-robot__art {
+  animation: jr-teleport-out .23s cubic-bezier(.55,0,.8,.5) both !important;
+  filter: drop-shadow(0 0 16px #62f7ed);
+}
+.jakhon-robot.is-teleport-in .jakhon-robot__art {
+  animation: jr-teleport-in .42s cubic-bezier(.14,.8,.22,1) both !important;
+  filter: drop-shadow(0 0 13px #5becdd);
+}
+.jakhon-robot__button::before {
+  content:"";
+  position:absolute;
+  inset:4px -5px 4px;
+  border: 2px solid rgba(91,255,232,.9);
+  border-radius:50%;
+  box-shadow: 0 0 24px rgba(81,225,196,.65), inset 0 0 14px rgba(81,225,196,.3);
+  opacity:0;
+  transform:scale(.4);
+  pointer-events:none;
+}
+.jakhon-robot.is-teleport-out .jakhon-robot__button::before {
+  animation:jr-portal-out .23s ease-in both;
+}
+.jakhon-robot.is-teleport-in .jakhon-robot__button::before {
+  animation:jr-portal-in .42s ease-out both;
+}
+.jakhon-robot.is-grabbed .jakhon-robot__button::before,
+.jakhon-robot.is-dragging .jakhon-robot__button::before {
+  opacity:.8;
+  transform:scale(1);
+  border-style:dashed;
+  animation:jr-held-ring 2.5s linear infinite;
+}
+.jakhon-robot.is-teleport-out .jr-stars,
+.jakhon-robot.is-teleport-in .jr-stars {
+  animation: jr-twinkle .35s ease-in-out infinite alternate;
+}
+@keyframes jr-thrust-pulse {
+  from { transform:scale(.72,.75); opacity:.6; }
+  to { transform:scale(1.18,1.17); opacity:1; }
+}
+@keyframes jr-shut-engine {
+  from { transform:scale(1.1); opacity:1; }
+  to { transform:scale(.3); opacity:0; }
+}
+@keyframes jr-rocket-tilt {
+  from { transform:rotate(-9deg) translateY(-2px); }
+  to { transform:rotate(8deg) translateY(-5px); }
+}
+@keyframes jr-engine-legs {
+  from {transform:rotate(11deg)}
+  to {transform:rotate(-11deg)}
+}
+@keyframes jr-teleport-out {
+  0% { opacity:1; transform:scale(1) rotate(0); filter:blur(0); }
+  48% { opacity:.95; transform:scale(1.12,.7) rotate(7deg); filter:blur(1px); }
+  100% { opacity:0; transform:scale(.04,1.32) rotate(-7deg); filter:blur(5px); }
+}
+@keyframes jr-teleport-in {
+  0% { opacity:0; transform:scale(.04,1.45) rotate(10deg); filter:blur(5px); }
+  50% { opacity:.75; transform:scale(1.15,.82) rotate(-5deg); filter:blur(1px); }
+  78% { opacity:1; transform:scale(.94,1.07) rotate(2deg); filter:blur(0); }
+  100% { opacity:1; transform:scale(1) rotate(0); filter:blur(0); }
+}
+@keyframes jr-portal-out {
+  0% {opacity:0;transform:scale(.3)}
+  35% {opacity:1;transform:scale(.95)}
+  100% {opacity:0;transform:scale(1.65)}
+}
+@keyframes jr-portal-in {
+  0% {opacity:0;transform:scale(1.65)}
+  45% {opacity:1;transform:scale(.85)}
+  100% {opacity:0;transform:scale(.2)}
+}
+@keyframes jr-grab-float {
+  0%,100% { transform:translateY(0) rotate(-5deg); }
+  50% { transform:translateY(-5px) rotate(5deg); }
+}
+@keyframes jr-grab-look {
+  from { transform:rotate(-6deg) }
+  to { transform:rotate(6deg) }
+}
+@keyframes jr-grab-left {
+  from { transform:rotate(-36deg) }
+  to { transform:rotate(-19deg) }
+}
+@keyframes jr-grab-right {
+  from { transform:rotate(36deg) }
+  to { transform:rotate(19deg) }
+}
+@keyframes jr-drag-dangle {
+  from { transform:rotate(-14deg) }
+  to { transform:rotate(14deg) }
+}
+@keyframes jr-held-ring {
+  from { transform:rotate(0); }
+  to { transform:rotate(360deg); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .jakhon-robot.is-dragging .jakhon-robot__art,
+  .jakhon-robot.is-dragging .jr-head,
+  .jakhon-robot.is-dragging .jr-arm-left,
+  .jakhon-robot.is-dragging .jr-arm-right,
+  .jakhon-robot.is-dragging .jr-leg,
+  .jakhon-robot.is-teleport-in .jakhon-robot__art,
+  .jakhon-robot.is-teleport-out .jakhon-robot__art,
+  .jakhon-robot.is-flying .jakhon-robot__art {
+    animation: none !important;
+    filter: none !important;
+  }
+  .jakhon-robot__button::before,
+  .jakhon-robot .jr-thruster {animation:none!important;opacity:0!important;}
+}
