@@ -279,6 +279,9 @@ small{font-size:.77rem}
 .footer-links a:hover{color:var(--teal)}
 .footer-bottom{display:flex;justify-content:space-between;gap:18px;border-top:1px solid #183347;padding:22px 0 27px;font-size:10px;color:#718e9d}
 .footer-bottom a{color:#a5cacb}
+.footer-visit-counter{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 12px;padding:0 0 24px;color:#94b9c1;font:600 10px "SFMono-Regular",Consolas,"Liberation Mono",monospace;letter-spacing:.09em}
+.footer-visit-counter::before{content:"";width:5px;height:5px;flex:none;border-radius:50%;background:#5de0c6;box-shadow:0 0 8px #5de0c680}
+.footer-visit-counter img{display:block;width:auto;max-width:100%;height:20px;border-radius:3px}
 @media (max-width:1120px){
   .container{width:min(calc(100% - 50px),var(--max))}
   .hero-grid{grid-template-columns:1fr 1fr;gap:30px}
