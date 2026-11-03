@@ -5,3 +5,8 @@ for (const line of "Перейти к содержимому|||Skip to content||
   if (parts.length !== 3) continue;
   window.JakhonDictionary[parts[0]] = {en:parts[1],uz:parts[2]};
 }
+
+// Footer visit counter (same total across all language variants).
+window.JakhonDictionary["Просмотры сайта"] = {en:"Site views",uz:"Sayt ko‘rishlari"};
+window.JakhonDictionary["Счётчик просмотров JAKHON.UZ"] = {en:"JAKHON.UZ view counter",uz:"JAKHON.UZ ko‘rishlar hisoblagichi"};
+window.JakhonDictionary["Количество просмотров сайта JAKHON.UZ"] = {en:"JAKHON.UZ site view count",uz:"JAKHON.UZ sayt ko‘rishlari soni"};
