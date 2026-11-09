@@ -77,3 +77,12 @@
 @media(max-width:1080px){.masterpiece-hero h1{font-size:clamp(2.5rem,4.8vw,4.7rem)}}
 @media(max-width:820px){.masterpiece-hero h1{font-size:clamp(2.85rem,8.25vw,5.6rem)}}
 @media(max-width:570px){.masterpiece-hero h1{font-size:clamp(2.1rem,9.6vw,4.15rem)}.masterpiece-hero h1 em{font-size:.74em}}
+
+
+/* Portfolio revision metadata — compact on desktop and mobile. */
+.portfolio-reviewed{margin:-9px 0 25px;color:#55707b;font-size:12px;line-height:1.65}
+.portfolio-reviewed time{font-weight:800;color:#176b64;font-variant-numeric:tabular-nums}
+.projects-section .project-info p.project-last-commit{margin:0 0 16px;padding:9px 11px;border:1px solid #dce9e8;border-radius:7px;background:#f6faf9;color:#4f6971;font-size:11px;line-height:1.6;display:flex;gap:7px;flex-wrap:wrap}
+.project-last-commit time{font-weight:800;color:#106c64;font-variant-numeric:tabular-nums}
+.project-detail-dialog[data-status="prototype"] .pd-status{border-color:#79694e;background:#403423;color:#ffdfae}
+.project-detail-dialog[data-status="prototype"] .pd-status::before{background:#e2b56d;box-shadow:none}
