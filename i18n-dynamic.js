@@ -6,3 +6,67 @@ for (const line of "Открыть кейс|||View case|||Loyihani ochish\nПо�
 }
 
 for (const line of "Поиск раздела, проекта, направления...|||Search sections, projects, expertise...|||Bo'lim, loyiha yoki yo'nalishni qidirish...\nРезультаты навигации|||Navigation results|||Navigatsiya natijalari\nLanguage / Til / Язык|||Language|||Til".split("\n")) { const parts=line.split("|||"); if(parts.length===3) window.JakhonDictionary[parts[0]]={en:parts[1],uz:parts[2]}; }
+
+/* GitHub-verified portfolio strings, 2026-11-09. */
+Object.assign(window.JakhonDictionary, {
+  "Данные проектов сверены с GitHub:": {
+    "en": "Project information checked against GitHub:",
+    "uz": "Loyihalar ma’lumotlari GitHub bilan tekshirildi:"
+  },
+  ". Версия исходников не означает подтверждённый публичный релиз.": {
+    "en": ". A source version does not mean a confirmed public release.",
+    "uz": ". Manba kodi versiyasi tasdiqlangan ommaviy reliz degani emas."
+  },
+  "Версия исходников не означает подтверждённый публичный релиз.": {
+    "en": "A source version does not mean a confirmed public release.",
+    "uz": "Manba kodi versiyasi tasdiqlangan ommaviy reliz degani emas."
+  },
+  "Последний коммит:": {
+    "en": "Last commit:",
+    "uz": "So‘nggi commit:"
+  },
+  "Бета · v0.8.8": {
+    "en": "Beta · v0.8.8",
+    "uz": "Beta · v0.8.8"
+  },
+  "Бета · v1.8.0b1": {
+    "en": "Beta · v1.8.0b1",
+    "uz": "Beta · v1.8.0b1"
+  },
+  "Прототип · v0.3.0": {
+    "en": "Prototype · v0.3.0",
+    "uz": "Prototip · v0.3.0"
+  },
+  "Core · v0.5.0 beta": {
+    "en": "Core · v0.5.0 beta",
+    "uz": "Core · v0.5.0 beta"
+  },
+  "Исходники · v1.3.3": {
+    "en": "Source · v1.3.3",
+    "uz": "Manba · v1.3.3"
+  },
+  "Версия исходников:": {
+    "en": "Source version:",
+    "uz": "Manba kodi versiyasi:"
+  },
+  "Офлайн-инструментарий Android для инженеров: 57 расчётных сценариев в версии 0.8.8, архив результатов и 11 языков. Бета-развитие продолжается.": {
+    "en": "Offline Android engineering toolkit: 57 calculation workflows in v0.8.8, a results archive and 11 languages. Beta development continues.",
+    "uz": "Android uchun oflayn muhandislik vositasi: 0.8.8 versiyada 57 ta hisoblash jarayoni, natijalar arxivi va 11 til. Beta rivojlanishi davom etmoqda."
+  },
+  "Local-first система для инженерных данных: SQLite, LAN API, права доступа, аудит, Excel и реестр оборудования KKS. Код 1.8.0-beta.1; установщик ещё требует приёмки.": {
+    "en": "Local-first engineering data platform with SQLite, LAN API, access control, audit, Excel and a KKS equipment register. Version 1.8.0-beta.1 source; installer acceptance is pending.",
+    "uz": "SQLite, LAN API, kirish nazorati, audit, Excel va KKS uskunalar reyestriga ega lokal muhandislik ma’lumot tizimi. Kod 1.8.0-beta.1; o‘rnatma hali sinovdan o‘tishi kerak."
+  },
+  "Программный прототип умного дома 0.3.0: Flutter-приложение, Orange Pi, MQTT и ESP32. Есть деморежим и синхронизация; готовый физический комплект не заявлен.": {
+    "en": "Smart-home software prototype 0.3.0 with Flutter, Orange Pi, MQTT and ESP32. Demo and synchronization are available; no finished physical kit is claimed.",
+    "uz": "Flutter, Orange Pi, MQTT va ESP32 asosidagi aqlli uy dasturiy prototipi 0.3.0. Demo va sinxronlash mavjud; tayyor apparat majmuasi e’lon qilinmagan."
+  },
+  "Core 0.5.0-beta.1 обрабатывает инженерные запросы и KKS, связывая Local_DB, Visual Pack и локальные AI-модели. Единая сборка DB AI Core пока не подтверждена.": {
+    "en": "Core 0.5.0-beta.1 handles engineering queries and KKS while integrating Local_DB, Visual Pack and local AI models. An accepted all-in-one DB AI Core build is not yet confirmed.",
+    "uz": "Core 0.5.0-beta.1 muhandislik so‘rovlari va KKS bilan ishlaydi, Local_DB, Visual Pack hamda mahalliy AI modellarini bog‘laydi. Yagona DB AI Core yig‘ilmasi hali tasdiqlanmagan."
+  },
+  "Модуль OCR/PDF/DXF и поиска KKS на схемах, код 1.3.3. Установщик Windows — кандидат; сквозная проверка установки ещё не подтверждена.": {
+    "en": "OCR/PDF/DXF module for KKS searches on drawings, source version 1.3.3. Windows installer is a candidate; end-to-end validation remains unconfirmed.",
+    "uz": "Chizmalardagi KKS qidiruvi uchun OCR/PDF/DXF moduli, kod 1.3.3. Windows o‘rnatmasi nomzod, yakuniy tekshiruv hali tasdiqlanmagan."
+  }
+});
