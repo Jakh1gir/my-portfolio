@@ -29,7 +29,7 @@ Object.assign(window.JakhonDictionary, {
     "en": "Beta · v0.8.8",
     "uz": "Beta · v0.8.8"
   },
-  "Бета · v1.8.0b1": {
+  "Бета · 1.8.0-beta.1": {
     "en": "Beta · v1.8.0b1",
     "uz": "Beta · v1.8.0b1"
   },
