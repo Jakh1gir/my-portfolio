@@ -84,9 +84,46 @@ L("Попробовать интерактивные игровые идеи и 
 [S("now","Направление запланировано","Future direction planned","Kelajakdagi yo'nalish rejalashtirilgan"),S("target","Старт подготовки — конец 2027 года","Preparation starts — late 2027","Tayyorgarlik boshlanishi — 2027-yil oxiri"),S("next","После старта: прототип и первые тесты","Later: prototype and initial tests","Keyin: prototip va dastlabki sinovlar")],
 ["Mobile","Game design"])
 };
+
+/* Repository-verified snapshot, 2026-11-09. Dates below are commits on main,
+   not public release dates. Private source links are deliberately omitted. */
+const projectRevisions={
+  j1calc:{
+    lastCommit:"2026-08-23",status:"beta",
+    summary:L("J1Calc 0.8.8 — автономный Android-инструментарий с 57 инженерными расчётами и сценариями, архивом результатов и 11 языками. Публичная стабильная сборка отдельно не подтверждена.","J1Calc 0.8.8 is an offline Android engineering toolbox with 57 calculation workflows, a local archive and 11 languages. Stable public distribution has not been independently confirmed.","J1Calc 0.8.8 — 57 ta muhandislik hisoblash vositasi, mahalliy arxiv va 11 tilga ega oflayn Android ilovasi. Ommaviy barqaror reliz alohida tasdiqlanmagan."),
+    steps:[S("now","Версия исходников 0.8.8","Source code version 0.8.8","Manba kodi 0.8.8"),S("next","Проверка подписанного APK и обновлений","Verify signed APK and upgrades","Imzolangan APK va yangilanishlarni tekshirish"),S("target","Стабильная публикация после приёмки","Stable release after acceptance","Qabul sinovidan so‘ng barqaror reliz")],
+    release:L("Код · v0.8.8","Source · v0.8.8","Kod · v0.8.8")
+  },
+  localdb:{
+    lastCommit:"2026-11-04",status:"beta",
+    summary:L("Local_DB Universal 1.8.0-beta.1 — локальная инженерная база данных с LAN API, SQLite, аудитом, правами доступа, обменом с Excel и реестром оборудования KKS. Последняя подтверждённая стабильная контрольная версия — 1.7.5; Windows Beta ещё требует приёмки.","Local_DB Universal 1.8.0-beta.1 combines SQLite, LAN API, audit, access roles, Excel and a KKS equipment register. The last verified stable checkpoint is 1.7.5; Windows Beta installation still requires acceptance.","Local_DB Universal 1.8.0-beta.1 — SQLite, LAN API, audit, kirish huquqlari, Excel va KKS uskunalari reyestri. Tasdiqlangan barqaror nazorat versiyasi 1.7.5, Windows Beta sinovi hali kerak."),
+    steps:[S("now","Исходники 1.8.0-beta.1, стабильная контрольная версия 1.7.5","Source 1.8.0-beta.1, stable checkpoint 1.7.5","Kod 1.8.0-beta.1, barqaror nazorat 1.7.5"),S("next","Полная приёмка Windows Setup, резервных копий и прав доступа","Full Windows Setup, backup and access-control acceptance","Windows Setup, zaxira nusxa va kirish nazorati sinovlari"),S("target","15 декабря 2026 — плановая цель, не подтверждённый выпуск","December 15, 2026 is a target, not a confirmed release","2026-yil 15-dekabr — reja, tasdiqlangan reliz emas")],
+    release:L("Исходники · v1.8.0-beta.1","Source · v1.8.0-beta.1","Kod · v1.8.0-beta.1")
+  },
+  smarthome:{
+    lastCommit:"2026-07-24",status:"prototype",
+    summary:L("Smart Home Edge 0.3.0 — программный прототип локального умного дома: приложение Flutter для Android/iOS, Orange Pi, MQTT и ESP32. Деморежим, настройки устройств и синхронизация конфигурации реализованы. Физический комплект и промышленный контур ПЛК/SCADA ещё не подтверждены.","Smart Home Edge 0.3.0 is a local smart-home software prototype with Flutter, Orange Pi, MQTT and ESP32. Demo mode, device settings and configuration sync are implemented. Physical hardware and PLC/SCADA deployment are not yet confirmed.","Smart Home Edge 0.3.0 — Flutter, Orange Pi, MQTT va ESP32 asosidagi mahalliy aqlli uy dasturiy prototipi. Demo rejimi, qurilmalar sozlamalari va sinxronlash mavjud. Tayyor apparat va PLC/SCADA hali tasdiqlanmagan."),
+    steps:[S("now","Программный прототип 0.3.0 и автономный деморежим","Software prototype 0.3.0 with offline demo","Dasturiy prototip 0.3.0 va oflayn demo"),S("next","Физические испытания устройств и локального сервера","Hardware and local-server testing","Qurilmalar va mahalliy server sinovlari"),S("target","ПЛК/SCADA — план развития; дата релиза не назначена","PLC/SCADA planned; no release date set","PLC/SCADA rejada; reliz sanasi belgilanmagan")],
+    release:L("Прототип ПО · v0.3.0","Software prototype · v0.3.0","Dasturiy prototip · v0.3.0")
+  },
+  aicore:{
+    lastCommit:"2026-10-30",status:"development",
+    summary:L("Core 0.5.0-beta.1 — локальный AI-модуль с маршрутизацией инженерных запросов, поиском KKS и ответами с источниками. Интеграция с Local_DB, Visual Pack и Ollama развивается. DB AI Core как единая проверенная установленная система пока не подтверждена.","Core 0.5.0-beta.1 is a local AI module for engineering query routing, KKS retrieval and evidence-backed answers. Local_DB, Visual Pack and Ollama integration is evolving. An accepted all-in-one DB AI Core installation is not confirmed.","Core 0.5.0-beta.1 — muhandislik so‘rovlari, KKS qidiruvi va dalillarga asoslangan javoblar uchun mahalliy AI moduli. Local_DB, Visual Pack va Ollama integratsiyasi davom etmoqda; yagona DB AI Core tizimi hali tasdiqlanmagan."),
+    steps:[S("now","Core 0.5.0-beta.1; отдельный компонент, не готовая объединённая поставка","Core 0.5.0-beta.1; separate component, not an accepted combined release","Core 0.5.0-beta.1; alohida modul, umumiy reliz emas"),S("next","Интеграционная приёмка DB, Core, Visual Pack и Ollama","Accept DB, Core, Visual Pack and Ollama integration","DB, Core, Visual Pack va Ollama integratsiya sinovi"),S("target","30 декабря 2026 — план, не подтверждённая дата выпуска","December 30, 2026 is a target, not a confirmed release","2026-yil 30-dekabr — reja, reliz tasdiqlanmagan")],
+    release:L("Core · v0.5.0-beta.1","Core · v0.5.0-beta.1","Core · v0.5.0-beta.1")
+  },
+  visual:{
+    lastCommit:"2026-10-27",status:"development",
+    summary:L("Visual Pack 1.3.3 — отдельный модуль OCR для PDF и изображений, обработки DXF и поиска KKS на инженерных схемах. Исходники обновлены, но Windows Setup 1.3.3 остаётся кандидатом; сквозная Windows-приёмка пока не выполнена.","Visual Pack 1.3.3 is a standalone OCR module for PDF/images, DXF handling and KKS discovery on engineering drawings. Source is updated, but Windows Setup 1.3.3 remains a candidate pending end-to-end validation.","Visual Pack 1.3.3 — PDF/rasm OCR, DXF va muhandislik sxemalarida KKS qidiruvi uchun alohida modul. Kod yangilangan, ammo Windows Setup 1.3.3 yakuniy sinovdan o‘tmagan nomzod."),
+    steps:[S("now","Код Visual Pack 1.3.3 в main; Windows Setup — кандидат","Visual Pack 1.3.3 source on main; Windows Setup candidate","Visual Pack 1.3.3 kodi main da; Windows Setup nomzod"),S("next","Windows E2E и проверка протокола v3 с Core и Local_DB","Windows E2E and protocol v3 checks with Core and Local_DB","Windows E2E va Core/Local_DB bilan v3 protokol sinovi"),S("target","5 декабря 2026 — плановая цель, не подтверждённый выпуск","December 5, 2026 is a target, not a confirmed release","2026-yil 5-dekabr — reja, reliz tasdiqlanmagan")],
+    release:L("Исходники · v1.3.3","Source · v1.3.3","Kod · v1.3.3")
+  }
+};
+for(const [id,revision] of Object.entries(projectRevisions))Object.assign(projects[id],revision);
 const statusLabels={
 beta:L("Работает в бета-режиме","Working beta","Ishlaydigan beta"),
 design:L("Проектирование","Design stage","Loyihalash"),
+prototype:L("Программный прототип","Software prototype","Dasturiy prototip"),
 development:L("В разработке","In development","Ishlab chiqilmoqda"),
 planned:L("Идея / план","Concept / planned","G'oya / reja"),
 active:L("Доступна услуга","Service available","Xizmat mavjud")
@@ -106,7 +143,8 @@ contact:L("Обсудить проект","Discuss this project","Loyihani muhok
 studio:L("Открыть страницу сервиса","Open service page","Xizmat sahifasini ochish"),
 close:L("Закрыть подробности","Close details","Tafsilotlarni yopish"),
 intro:L("Подробное описание проекта","Project details","Loyiha haqida batafsil"),
-expand:L("Подробнее и roadmap","Details & roadmap","Tafsilotlar va rivojlanish rejasi")
+expand:L("Подробнее и roadmap","Details & roadmap","Tafsilotlar va rivojlanish rejasi"),
+lastCommit:L("Последний коммит:","Last commit:","So‘nggi commit:")
 };
 const dlg=document.getElementById("project-detail-dialog");
 if(!dlg)return;
@@ -128,6 +166,7 @@ function render(id){
  const status=node("span","pd-status",local(statusLabels[item.status],lang));
  const release=item.release?node("span","pd-release",local(item.release,lang)):null;
  const stats=node("div","pd-badges");stats.append(status);if(release)stats.append(release);
+  if(item.lastCommit){const stamp=node("time","pd-release",local(ui.lastCommit,lang)+" "+item.lastCommit.split("-").reverse().join("."));stamp.dateTime=item.lastCommit;stats.append(stamp);}
  top.append(eyebrow,title,stats);
  const summary=node("p","pd-intro",local(item.summary,lang));summary.id="pd-intro";
  content.append(top,summary);
