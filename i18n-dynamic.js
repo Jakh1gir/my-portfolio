@@ -70,3 +70,59 @@ Object.assign(window.JakhonDictionary, {
     "uz": "Chizmalardagi KKS qidiruvi uchun OCR/PDF/DXF moduli, kod 1.3.3. Windows o‘rnatmasi nomzod, yakuniy tekshiruv hali tasdiqlanmagan."
   }
 });
+
+/* KIPSHOP.UZ localization — project details and temporary preview. */
+Object.assign(window.JakhonDictionary, {
+  "B2B / Web": {
+    "en": "B2B / Web",
+    "uz": "B2B / Veb"
+  },
+  "Frontend MVP · прототип": {
+    "en": "Frontend MVP · prototype",
+    "uz": "Frontend MVP · prototip"
+  },
+  "INDUSTRIAL MARKETPLACE": {
+    "en": "INDUSTRIAL MARKETPLACE",
+    "uz": "SANOAT MARKETPLEYSI"
+  },
+  "КАТАЛОГ": {
+    "en": "CATALOG",
+    "uz": "KATALOG"
+  },
+  "ИНЖЕНЕРИЯ": {
+    "en": "ENGINEERING",
+    "uz": "MUHANDISLIK"
+  },
+  "B2B / КИПИА / АСУ ТП": {
+    "en": "B2B / I&C / AUTOMATION",
+    "uz": "B2B / KIPiA / ASU TP"
+  },
+  "Промышленный B2B-маркетплейс в разработке: каталог оборудования, сравнение характеристик, локальные черновики RFQ и инженерные симуляции. Продажи и серверные заказы пока не запущены.": {
+    "en": "Industrial B2B marketplace in development: equipment catalog, product comparison, local RFQ drafts and engineering simulations. Live sales and server orders are not yet available.",
+    "uz": "Ishlab chiqilayotgan sanoat B2B platformasi: uskunalar katalogi, solishtirish, lokal RFQ qoralamalari va muhandislik simulyatsiyalari. Haqiqiy savdo va server buyurtmalari hali ishga tushmagan."
+  },
+  "Подробнее о проекте KIPSHOP.UZ ↗": {
+    "en": "KIPSHOP.UZ project details ↗",
+    "uz": "KIPSHOP.UZ loyihasi haqida ↗"
+  },
+  "Временная ссылка": {
+    "en": "Temporary preview",
+    "uz": "Vaqtinchalik havola"
+  },
+  "MVP · ТОРГОВЫЙ ЗАПУСК В ПЛАНЕ": {
+    "en": "MVP · COMMERCIAL LAUNCH PLANNED",
+    "uz": "MVP · TIJORIY ISHGA TUSHIRISH REJADA"
+  },
+  "KIPSHOP.UZ — промышленный B2B": {
+    "en": "KIPSHOP.UZ — industrial B2B",
+    "uz": "KIPSHOP.UZ — sanoat B2B"
+  },
+  "Frontend MVP каталога КИПиА и АСУ ТП уже разрабатывается. Полноценные заказы, поставщики и серверная обработка RFQ требуют запуска и проверки.": {
+    "en": "Frontend MVP for instrumentation and automation catalog is in development. Real orders, suppliers and server-side RFQ handling still require deployment and validation.",
+    "uz": "KIPiA va ASU TP katalogining frontend MVP versiyasi ishlab chiqilmoqda. Haqiqiy buyurtmalar, yetkazib beruvchilar va server RFQ jarayoni hali ishga tushirilishi hamda tekshirilishi kerak."
+  },
+  "Временный просмотр: kipshop.vercel.app ↗": {
+    "en": "Temporary preview: kipshop.vercel.app ↗",
+    "uz": "Vaqtinchalik ko‘rish: kipshop.vercel.app ↗"
+  }
+});
