@@ -85,6 +85,32 @@ L("Попробовать интерактивные игровые идеи и 
 ["Mobile","Game design"])
 };
 
+
+/* KIPSHOP.UZ: repository-verified industrial B2B frontend MVP.
+   Preview address is temporary; a working Vercel deployment is not a production launch. */
+projects.kipshop=D("KIPSHOP.UZ","INDUSTRIAL B2B / WEB","prototype",
+L("MVP промышленной B2B-площадки для поиска оборудования КИПиА и АСУ ТП, сравнения характеристик, подготовки спецификаций и запросов коммерческих предложений (RFQ). Интерфейс и демонстрационные сценарии реализованы, полноценные продажи пока не запущены.",
+"Industrial B2B marketplace MVP for instrumentation and automation equipment, product comparison, specifications and quote requests (RFQ). Interface and demo workflows are implemented; real commercial transactions are not live.",
+"KIPiA va ASU TP uskunalarini qidirish, solishtirish, spetsifikatsiya hamda tijorat taklifi so‘rovlari (RFQ) uchun sanoat B2B platformasining MVP versiyasi. Demo ishlaydi, haqiqiy savdo hali yo‘lga qo‘yilmagan."),
+L("Создать удобный цифровой маршрут от инженерного подбора до запроса коммерческого предложения.",
+"Provide a practical digital workflow from equipment selection to requesting a quote.",
+"Uskuna tanlashdan tijorat taklifi so‘rashgacha bo‘lgan qulay raqamli jarayonni yaratish."),
+[
+L("Каталог: 6 направлений, 29 категорий, 213 типов оборудования — классификатор, не наличие на складе","Taxonomy with 6 divisions, 29 categories and 213 equipment types; not available inventory","6 yo‘nalish, 29 toifa va 213 uskunalar turi; bu ombordagi mahsulotlar emas"),
+L("Поиск, карточки, сравнение до трёх позиций и локальные черновики RFQ","Search, product cards, comparison of up to three items and local RFQ drafts","Qidiruv, mahsulot kartalari, 3 tagacha solishtirish va mahalliy RFQ qoralamalari"),
+L("Демонстрационные инженерные симуляции PID, клапана, резервуара и электропривода","Educational PID, valve, tank and motor-drive simulations","O‘quv PID, klapan, rezervuar va elektr yuritma simulyatsiyalari"),
+L("Подготовленные API и Supabase-контуры; работа серверной части требует развёртывания","API and Supabase backend groundwork; live server features require deployment","API va Supabase asoslari tayyor; server funksiyalari ishga tushirilishi kerak")
+],
+[
+S("now","Frontend MVP: каталог, RFQ-черновики и учебная лаборатория","Frontend MVP: catalog, RFQ drafts and demo laboratory","Frontend MVP: katalog, RFQ qoralamalari va o‘quv laboratoriyasi"),
+S("next","Развёртывание и проверка серверной авторизации, каталога и заявок","Deploy and validate server authentication, catalog and RFQ flow","Server avtorizatsiyasi, katalog va RFQ tizimini ishga tushirish va tekshirish"),
+S("target","Основной домен kipshop.uz и коммерческий запуск — после приёмки; дата не назначена","Primary domain kipshop.uz and commercial launch after acceptance; no date set","Asosiy kipshop.uz domeni va tijoriy ishga tushirish sinovdan so‘ng; sana belgilanmagan")
+],
+["HTML","CSS","JavaScript","RFQ","Supabase"],
+L("Frontend MVP · в разработке","Frontend MVP · in development","Frontend MVP · ishlab chiqilmoqda"));
+projects.kipshop.lastCommit="2026-11-04";
+projects.kipshop.previewUrl="https://kipshop.vercel.app/";
+
 /* Repository-verified snapshot, 2026-11-09. Dates below are commits on main,
    not public release dates. Private source links are deliberately omitted. */
 const projectRevisions={
@@ -144,7 +170,8 @@ studio:L("Открыть страницу сервиса","Open service page","X
 close:L("Закрыть подробности","Close details","Tafsilotlarni yopish"),
 intro:L("Подробное описание проекта","Project details","Loyiha haqida batafsil"),
 expand:L("Подробнее и roadmap","Details & roadmap","Tafsilotlar va rivojlanish rejasi"),
-lastCommit:L("Последний коммит:","Last commit:","So‘nggi commit:")
+lastCommit:L("Последний коммит:","Last commit:","So‘nggi commit:"),
+preview:L("Временный сайт: kipshop.vercel.app","Temporary preview: kipshop.vercel.app","Vaqtinchalik sayt: kipshop.vercel.app")
 };
 const dlg=document.getElementById("project-detail-dialog");
 if(!dlg)return;
@@ -188,6 +215,7 @@ function render(id){
  const actions=node("div","pd-actions");
  const contact=node("a","pd-contact",local(ui.contact,lang));contact.href="https://t.me/JakhonUZ";contact.target="_blank";contact.rel="noopener noreferrer";actions.append(contact);
  if(item.url){const more=node("a","pd-service",local(ui.studio,lang));more.href=item.url;actions.append(more);}
+  if(item.previewUrl){const preview=node("a","pd-service",local(ui.preview,lang));preview.href=item.previewUrl;preview.target="_blank";preview.rel="noopener noreferrer";actions.append(preview);}
  content.append(actions);
  closeButton.setAttribute("aria-label",local(ui.close,lang));
  dlg.scrollTop=0;content.scrollTop=0;
