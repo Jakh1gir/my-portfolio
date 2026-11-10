@@ -126,3 +126,51 @@ Object.assign(window.JakhonDictionary, {
     "uz": "Vaqtinchalik ko‘rish: kipshop.vercel.app ↗"
   }
 });
+
+/* Featured KIPSHOP.UZ translations — RU/EN/UZ. */
+Object.assign(window.JakhonDictionary, {
+  "Закреплённый проект KIPSHOP.UZ": {
+    "en": "Featured project KIPSHOP.UZ",
+    "uz": "Tanlangan loyiha KIPSHOP.UZ"
+  },
+  "ЗАКРЕПЛЁННЫЙ ПРОЕКТ": {
+    "en": "FEATURED PROJECT",
+    "uz": "TANLANGAN LOYIHA"
+  },
+  "В разработке · Frontend MVP": {
+    "en": "In development · Frontend MVP",
+    "uz": "Ishlab chiqilmoqda · Frontend MVP"
+  },
+  "Промышленная B2B-платформа для подбора оборудования КИПиА и АСУ ТП. Реализованы прототип каталога, сравнение товаров, локальные RFQ-черновики и учебные инженерные симуляции. Коммерческие заказы и серверные операции ещё проходят подготовку.": {
+    "en": "An industrial B2B platform for sourcing instrumentation and automation equipment. The prototype includes a catalog, product comparison, local RFQ drafts and educational engineering simulations. Commercial orders and live backend workflows are still in preparation.",
+    "uz": "KIPiA va ASU TP uskunalarini tanlash uchun sanoat B2B platformasi. Prototipda katalog, mahsulotlarni solishtirish, lokal RFQ qoralamalari va o‘quv muhandislik simulyatsiyalari mavjud. Tijoriy buyurtmalar hamda server jarayonlari hali tayyorlanmoqda."
+  },
+  "Открыть временный сайт ↗": {
+    "en": "Open temporary website ↗",
+    "uz": "Vaqtinchalik saytni ochish ↗"
+  },
+  "Описание и статус проекта ↗": {
+    "en": "Project details and status ↗",
+    "uz": "Loyiha tavsifi va holati ↗"
+  },
+  "Временный адрес:": {
+    "en": "Temporary URL:",
+    "uz": "Vaqtinchalik manzil:"
+  },
+  "НАПРАВЛЕНИЙ": {
+    "en": "DIVISIONS",
+    "uz": "YO‘NALISH"
+  },
+  "КАТЕГОРИЙ": {
+    "en": "CATEGORIES",
+    "uz": "TOIFA"
+  },
+  "ТИПОВ": {
+    "en": "TYPES",
+    "uz": "TUR"
+  },
+  "КЛАССИФИКАТОР, НЕ НАЛИЧИЕ НА СКЛАДЕ": {
+    "en": "TAXONOMY, NOT STOCK AVAILABILITY",
+    "uz": "TASNIFLAGICH, OMBOR QOLDIG‘I EMAS"
+  }
+});
