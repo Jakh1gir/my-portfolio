@@ -86,3 +86,21 @@
 .project-last-commit time{font-weight:800;color:#106c64;font-variant-numeric:tabular-nums}
 .project-detail-dialog[data-status="prototype"] .pd-status{border-color:#79694e;background:#403423;color:#ffdfae}
 .project-detail-dialog[data-status="prototype"] .pd-status::before{background:#e2b56d;box-shadow:none}
+
+/* KIPSHOP.UZ portfolio card */
+.art-kipshop{background:radial-gradient(circle at 85% 15%,rgba(75,207,188,.18),transparent 46%),linear-gradient(135deg,#0b2531,#174652 64%,#1c3a49);padding:22px}
+.kipshop-art{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:min(100%,330px);min-height:148px;padding:17px 20px;border:1px solid rgba(163,224,214,.4);border-radius:10px;background:rgba(6,25,38,.7);box-shadow:0 14px 40px rgba(0,0,0,.17);color:#effffb}
+.kipshop-art-kicker{font:700 8px/1.4 Consolas,monospace;letter-spacing:.17em;color:#a9d1d0}
+.kipshop-art>strong{display:block;margin:10px 0 13px;font:900 clamp(25px,3vw,33px)/1 "Segoe UI",sans-serif;letter-spacing:-.055em}
+.kipshop-art>strong span{color:#67dcc1}
+.kipshop-art>strong small{font-size:13px;letter-spacing:0}
+.kipshop-art-flow{display:flex;align-items:center;flex-wrap:wrap;gap:7px;color:#b2e5df;font:700 8px/1.4 Consolas,monospace;letter-spacing:.08em}
+.kipshop-art-flow i{width:13px;height:1px;background:#69c7b7}
+.kipshop-art-spec{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.kipshop-art-spec b{border:1px solid rgba(122,194,187,.25);border-radius:4px;padding:4px 6px;color:#83cfc3;font:700 8px/1.25 Consolas,monospace}
+.projects-section .project-info p.project-preview{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;margin:-4px 0 13px;font-size:12px;line-height:1.6}
+.project-preview>span{color:#536e79;font-weight:700}
+.project-preview>a{color:#116f69;font-weight:800;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.project-preview>a:hover,.project-preview>a:focus-visible{color:#0a534e}
+.upcoming-card a[data-seo-link]{display:inline-block;margin-top:12px;color:#17877a;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+@media(max-width:570px){.art-kipshop{padding:17px}.kipshop-art{padding:16px;width:100%}.kipshop-art>strong{font-size:29px}}
